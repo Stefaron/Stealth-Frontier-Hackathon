@@ -1,108 +1,90 @@
 "use client";
 
-/* ── Encrypted balance mock card shown on the right side of the hero ── */
 function EncryptedBalanceCard() {
   return (
-    <div className="relative w-full max-w-[320px] mx-auto animate-float">
-      {/* Glow behind */}
+    <div className="relative w-full max-w-[340px] mx-auto animate-float">
+      {/* Ambient glow */}
       <div
-        className="absolute inset-0 rounded-2xl blur-3xl opacity-20"
+        className="absolute -inset-6 rounded-3xl pointer-events-none"
         style={{
-          background: "radial-gradient(circle, #7c3aed 0%, transparent 70%)",
-          transform: "scale(0.85) translateY(10px)",
+          background: "radial-gradient(ellipse at 50% 60%, rgba(109,40,217,0.28) 0%, transparent 70%)",
         }}
       />
 
       {/* Card */}
-      <div className="relative bg-[#111] border border-white/10 rounded-2xl p-5 overflow-hidden">
-        {/* Scanline effect */}
+      <div className="relative bg-[#131211] border border-white/[0.07] rounded-2xl overflow-hidden shadow-[0_32px_80px_-16px_rgba(0,0,0,0.8)]">
+        {/* Scanline */}
         <div
-          className="absolute left-0 right-0 h-12 pointer-events-none opacity-[0.03]"
+          className="absolute left-0 right-0 h-16 pointer-events-none opacity-[0.022]"
           style={{
-            background: "linear-gradient(transparent, rgba(255,255,255,0.8), transparent)",
-            animation: "scanline 4s linear infinite",
+            background: "linear-gradient(to bottom, transparent, rgba(255,255,255,0.95), transparent)",
+            animation: "scanline 7s linear infinite",
             top: 0,
           }}
         />
 
         {/* Header */}
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.04]">
           <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded bg-white/10 flex items-center justify-center">
-              <svg width="10" height="10" viewBox="0 0 16 16" fill="none">
-                <path d="M8 1L14 4.5V11.5L8 15L2 11.5V4.5L8 1Z" stroke="rgba(255,255,255,0.5)" strokeWidth="1.4" />
+            <div className="w-4 h-4 rounded bg-white/[0.06] grid place-items-center">
+              <svg width="8" height="8" viewBox="0 0 16 16" fill="none">
+                <path d="M8 1L14 4.5V11.5L8 15L2 11.5V4.5L8 1Z" stroke="rgba(255,255,255,0.35)" strokeWidth="1.5" />
               </svg>
             </div>
-            <span className="text-[9px] font-mono tracking-widest uppercase text-white/40">
-              Stealth Treasury
-            </span>
+            <span className="text-[9px] font-mono tracking-[0.15em] uppercase text-white/25">Stealth Treasury</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse-glow" />
-            <span className="text-[9px] font-mono text-green-400/60">Devnet</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse-glow" />
+            <span className="text-[9px] font-mono text-emerald-400/45">live</span>
           </div>
         </div>
 
-        {/* Encrypted balance */}
-        <div className="border-t border-white/5 pt-4 mb-4">
-          <p className="text-[9px] tracking-widest uppercase text-white/25 mb-1.5 font-mono">
+        {/* Balance */}
+        <div className="px-4 pt-4 pb-3.5 border-b border-white/[0.04]">
+          <p className="text-[8px] font-mono tracking-[0.2em] uppercase text-white/18 mb-2">
             Encrypted Balance
           </p>
-          <div className="flex items-center gap-2.5">
-            <span className="text-white/15 text-xl tracking-widest select-none font-mono leading-none">
+          <div className="flex items-end gap-2.5">
+            <span className="text-2xl font-mono tracking-wider text-white/[0.1] select-none leading-none">
               ██████.██
             </span>
-            <span className="text-white/30 text-[10px] font-mono">USDC</span>
-            <svg
-              className="ml-auto"
-              width="13"
-              height="13"
-              viewBox="0 0 13 13"
-              fill="none"
-            >
-              <rect x="2" y="5" width="9" height="6" rx="1" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
-              <path d="M4 5V3.5a2.5 2.5 0 0 1 5 0V5" stroke="rgba(255,255,255,0.2)" strokeWidth="1" strokeLinecap="round" />
-            </svg>
+            <span className="text-[10px] font-mono text-white/22 mb-0.5">USDC</span>
+            <div className="ml-auto mb-0.5 opacity-30">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                <rect x="1.5" y="5" width="10" height="6.5" rx="1.5" stroke="rgba(255,255,255,0.6)" strokeWidth="1.1" />
+                <path d="M4 5V3.5a2.5 2.5 0 0 1 5 0V5" stroke="rgba(255,255,255,0.6)" strokeWidth="1.1" strokeLinecap="round" />
+              </svg>
+            </div>
           </div>
         </div>
 
-        {/* Last payroll */}
-        <div className="border-t border-white/5 pt-3 mb-3">
-          <p className="text-[9px] tracking-widest uppercase text-white/25 mb-2 font-mono">
-            Last Payroll
-          </p>
+        {/* Payroll */}
+        <div className="px-4 py-3.5 border-b border-white/[0.04]">
+          <p className="text-[8px] font-mono tracking-[0.2em] uppercase text-white/18 mb-2">Last Payroll</p>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-white/60 text-[10px]">23 contributors</p>
-              <p className="text-white/15 text-[9px] font-mono mt-0.5 tracking-wide select-none">
-                tx: ███████████████████
-              </p>
+              <p className="text-[11px] text-white/50">23 contributors</p>
+              <p className="text-[9px] font-mono text-white/[0.1] mt-0.5 select-none tracking-wide">tx: ███████████████</p>
             </div>
-            <span className="text-white/25 text-[9px] font-mono">2h ago</span>
+            <span className="text-[9px] font-mono text-white/18">2h ago</span>
           </div>
         </div>
 
-        {/* Auditor access */}
-        <div className="border-t border-white/5 pt-3">
-          <p className="text-[9px] tracking-widest uppercase text-white/25 mb-2 font-mono">
-            Auditor Access
-          </p>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5">
-                <div className="w-1 h-1 rounded-full bg-green-400" />
-                <span className="text-white/55 text-[10px]">Hacken</span>
-                <span className="text-white/20 text-[9px]">— Aggregate</span>
-              </div>
-              <span className="text-green-400/50 text-[9px]">✓</span>
+        {/* Auditors */}
+        <div className="px-4 py-3.5">
+          <p className="text-[8px] font-mono tracking-[0.2em] uppercase text-white/18 mb-3">Auditor Access</p>
+          <div className="space-y-2.5">
+            <div className="flex items-center gap-2">
+              <span className="w-1 h-1 rounded-full bg-emerald-400/65 flex-shrink-0" />
+              <span className="text-[10px] text-white/48 flex-1">Hacken</span>
+              <span className="text-[8px] text-white/20 font-mono">aggregate</span>
+              <span className="text-emerald-400/45 text-[9px] ml-2">✓</span>
             </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5">
-                <div className="w-1 h-1 rounded-full bg-green-400/50" />
-                <span className="text-white/15 text-[10px] select-none">██████████</span>
-                <span className="text-white/15 text-[9px]">— Full</span>
-              </div>
-              <span className="text-green-400/40 text-[9px]">✓</span>
+            <div className="flex items-center gap-2">
+              <span className="w-1 h-1 rounded-full bg-emerald-400/30 flex-shrink-0" />
+              <span className="text-[10px] text-white/[0.12] select-none flex-1">██████████</span>
+              <span className="text-[8px] text-white/[0.12] font-mono">full</span>
+              <span className="text-emerald-400/30 text-[9px] ml-2">✓</span>
             </div>
           </div>
         </div>
@@ -114,128 +96,93 @@ function EncryptedBalanceCard() {
 const TICKER = [
   "PRIVATE BY DEFAULT",
   "AUDITABLE ON DEMAND",
-  "POWERED BY UMBRA",
+  "POWERED BY UMBRA SDK",
   "SOLANA NATIVE",
-  "ENCRYPTED PAYROLL",
-  "COMPLIANCE READY",
   "ZERO SALARY LEAKS",
+  "COMPLIANCE READY",
   "X25519 GRANTS",
+  "ENCRYPTED PAYROLL",
 ];
 
 export default function HeroSection() {
   const doubled = [...TICKER, ...TICKER];
 
   return (
-    <section className="pt-16 px-4 md:px-6 pb-0">
-      <div className="max-w-7xl mx-auto">
-        {/* ── Dark hero card ── */}
-        <div
-          className="relative bg-[#0a0a0a] rounded-3xl overflow-hidden flex flex-col"
-          style={{ minHeight: "calc(100svh - 72px)" }}
-        >
-          {/* Subtle grid */}
-          <div
-            className="absolute inset-0 opacity-[0.025] pointer-events-none"
-            style={{
-              backgroundImage: `
-                linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)
-              `,
-              backgroundSize: "48px 48px",
-            }}
-          />
+    <section className="bg-[#0c0b09] min-h-svh flex flex-col">
+      {/* Main */}
+      <div className="flex-1 flex items-center">
+        <div className="max-w-7xl mx-auto px-6 md:px-8 w-full pt-28 pb-16 md:pt-32 md:pb-20 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-16 lg:gap-8">
 
-          {/* Radial glow left */}
-          <div
-            className="absolute top-1/4 -left-32 w-[500px] h-[500px] rounded-full pointer-events-none"
-            style={{
-              background: "radial-gradient(circle, rgba(124,58,237,0.08) 0%, transparent 70%)",
-            }}
-          />
-
-          {/* Radial glow right */}
-          <div
-            className="absolute bottom-1/4 -right-32 w-[400px] h-[400px] rounded-full pointer-events-none"
-            style={{
-              background: "radial-gradient(circle, rgba(99,102,241,0.06) 0%, transparent 70%)",
-            }}
-          />
-
-          {/* ── Main content ── */}
-          <div className="relative flex-1 flex flex-col lg:flex-row items-center justify-between px-8 md:px-14 lg:px-20 pt-16 pb-12 gap-12 lg:gap-8">
-            {/* Left: copy */}
-            <div className="flex-1 max-w-2xl">
-              {/* Label pill */}
-              <div className="inline-flex items-center gap-2 border border-white/10 rounded-full px-3.5 py-1.5 mb-10 animate-fade-in-up delay-0">
-                <div className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse" />
-                <span className="text-[9px] tracking-widest uppercase text-white/40 font-mono">
-                  Umbra Side Track · Solana Frontier 2026
-                </span>
-              </div>
-
-              {/* Headline */}
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.04] tracking-tight mb-7">
-                <span className="block animate-fade-in-up delay-75">Pay your DAO</span>
-                <span className="block font-serif-italic animate-fade-in-up delay-200" style={{ fontWeight: 400 }}>
-                  privately.
-                </span>
-                <span className="block animate-fade-in-up delay-300">Audit it</span>
-                <span className="block font-serif-italic animate-fade-in-up delay-400" style={{ fontWeight: 400 }}>
-                  confidently.
-                </span>
-              </h1>
-
-              {/* Description */}
-              <p className="text-white/40 text-base leading-relaxed max-w-sm mb-10 animate-fade-in-up delay-500">
-                Confidential payroll for DAOs. Built on the Umbra SDK.
-              </p>
-
-              {/* CTAs */}
-              <div className="flex flex-wrap items-center gap-4 animate-fade-in-up delay-600">
-                <a
-                  href="/treasurer"
-                  className="flex items-center gap-2.5 bg-white text-[#0d0d0d] text-[10px] font-bold tracking-widest uppercase px-7 py-3.5 rounded-full hover:bg-white/90 transition-all duration-200 hover:scale-[1.04]"
-                >
-                  Launch App
-                  <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
-                    <path d="M2 10L10 2M10 2H4M10 2V8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-                  </svg>
-                </a>
-                <a
-                  href="#how-it-works"
-                  className="flex items-center gap-2 text-white/40 text-[10px] font-semibold tracking-widest uppercase hover:text-white/70 transition-colors duration-150"
-                >
-                  How it works
-                  <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
-                    <path d="M2 10L10 2M10 2H4M10 2V8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-                  </svg>
-                </a>
-              </div>
+          {/* Left */}
+          <div className="flex-1 max-w-2xl">
+            {/* Eyebrow */}
+            <div className="inline-flex items-center gap-2 mb-10 animate-fade-in-up">
+              <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse-glow" />
+              <span className="font-mono text-[9px] tracking-[0.22em] uppercase text-white/28">
+                Umbra Side Track · Solana Frontier 2026
+              </span>
             </div>
 
-            {/* Right: card */}
-            <div className="flex-shrink-0 w-full lg:w-auto animate-slide-in-right delay-300">
-              <EncryptedBalanceCard />
-            </div>
-          </div>
-
-          {/* ── Marquee ticker ── */}
-          <div className="border-t border-white/5 py-3.5 overflow-hidden">
-            <div
-              className="animate-marquee whitespace-nowrap"
-              style={{ display: "inline-flex", width: "max-content" }}
+            {/* Headline */}
+            <h1
+              className="font-bold leading-[0.95] tracking-tight mb-8"
+              style={{ fontSize: "clamp(3.75rem, 8.5vw, 8rem)" }}
             >
-              {doubled.map((item, i) => (
-                <span
-                  key={i}
-                  className="inline-flex items-center gap-5 px-8 text-[9px] tracking-[0.22em] uppercase font-mono text-white/18"
-                >
-                  {item}
-                  <span className="text-white/10">◆</span>
-                </span>
-              ))}
+              <span className="block text-white animate-fade-in-up delay-75">Pay your</span>
+              <span className="block text-white animate-fade-in-up delay-150">DAO</span>
+              <span
+                className="block font-serif-italic text-white/40 animate-fade-in-up delay-300"
+                style={{ fontWeight: 400 }}
+              >
+                privately.
+              </span>
+            </h1>
+
+            <p className="text-white/32 text-[15px] leading-relaxed max-w-xs mb-10 animate-fade-in-up delay-400">
+              Confidential payroll for DAOs. Built on the Umbra SDK.
+            </p>
+
+            <div className="flex flex-wrap items-center gap-4 animate-fade-in-up delay-500">
+              <a
+                href="/treasurer"
+                className="inline-flex items-center gap-2.5 bg-white text-[#0c0b09] text-[10px] font-bold tracking-widest uppercase px-7 py-3.5 rounded-full hover:bg-white/90 transition-all duration-200 hover:scale-[1.03] active:scale-[0.98]"
+              >
+                Launch App
+                <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
+                  <path d="M2 10L10 2M10 2H4M10 2V8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                </svg>
+              </a>
+              <a
+                href="#how-it-works"
+                className="text-white/28 text-[10px] font-semibold tracking-widest uppercase hover:text-white/60 transition-colors duration-200"
+              >
+                How it works ↓
+              </a>
             </div>
           </div>
+
+          {/* Right: card */}
+          <div className="w-full lg:w-auto lg:flex-shrink-0 animate-fade-in delay-400">
+            <EncryptedBalanceCard />
+          </div>
+        </div>
+      </div>
+
+      {/* Marquee */}
+      <div className="border-t border-white/[0.045] py-3.5 overflow-hidden">
+        <div
+          className="animate-marquee whitespace-nowrap"
+          style={{ display: "inline-flex", width: "max-content" }}
+        >
+          {doubled.map((item, i) => (
+            <span
+              key={i}
+              className="inline-flex items-center gap-6 px-8 text-[9px] font-mono tracking-[0.26em] uppercase text-white/12"
+            >
+              {item}
+              <span className="text-white/8">◆</span>
+            </span>
+          ))}
         </div>
       </div>
     </section>
