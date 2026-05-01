@@ -283,7 +283,13 @@ export function ParticleTextEffect({
     <div className={className ?? "flex flex-col items-center justify-center min-h-screen bg-black p-4"}>
       <canvas
         ref={canvasRef}
-        style={{ maxWidth: "100%", height: "auto", display: "block" }}
+        style={{
+          maxWidth: "100%",
+          height: "auto",
+          display: "block",
+          maskImage: "radial-gradient(ellipse 80% 75% at 50% 50%, black 20%, transparent 72%)",
+          WebkitMaskImage: "radial-gradient(ellipse 80% 75% at 50% 50%, black 20%, transparent 72%)",
+        }}
       />
       {showDescription && (
         <div className="mt-4 text-white text-sm text-center max-w-md">
