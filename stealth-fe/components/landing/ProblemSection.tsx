@@ -51,24 +51,24 @@ export default function ProblemSection() {
           ))}
         </div>
 
-        {/* Solution bridge */}
+        {/* Solution bridge — light with strong border */}
         <ScrollReveal delay={300}>
-          <div className="bg-[#0c0b09] rounded-2xl p-8 md:p-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="bg-white border-2 border-[#0c0b09] rounded-2xl p-8 md:p-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div>
-              <span className="inline-flex items-center gap-1.5 bg-white/8 border border-white/8 rounded-full px-3 py-1.5 mb-5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                <span className="text-white/40 text-[9px] font-bold tracking-widest uppercase">Stealth</span>
+              <span className="inline-flex items-center gap-1.5 bg-[#f4f3ef] border border-[#d9d5cc] rounded-full px-3 py-1.5 mb-5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                <span className="text-[#6b6863] text-[9px] font-bold tracking-widest uppercase">Stealth</span>
               </span>
-              <h3 className="text-2xl md:text-3xl font-bold text-white leading-tight">
+              <h3 className="text-2xl md:text-3xl font-bold text-[#0c0b09] leading-tight">
                 Private by default.{" "}
-                <span className="font-serif-italic text-white/40" style={{ fontWeight: 400 }}>
+                <span className="font-serif-italic text-[#a09d98]" style={{ fontWeight: 400 }}>
                   Auditable on demand.
                 </span>
               </h3>
             </div>
             <a
               href="#how-it-works"
-              className="flex-shrink-0 bg-white text-[#0c0b09] text-[10px] font-bold tracking-widest uppercase px-6 py-3 rounded-full hover:bg-white/90 transition-all hover:scale-[1.03] whitespace-nowrap"
+              className="flex-shrink-0 bg-[#0c0b09] text-white text-[10px] font-bold tracking-widest uppercase px-6 py-3 rounded-full hover:bg-[#1e1c19] transition-all hover:scale-[1.03] whitespace-nowrap"
             >
               See how →
             </a>

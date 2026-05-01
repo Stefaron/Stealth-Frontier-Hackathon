@@ -1,18 +1,21 @@
 "use client";
 
+const TICKER = [
+  "PRIVATE BY DEFAULT",
+  "AUDITABLE ON DEMAND",
+  "POWERED BY UMBRA SDK",
+  "SOLANA NATIVE",
+  "ZERO SALARY LEAKS",
+  "COMPLIANCE READY",
+  "X25519 GRANTS",
+  "ENCRYPTED PAYROLL",
+];
+
 function EncryptedBalanceCard() {
   return (
     <div className="relative w-full max-w-[340px] mx-auto animate-float">
-      {/* Ambient glow */}
-      <div
-        className="absolute -inset-6 rounded-3xl pointer-events-none"
-        style={{
-          background: "radial-gradient(ellipse at 50% 60%, rgba(109,40,217,0.28) 0%, transparent 70%)",
-        }}
-      />
-
-      {/* Card */}
-      <div className="relative bg-[#131211] border border-white/[0.07] rounded-2xl overflow-hidden shadow-[0_32px_80px_-16px_rgba(0,0,0,0.8)]">
+      {/* Card — dark for contrast against light hero */}
+      <div className="relative bg-[#131211] border border-[#131211] rounded-2xl overflow-hidden shadow-[0_40px_100px_-20px_rgba(12,11,9,0.22)]">
         {/* Scanline */}
         <div
           className="absolute left-0 right-0 h-16 pointer-events-none opacity-[0.022]"
@@ -41,9 +44,7 @@ function EncryptedBalanceCard() {
 
         {/* Balance */}
         <div className="px-4 pt-4 pb-3.5 border-b border-white/[0.04]">
-          <p className="text-[8px] font-mono tracking-[0.2em] uppercase text-white/18 mb-2">
-            Encrypted Balance
-          </p>
+          <p className="text-[8px] font-mono tracking-[0.2em] uppercase text-white/18 mb-2">Encrypted Balance</p>
           <div className="flex items-end gap-2.5">
             <span className="text-2xl font-mono tracking-wider text-white/[0.1] select-none leading-none">
               ██████.██
@@ -93,59 +94,46 @@ function EncryptedBalanceCard() {
   );
 }
 
-const TICKER = [
-  "PRIVATE BY DEFAULT",
-  "AUDITABLE ON DEMAND",
-  "POWERED BY UMBRA SDK",
-  "SOLANA NATIVE",
-  "ZERO SALARY LEAKS",
-  "COMPLIANCE READY",
-  "X25519 GRANTS",
-  "ENCRYPTED PAYROLL",
-];
-
 export default function HeroSection() {
   const doubled = [...TICKER, ...TICKER];
 
   return (
-    <section className="bg-[#0c0b09] min-h-svh flex flex-col">
-      {/* Main */}
+    <section className="min-h-svh flex flex-col">
+      {/* Main content */}
       <div className="flex-1 flex items-center">
         <div className="max-w-7xl mx-auto px-6 md:px-8 w-full pt-28 pb-16 md:pt-32 md:pb-20 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-16 lg:gap-8">
 
-          {/* Left */}
+          {/* Left: text */}
           <div className="flex-1 max-w-2xl">
-            {/* Eyebrow */}
             <div className="inline-flex items-center gap-2 mb-10 animate-fade-in-up">
-              <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse-glow" />
-              <span className="font-mono text-[9px] tracking-[0.22em] uppercase text-white/28">
+              <span className="w-1.5 h-1.5 rounded-full bg-violet-500 animate-pulse-glow" />
+              <span className="font-mono text-[9px] tracking-[0.22em] uppercase text-[#a09d98]">
                 Umbra Side Track · Solana Frontier 2026
               </span>
             </div>
 
-            {/* Headline */}
             <h1
-              className="font-bold leading-[0.95] tracking-tight mb-8"
+              className="font-bold leading-[0.95] tracking-tight mb-8 text-[#0c0b09]"
               style={{ fontSize: "clamp(3.75rem, 8.5vw, 8rem)" }}
             >
-              <span className="block text-white animate-fade-in-up delay-75">Pay your</span>
-              <span className="block text-white animate-fade-in-up delay-150">DAO</span>
+              <span className="block animate-fade-in-up delay-75">Pay your</span>
+              <span className="block animate-fade-in-up delay-150">DAO</span>
               <span
-                className="block font-serif-italic text-white/40 animate-fade-in-up delay-300"
+                className="block font-serif-italic text-[#a09d98] animate-fade-in-up delay-300"
                 style={{ fontWeight: 400 }}
               >
                 privately.
               </span>
             </h1>
 
-            <p className="text-white/32 text-[15px] leading-relaxed max-w-xs mb-10 animate-fade-in-up delay-400">
+            <p className="text-[#6b6863] text-[15px] leading-relaxed max-w-xs mb-10 animate-fade-in-up delay-400">
               Confidential payroll for DAOs. Built on the Umbra SDK.
             </p>
 
             <div className="flex flex-wrap items-center gap-4 animate-fade-in-up delay-500">
               <a
                 href="/treasurer"
-                className="inline-flex items-center gap-2.5 bg-white text-[#0c0b09] text-[10px] font-bold tracking-widest uppercase px-7 py-3.5 rounded-full hover:bg-white/90 transition-all duration-200 hover:scale-[1.03] active:scale-[0.98]"
+                className="inline-flex items-center gap-2.5 bg-[#0c0b09] text-white text-[10px] font-bold tracking-widest uppercase px-7 py-3.5 rounded-full hover:bg-[#1e1c19] transition-all duration-200 hover:scale-[1.03] active:scale-[0.98]"
               >
                 Launch App
                 <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
@@ -154,7 +142,7 @@ export default function HeroSection() {
               </a>
               <a
                 href="#how-it-works"
-                className="text-white/28 text-[10px] font-semibold tracking-widest uppercase hover:text-white/60 transition-colors duration-200"
+                className="text-[#a09d98] text-[10px] font-semibold tracking-widest uppercase hover:text-[#0c0b09] transition-colors duration-200"
               >
                 How it works ↓
               </a>
@@ -168,8 +156,8 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* Marquee */}
-      <div className="border-t border-white/[0.045] py-3.5 overflow-hidden">
+      {/* Marquee ticker */}
+      <div className="border-t border-[#d9d5cc] py-3.5 overflow-hidden">
         <div
           className="animate-marquee whitespace-nowrap"
           style={{ display: "inline-flex", width: "max-content" }}
@@ -177,10 +165,10 @@ export default function HeroSection() {
           {doubled.map((item, i) => (
             <span
               key={i}
-              className="inline-flex items-center gap-6 px-8 text-[9px] font-mono tracking-[0.26em] uppercase text-white/12"
+              className="inline-flex items-center gap-6 px-8 text-[9px] font-mono tracking-[0.26em] uppercase text-[#a09d98]"
             >
               {item}
-              <span className="text-white/8">◆</span>
+              <span className="text-[#d9d5cc]">◆</span>
             </span>
           ))}
         </div>
