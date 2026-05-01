@@ -4,9 +4,9 @@ const ROLES = [
   {
     num: "01",
     label: "Treasurer",
-    accent: "text-violet-500",
-    accentBg: "bg-violet-50",
-    accentBorder: "border-violet-100",
+    accent: "text-violet-400",
+    accentBg: "bg-violet-500/10",
+    accentBorder: "border-violet-500/20",
     headline: "Pay privately",
     sub: "CSV upload · tag recipients · multisig approval · bulk send.",
     icon: (
@@ -18,9 +18,9 @@ const ROLES = [
   {
     num: "02",
     label: "Contributor",
-    accent: "text-slate-500",
-    accentBg: "bg-slate-50",
-    accentBorder: "border-slate-100",
+    accent: "text-slate-400",
+    accentBg: "bg-slate-500/10",
+    accentBorder: "border-slate-500/20",
     headline: "Receive privately",
     sub: "Encrypted balance. Withdraw anytime. No exposure.",
     icon: (
@@ -33,9 +33,9 @@ const ROLES = [
   {
     num: "03",
     label: "Auditor",
-    accent: "text-emerald-600",
-    accentBg: "bg-emerald-50",
-    accentBorder: "border-emerald-100",
+    accent: "text-emerald-400",
+    accentBg: "bg-emerald-500/10",
+    accentBorder: "border-emerald-500/20",
     headline: "Audit with scope",
     sub: "Scoped viewing key. Generate PDF report. Export CSV.",
     icon: (
@@ -54,14 +54,14 @@ export default function HowItWorksSection() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
           <div>
             <ScrollReveal>
-              <p className="text-[9px] font-semibold tracking-[0.22em] uppercase text-[#a09d98] mb-4">
+              <p className="text-[9px] font-semibold tracking-[0.22em] uppercase text-white/25 mb-4">
                 How it works
               </p>
             </ScrollReveal>
             <ScrollReveal delay={80}>
-              <h2 className="text-4xl md:text-[3.25rem] font-bold text-[#0c0b09] leading-[1.05] tracking-tight max-w-xl">
+              <h2 className="text-4xl md:text-[3.25rem] font-bold text-white leading-[1.05] tracking-tight max-w-xl">
                 Three roles.{" "}
-                <span className="font-serif-italic" style={{ fontWeight: 400 }}>One private</span>{" "}
+                <span className="font-serif-italic text-white/35" style={{ fontWeight: 400 }}>One private</span>{" "}
                 payroll.
               </h2>
             </ScrollReveal>
@@ -71,22 +71,20 @@ export default function HowItWorksSection() {
         <div className="grid md:grid-cols-3 gap-4">
           {ROLES.map((role, i) => (
             <ScrollReveal key={role.label} delay={160 + i * 90}>
-              <div className="bg-white border border-[#e6e2da] rounded-2xl p-7 h-full card-lift group">
+              <div className="bg-[#1a1917] border border-white/[0.06] rounded-2xl p-7 h-full card-lift group">
                 <div className="flex items-start justify-between mb-7">
                   <span className={`font-mono text-[11px] font-bold ${role.accent} opacity-35`}>
                     {role.num}
                   </span>
-                  <div
-                    className={`w-9 h-9 rounded-xl ${role.accentBg} border ${role.accentBorder} flex items-center justify-center ${role.accent}`}
-                  >
+                  <div className={`w-9 h-9 rounded-xl ${role.accentBg} border ${role.accentBorder} flex items-center justify-center ${role.accent}`}>
                     {role.icon}
                   </div>
                 </div>
                 <span className={`text-[8px] font-bold tracking-[0.22em] uppercase ${role.accent} block mb-2.5`}>
                   {role.label}
                 </span>
-                <h3 className="text-xl font-bold text-[#0c0b09] mb-2.5">{role.headline}</h3>
-                <p className="text-sm text-[#a09d98] leading-relaxed">{role.sub}</p>
+                <h3 className="text-xl font-bold text-white mb-2.5">{role.headline}</h3>
+                <p className="text-sm text-white/35 leading-relaxed">{role.sub}</p>
               </div>
             </ScrollReveal>
           ))}

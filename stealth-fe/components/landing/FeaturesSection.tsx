@@ -65,19 +65,19 @@ const FEATURES = [
 
 export default function FeaturesSection() {
   return (
-    <section className="bg-[#eceae4] py-24 md:py-32" id="features">
+    <section className="py-24 md:py-32" id="features">
       <div className="max-w-7xl mx-auto px-6 md:px-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-14">
           <div>
             <ScrollReveal>
-              <p className="text-[9px] font-semibold tracking-[0.22em] uppercase text-[#a09d98] mb-4">
+              <p className="text-[9px] font-semibold tracking-[0.22em] uppercase text-white/25 mb-4">
                 Features
               </p>
             </ScrollReveal>
             <ScrollReveal delay={80}>
-              <h2 className="text-4xl md:text-[3.25rem] font-bold text-[#0c0b09] leading-[1.05] tracking-tight max-w-xl">
+              <h2 className="text-4xl md:text-[3.25rem] font-bold text-white leading-[1.05] tracking-tight max-w-xl">
                 Everything DAOs need.{" "}
-                <span className="font-serif-italic" style={{ fontWeight: 400 }}>
+                <span className="font-serif-italic text-white/30" style={{ fontWeight: 400 }}>
                   Nothing more.
                 </span>
               </h2>
@@ -85,20 +85,20 @@ export default function FeaturesSection() {
           </div>
         </div>
 
-        <div className="border-t border-[#d9d5cc]">
+        <div className="border-t border-white/[0.07]">
           {FEATURES.map((f, i) => (
             <ScrollReveal key={f.headline} delay={60 + i * 40}>
-              <div className="row-hover flex items-center gap-6 md:gap-10 py-5 border-b border-[#e6e2da] px-3 -mx-3 rounded-xl group cursor-default">
-                <span className="font-mono text-[10px] text-[#a09d98] tracking-widest w-7 flex-shrink-0">
+              <div className="row-hover flex items-center gap-6 md:gap-10 py-5 border-b border-white/[0.05] px-3 -mx-3 rounded-xl group cursor-default">
+                <span className="font-mono text-[10px] text-white/20 tracking-widest w-7 flex-shrink-0">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <span className="text-[8px] font-bold tracking-[0.24em] uppercase text-[#a09d98] w-24 flex-shrink-0 hidden sm:block">
+                <span className="text-[8px] font-bold tracking-[0.24em] uppercase text-white/22 w-24 flex-shrink-0 hidden sm:block">
                   {f.label}
                 </span>
-                <h3 className="font-semibold text-[#0c0b09] flex-1 text-[15px]">
+                <h3 className="font-semibold text-white/75 group-hover:text-white flex-1 text-[15px] transition-colors duration-200">
                   {f.headline}
                 </h3>
-                <div className="w-8 h-8 rounded-xl bg-white border border-[#e6e2da] flex items-center justify-center text-[#0c0b09] opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex-shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-white/[0.05] border border-white/[0.07] flex items-center justify-center text-white/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex-shrink-0">
                   {f.icon}
                 </div>
               </div>

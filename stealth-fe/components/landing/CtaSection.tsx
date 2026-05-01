@@ -2,25 +2,25 @@ import ScrollReveal from "./ScrollReveal";
 
 export default function CtaSection() {
   return (
-    <section className="py-24 md:py-36" id="auditors">
+    <section className="bg-[#111010] py-24 md:py-36" id="auditors">
       <div className="max-w-7xl mx-auto px-6 md:px-8">
-        <div className="border-t border-[#d9d5cc] pt-16 md:pt-24">
+        <div className="border-t border-white/[0.07] pt-16 md:pt-24">
           <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-12">
 
             <ScrollReveal className="flex-1">
               <h2
-                className="font-bold text-[#0c0b09] leading-[0.95] tracking-tight mb-10"
+                className="font-bold text-white leading-[0.95] tracking-tight mb-10"
                 style={{ fontSize: "clamp(3rem, 6.5vw, 6rem)" }}
               >
                 Start paying
                 <br />
-                <span className="font-serif-italic" style={{ fontWeight: 400, color: "#a09d98" }}>
+                <span className="font-serif-italic text-white/25" style={{ fontWeight: 400 }}>
                   privately.
                 </span>
               </h2>
               <a
                 href="/treasurer"
-                className="inline-flex items-center gap-2.5 bg-[#0c0b09] text-white text-[10px] font-bold tracking-widest uppercase px-7 py-3.5 rounded-full hover:bg-[#1e1c19] transition-all hover:scale-[1.04] active:scale-[0.98]"
+                className="inline-flex items-center gap-2.5 bg-white text-[#0d0c0a] text-[10px] font-bold tracking-widest uppercase px-7 py-3.5 rounded-full hover:bg-white/90 transition-all hover:scale-[1.04] active:scale-[0.98]"
               >
                 Launch App
                 <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
@@ -32,7 +32,7 @@ export default function CtaSection() {
             <ScrollReveal delay={160} className="flex-1 md:text-right">
               <p
                 className="text-4xl md:text-5xl lg:text-[3.5rem] font-bold leading-[1.1] tracking-tight select-none"
-                style={{ color: "#d9d5cc" }}
+                style={{ color: "rgba(255,255,255,0.07)" }}
               >
                 Private by default.{" "}
                 <span className="font-serif-italic" style={{ fontWeight: 400 }}>
