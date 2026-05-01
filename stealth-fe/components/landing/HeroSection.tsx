@@ -186,9 +186,8 @@ export default function HeroSection() {
               </h1>
 
               {/* Description */}
-              <p className="text-white/45 text-base md:text-lg leading-relaxed max-w-md mb-10 animate-fade-in-up delay-500">
-                Stealth brings confidential payroll to Solana DAOs — private by default,
-                auditable on demand. No salary leaks. No opaque mixers. Built on the Umbra SDK.
+              <p className="text-white/40 text-base leading-relaxed max-w-sm mb-10 animate-fade-in-up delay-500">
+                Confidential payroll for DAOs. Built on the Umbra SDK.
               </p>
 
               {/* CTAs */}
