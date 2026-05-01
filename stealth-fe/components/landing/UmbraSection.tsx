@@ -29,7 +29,7 @@ const PRIMITIVES = [
 
 export default function UmbraSection() {
   return (
-    <section className="bg-[#0c0b09] py-24 md:py-32" id="umbra">
+    <section className="bg-[#111010] py-24 md:py-32" id="umbra">
       <div className="max-w-7xl mx-auto px-6 md:px-8">
         <ScrollReveal>
           <div className="flex items-center gap-2.5 mb-5">
@@ -48,7 +48,7 @@ export default function UmbraSection() {
         <ScrollReveal delay={80}>
           <h2 className="text-4xl md:text-[3.25rem] font-bold text-white leading-[1.05] tracking-tight max-w-2xl mb-16">
             Every primitive.{" "}
-            <span className="font-serif-italic text-white/35" style={{ fontWeight: 400 }}>
+            <span className="font-serif-italic text-white/30" style={{ fontWeight: 400 }}>
               Fully used.
             </span>
           </h2>
@@ -57,17 +57,17 @@ export default function UmbraSection() {
         <div className="grid md:grid-cols-2 gap-3">
           {PRIMITIVES.map((p, i) => (
             <ScrollReveal key={p.number} delay={160 + i * 60}>
-              <div className="border border-white/[0.06] rounded-2xl p-7 bg-white/[0.018] card-lift-dark group">
+              <div className="bg-white/[0.025] border border-white/[0.06] rounded-2xl p-7 card-lift group">
                 <div className="flex items-start justify-between mb-5">
-                  <span className="font-mono text-[9px] text-white/15 tracking-widest">{p.number}</span>
-                  <span className="text-[8px] font-semibold tracking-widest uppercase text-white/22 border border-white/[0.08] rounded-full px-2.5 py-1">
+                  <span className="font-mono text-[9px] text-white/18 tracking-widest">{p.number}</span>
+                  <span className="text-[8px] font-semibold tracking-widest uppercase text-white/28 border border-white/[0.08] rounded-full px-2.5 py-1">
                     {p.tag}
                   </span>
                 </div>
-                <h3 className="text-lg font-bold text-white mb-3 group-hover:text-white/90 transition-colors">
+                <h3 className="text-lg font-bold text-white mb-3 group-hover:text-white/85 transition-colors">
                   {p.name}
                 </h3>
-                <p className="font-mono text-[9px] text-white/12 tracking-widest">{p.id}</p>
+                <p className="font-mono text-[9px] text-white/15 tracking-widest">{p.id}</p>
               </div>
             </ScrollReveal>
           ))}
@@ -80,7 +80,7 @@ export default function UmbraSection() {
               href="https://sdk.umbraprivacy.com/introduction"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-white/28 text-[10px] font-semibold tracking-widest uppercase hover:text-white/55 transition-colors"
+              className="text-white/28 text-[10px] font-semibold tracking-widest uppercase hover:text-white/60 transition-colors"
             >
               SDK docs →
             </a>

@@ -11,10 +11,10 @@ interface StatItem {
 }
 
 const STATS: StatItem[] = [
-  { value: 0,   suffix: "",  label: "Salary leaks",      desc: "Plaintext exposure on-chain" },
-  { value: 4,   suffix: "",  label: "Umbra primitives",  desc: "Every primitive fully used" },
-  { value: 3,   suffix: "",  label: "Roles",             desc: "Treasurer · Contributor · Auditor" },
-  { value: 100, suffix: "%", label: "Auditor-ready",     desc: "Compliance built in by design" },
+  { value: 0,   suffix: "",  label: "Salary leaks",     desc: "Plaintext exposure on-chain" },
+  { value: 4,   suffix: "",  label: "Umbra primitives", desc: "Every primitive fully used" },
+  { value: 3,   suffix: "",  label: "Roles",            desc: "Treasurer · Contributor · Auditor" },
+  { value: 100, suffix: "%", label: "Auditor-ready",    desc: "Compliance built in by design" },
 ];
 
 function Counter({ value, prefix = "", suffix = "", label, desc, index }: StatItem & { prefix?: string; index: number }) {
@@ -49,20 +49,20 @@ function Counter({ value, prefix = "", suffix = "", label, desc, index }: StatIt
   return (
     <div
       ref={ref}
-      className={`py-10 md:py-14 ${index > 0 ? "border-t md:border-t-0 md:border-l border-[#d9d5cc] pl-0 md:pl-10" : ""} ${index === 0 ? "md:pr-10" : index === STATS.length - 1 ? "md:pl-10" : "md:px-10"}`}
+      className={`py-10 md:py-14 ${index > 0 ? "border-t md:border-t-0 md:border-l border-white/[0.07] pl-0 md:pl-10" : ""} ${index === 0 ? "md:pr-10" : index === STATS.length - 1 ? "md:pl-10" : "md:px-10"}`}
     >
-      <div className="text-[3.5rem] md:text-[5rem] lg:text-[6rem] font-bold text-[#0c0b09] tracking-tight leading-none mb-1.5 tabular-nums">
+      <div className="text-[3.5rem] md:text-[5rem] lg:text-[6rem] font-bold text-white tracking-tight leading-none mb-1.5 tabular-nums">
         {prefix}{count}{suffix}
       </div>
-      <p className="text-sm font-semibold text-[#0c0b09] mb-1">{label}</p>
-      <p className="text-[11px] text-[#a09d98] tracking-wide">{desc}</p>
+      <p className="text-sm font-semibold text-white/70 mb-1">{label}</p>
+      <p className="text-[11px] text-white/28 tracking-wide">{desc}</p>
     </div>
   );
 }
 
 export default function StatsSection() {
   return (
-    <section className="border-b border-[#d9d5cc]">
+    <section className="border-b border-white/[0.07]">
       <div className="max-w-7xl mx-auto px-6 md:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4">
           {STATS.map((s, i) => (
