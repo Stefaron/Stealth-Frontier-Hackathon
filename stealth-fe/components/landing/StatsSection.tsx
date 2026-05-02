@@ -2,71 +2,100 @@
 
 import { useEffect, useRef, useState } from "react";
 
-interface StatItem {
-  value: number;
-  prefix?: string;
-  suffix?: string;
-  label: string;
-  desc: string;
-}
-
-const STATS: StatItem[] = [
-  { value: 0,   suffix: "",  label: "Salary leaks",     desc: "Plaintext exposure on-chain" },
-  { value: 4,   suffix: "",  label: "Umbra primitives", desc: "Every primitive fully used" },
-  { value: 3,   suffix: "",  label: "Roles",            desc: "Treasurer · Contributor · Auditor" },
-  { value: 100, suffix: "%", label: "Auditor-ready",    desc: "Compliance built in by design" },
+const STATS = [
+  { value: 0,   suffix: "",  label: "Salary leaks",    desc: "Plaintext exposure on-chain",      ord: "01" },
+  { value: 4,   suffix: "",  label: "Umbra primitives", desc: "Every primitive fully used",        ord: "02" },
+  { value: 3,   suffix: "",  label: "Roles",            desc: "Treasurer · Contributor · Auditor", ord: "03" },
+  { value: 100, suffix: "%", label: "Auditor-ready",   desc: "Compliance built in by design",     ord: "04" },
 ];
 
-function Counter({ value, prefix = "", suffix = "", label, desc, index }: StatItem & { prefix?: string; index: number }) {
+function StatItem({
+  value, suffix, label, desc, ord, i,
+}: (typeof STATS)[0] & { i: number }) {
   const [count, setCount]     = useState(0);
-  const [started, setStarted] = useState(false);
+  const [visible, setVisible] = useState(false);
   const ref                   = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting && !started) { setStarted(true); observer.unobserve(el); } },
-      { threshold: 0.4 }
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => setVisible(true), i * 90);
+          observer.unobserve(el);
+        }
+      },
+      { threshold: 0.25 }
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, [started]);
+  }, [i]);
 
   useEffect(() => {
-    if (!started || value === 0) { setCount(0); return; }
-    const steps = 40;
-    let step    = 0;
+    if (!visible || value === 0) { setCount(0); return; }
+    const steps = 52;
+    let step = 0;
     const id = setInterval(() => {
       step++;
       const ease = 1 - Math.pow(1 - step / steps, 3);
       setCount(Math.round(value * ease));
       if (step >= steps) clearInterval(id);
-    }, 1200 / steps);
+    }, 1400 / steps);
     return () => clearInterval(id);
-  }, [started, value]);
+  }, [visible, value]);
+
+  const delay = i * 90;
 
   return (
     <div
       ref={ref}
-      className={`py-10 md:py-14 ${index > 0 ? "border-t md:border-t-0 md:border-l border-white/[0.07] pl-0 md:pl-10" : ""} ${index === 0 ? "md:pr-10" : index === STATS.length - 1 ? "md:pl-10" : "md:px-10"}`}
+      className={`relative pt-8 pb-12 ${i > 0 ? "md:border-l border-white/[0.06] md:pl-10" : ""} ${i < STATS.length - 1 ? "md:pr-10" : ""} border-t border-white/[0.06] md:border-t-0`}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(24px)",
+        transition: `opacity 0.75s cubic-bezier(0.16,1,0.3,1) ${delay}ms, transform 0.75s cubic-bezier(0.16,1,0.3,1) ${delay}ms`,
+      }}
     >
-      <div className="text-[3.5rem] md:text-[5rem] lg:text-[6rem] font-bold text-white tracking-tight leading-none mb-1.5 tabular-nums">
-        {prefix}{count}{suffix}
+      {/* Animated rule on top — desktop only */}
+      <div className="hidden md:block absolute top-0 left-0 right-0 h-px bg-white/[0.06]" />
+      <div
+        className="hidden md:block absolute top-0 left-0 h-px bg-white/50"
+        style={{
+          width: visible ? "100%" : "0%",
+          transition: `width 1s cubic-bezier(0.16,1,0.3,1) ${delay + 120}ms`,
+        }}
+      />
+
+      {/* Ordinal */}
+      <span className="block font-mono text-[9px] tracking-[0.24em] text-white/12 mb-8 select-none">
+        {ord}
+      </span>
+
+      {/* Number */}
+      <div
+        className="font-bold text-white tabular-nums leading-none mb-4"
+        style={{ fontSize: "clamp(3.25rem, 4.5vw, 5.5rem)" }}
+      >
+        {count}{suffix}
       </div>
-      <p className="text-sm font-semibold text-white/70 mb-1">{label}</p>
-      <p className="text-[11px] text-white/28 tracking-wide">{desc}</p>
+
+      {/* Label */}
+      <p className="text-sm font-semibold text-white/55 mb-1.5">{label}</p>
+
+      {/* Desc */}
+      <p className="text-[11px] text-white/22 tracking-wide leading-relaxed">{desc}</p>
     </div>
   );
 }
 
 export default function StatsSection() {
   return (
-    <section className="border-b border-white/[0.07]">
+    <section className="border-b border-white/[0.06]">
       <div className="max-w-7xl mx-auto px-6 md:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4">
           {STATS.map((s, i) => (
-            <Counter key={s.label} {...s} index={i} />
+            <StatItem key={s.label} {...s} i={i} />
           ))}
         </div>
       </div>

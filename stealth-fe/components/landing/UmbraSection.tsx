@@ -29,7 +29,7 @@ const PRIMITIVES = [
 
 export default function UmbraSection() {
   return (
-    <section className="bg-[#111010] py-24 md:py-32" id="umbra">
+    <section className="bg-black py-24 md:py-32" id="umbra">
       <div className="max-w-7xl mx-auto px-6 md:px-8">
         <ScrollReveal>
           <div className="flex items-center gap-2.5 mb-5">

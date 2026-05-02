@@ -2,7 +2,7 @@ import ScrollReveal from "./ScrollReveal";
 
 export default function CtaSection() {
   return (
-    <section className="bg-[#111010] py-24 md:py-36" id="auditors">
+    <section className="bg-black py-24 md:py-36" id="auditors">
       <div className="max-w-7xl mx-auto px-6 md:px-8">
         <div className="border-t border-white/[0.07] pt-16 md:pt-24">
           <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-12">

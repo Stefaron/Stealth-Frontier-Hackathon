@@ -71,7 +71,7 @@ export default function HowItWorksSection() {
         <div className="grid md:grid-cols-3 gap-4">
           {ROLES.map((role, i) => (
             <ScrollReveal key={role.label} delay={160 + i * 90}>
-              <div className="bg-[#1a1917] border border-white/[0.06] rounded-2xl p-7 h-full card-lift group">
+              <div className="bg-black border border-white/[0.06] rounded-2xl p-7 h-full card-lift group">
                 <div className="flex items-start justify-between mb-7">
                   <span className={`font-mono text-[11px] font-bold ${role.accent} opacity-35`}>
                     {role.num}

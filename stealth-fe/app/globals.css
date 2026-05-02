@@ -1,15 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #0d0c0a;
-  --bg-card: #1a1917;
-  --bg-alt: #111010;
+  --bg: #000000;
+  --bg-card: #000000;
+  --bg-alt: #000000;
   --fg: #f0ede8;
   --fg-2: rgba(240, 237, 232, 0.5);
   --fg-3: rgba(240, 237, 232, 0.28);
   --border: rgba(255, 255, 255, 0.07);
   --border-light: rgba(255, 255, 255, 0.04);
-  --dark: #0d0c0a;
+  --dark: #000000;
 }
 
 @theme inline {
@@ -88,12 +88,133 @@ body::after {
   100% { transform: translateY(500%); }
 }
 
+@keyframes drawLine {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+@keyframes cardAura {
+  0%, 100% {
+    opacity: 0.32;
+    transform: scale(0.96) translate3d(0, 0, 0);
+  }
+  50% {
+    opacity: 0.82;
+    transform: scale(1.04) translate3d(0, -8px, 0);
+  }
+}
+
+@keyframes cardRing {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes cardLightDriftA {
+  0%, 100% { transform: translate3d(-18%, -10%, 0) scale(0.9); }
+  35%      { transform: translate3d(18%, -18%, 0) scale(1.1); }
+  70%      { transform: translate3d(10%, 22%, 0) scale(0.96); }
+}
+
+@keyframes cardLightDriftB {
+  0%, 100% { transform: translate3d(18%, 14%, 0) scale(1); }
+  40%      { transform: translate3d(-14%, 20%, 0) scale(0.88); }
+  75%      { transform: translate3d(-22%, -14%, 0) scale(1.08); }
+}
+
 .animate-fade-in-up    { animation: fadeInUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) both; }
 .animate-fade-in       { animation: fadeIn 0.8s ease both; }
 .animate-slide-in-right { animation: slideInRight 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
 .animate-float         { animation: float 5.5s ease-in-out infinite; }
 .animate-marquee       { animation: marquee 32s linear infinite; }
 .animate-pulse-glow    { animation: pulseGlow 2s ease-in-out infinite; }
+.animate-draw-line     { animation: drawLine 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both; transform-origin: left center; }
+
+.problem-card-shell {
+  position: relative;
+  isolation: isolate;
+}
+
+.problem-card-shell::before,
+.problem-card-shell::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.problem-card-shell::before {
+  inset: -26px;
+  border-radius: 48px;
+  opacity: 0.22;
+  filter: blur(20px);
+  background:
+    radial-gradient(circle at 18% 24%, rgba(14, 165, 233, 0.28), transparent 31%),
+    radial-gradient(circle at 82% 74%, rgba(125, 211, 252, 0.16), transparent 34%),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.07), transparent 44%);
+  animation: cardAura 6.5s ease-in-out infinite;
+  transition: opacity 0.35s ease, filter 0.35s ease;
+}
+
+.problem-card-shell::after {
+  inset: -2px;
+  border-radius: 34px;
+  opacity: 0.14;
+  filter: blur(12px);
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(14, 165, 233, 0.55) 46deg,
+    transparent 96deg,
+    transparent 184deg,
+    rgba(125, 211, 252, 0.32) 234deg,
+    transparent 292deg,
+    transparent 360deg
+  );
+  animation: cardRing 7s linear infinite;
+  transition: opacity 0.35s ease;
+}
+
+.problem-card-shell:hover::before,
+.problem-card-shell:focus-within::before {
+  opacity: 0.58;
+  filter: blur(24px);
+}
+
+.problem-card-shell:hover::after,
+.problem-card-shell:focus-within::after {
+  opacity: 0.54;
+}
+
+.problem-card-light {
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+  width: 46%;
+  aspect-ratio: 1;
+  border-radius: 999px;
+  filter: blur(34px);
+  opacity: 0.22;
+  transition: opacity 0.3s ease;
+}
+
+.problem-card-light-a {
+  left: -12%;
+  top: -10%;
+  background: rgba(14, 165, 233, 0.32);
+  animation: cardLightDriftA 8s ease-in-out infinite;
+}
+
+.problem-card-light-b {
+  right: -14%;
+  bottom: -12%;
+  background: rgba(125, 211, 252, 0.2);
+  animation: cardLightDriftB 9.5s ease-in-out infinite;
+}
+
+.problem-card-shell:hover .problem-card-light,
+.problem-card-shell:focus-within .problem-card-light {
+  opacity: 0.62;
+}
 
 .delay-0    { animation-delay: 0ms; }
 .delay-75   { animation-delay: 75ms; }
