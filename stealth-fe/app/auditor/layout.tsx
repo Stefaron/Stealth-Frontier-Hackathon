@@ -1,0 +1,21 @@
+"use client";
+
+import AppNav from "@/components/app/AppNav";
+import ConnectGate from "@/components/app/ConnectGate";
+
+const LINKS = [{ label: "Grants", href: "/auditor" }];
+
+export default function AuditorLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <>
+      <AppNav role="auditor" links={LINKS} />
+      <main className="pt-14 min-h-svh">
+        <ConnectGate role="auditor">{children}</ConnectGate>
+      </main>
+    </>
+  );
+}

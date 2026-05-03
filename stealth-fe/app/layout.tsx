@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Playfair_Display } from "next/font/google";
+import WalletProvider from "@/context/WalletProvider";
+import { UmbraProvider } from "@/context/UmbraContext";
+import { ToastProvider } from "@/context/ToastContext";
+import Toaster from "@/components/app/Toaster";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -36,8 +40,15 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-black text-[#f0ede8]">
-        {children}
+      <body className="min-h-full flex flex-col bg-[#0d0c0a] text-[#f0ede8]" suppressHydrationWarning>
+        <WalletProvider>
+          <UmbraProvider>
+            <ToastProvider>
+              {children}
+              <Toaster />
+            </ToastProvider>
+          </UmbraProvider>
+        </WalletProvider>
       </body>
     </html>
   );
