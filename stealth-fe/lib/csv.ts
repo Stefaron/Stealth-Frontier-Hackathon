@@ -22,8 +22,8 @@ export function generateCsvTemplate(): string {
   const headers = ["address", "amount", "mint", "note"];
   const example = [
     "8xH3kJLmV9aQ2WNrYz4XUPD...",
-    "100.00",
-    "USDC",
+    "0.01",
+    "SOL",
     "Q1 2025 salary",
   ];
   return [headers.join(","), example.join(",")].join("\n");

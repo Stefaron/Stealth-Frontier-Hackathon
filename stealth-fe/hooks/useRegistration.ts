@@ -34,16 +34,19 @@ export function useRegistration(walletAddress?: string) {
     try {
       const querier = getUserAccountQuerier(client);
       const result = await querier(walletAddress as Address);
-      const fullyRegistered =
-        result.state === "exists" &&
-        result.data?.isUserAccountX25519KeyRegistered === true &&
-        result.data?.isUserCommitmentRegistered === true;
+      const x25519Done = result.state === "exists" && result.data?.isUserAccountX25519KeyRegistered === true;
+      const anonymousDone = result.state === "exists" && result.data?.isActiveForAnonymousUsage === true;
+      const fullyRegistered = x25519Done && anonymousDone;
       if (fullyRegistered) {
         setStatus("registered");
       } else if (result.state === "exists") {
-        // Account exists but X25519 key not yet finalized by MXE
+        // Account exists but Arcium MPC callback not yet finalized
         setStatus("pending");
-        setErrorMsg("Registration submitted — waiting for privacy key confirmation.");
+        setErrorMsg(
+          x25519Done && !anonymousDone
+            ? "X25519 key confirmed — waiting for Arcium to activate anonymous usage."
+            : "Registration submitted — waiting for privacy key confirmation."
+        );
       } else {
         setStatus("unregistered");
       }
@@ -78,16 +81,16 @@ export function useRegistration(walletAddress?: string) {
         try {
           const querier = getUserAccountQuerier(client);
           const result = await querier(walletAddress as Address);
-          const fullyRegistered =
-            result.state === "exists" &&
-            result.data?.isUserAccountX25519KeyRegistered === true &&
-            result.data?.isUserCommitmentRegistered === true;
-          if (fullyRegistered) {
+          const x25519Done2 = result.state === "exists" && result.data?.isUserAccountX25519KeyRegistered === true;
+          const anonymousDone2 = result.state === "exists" && result.data?.isActiveForAnonymousUsage === true;
+          if (x25519Done2 && anonymousDone2) {
             setStatus("registered");
           } else {
             setStatus("pending");
             setErrorMsg(
-              "Registration is on-chain — waiting for privacy key to be confirmed by the network. Check again in a few seconds."
+              x25519Done2 && !anonymousDone2
+                ? "X25519 key confirmed — waiting for Arcium to activate anonymous usage. Check again in 30s."
+                : "Registration is on-chain — waiting for privacy key to be confirmed. Check again in a few seconds."
             );
           }
         } catch {

@@ -17,7 +17,7 @@ export async function createUmbraClient(
     rpcUrl: SOLANA_RPC_URL,
     rpcSubscriptionsUrl: SOLANA_WS_URL,
     indexerApiEndpoint: UMBRA_INDEXER_URL,
-    deferMasterSeedSignature: true,
+    deferMasterSeedSignature: false,
   });
 }
 

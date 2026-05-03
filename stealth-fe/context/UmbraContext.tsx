@@ -50,7 +50,8 @@ export function UmbraProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsInitializing(false);
     }
-  }, [wallet, connected]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wallet, connected, publicKey]);
 
   const clearClient = useCallback(() => {
     setClient(null);

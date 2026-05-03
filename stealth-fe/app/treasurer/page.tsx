@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useUmbra } from "@/context/UmbraContext";
+import { useRegistration } from "@/hooks/useRegistration";
 
 const QUICK_ACTIONS = [
   {
@@ -34,9 +36,24 @@ const STATS = [
   { label: "Privacy Model", value: "ZK + MPC", tag: "Arcium" },
 ];
 
+const SESSION_STATUS: Record<string, { label: string; color: string }> = {
+  registered:   { label: "● Active",        color: "text-emerald-400" },
+  pending:      { label: "◌ Confirming…",   color: "text-blue-400" },
+  checking:     { label: "◌ Checking…",     color: "text-blue-400" },
+  registering:  { label: "◌ Registering…",  color: "text-violet-400" },
+  unregistered: { label: "○ Not registered", color: "text-amber-400" },
+  error:        { label: "✕ Error",          color: "text-red-400" },
+  idle:         { label: "○ Not connected",  color: "text-white/30" },
+};
+
 export default function TreasurerPage() {
   const { publicKey } = useWallet();
   const { client } = useUmbra();
+  const { status, checkRegistration } = useRegistration(publicKey?.toBase58());
+
+  useEffect(() => {
+    if (client && publicKey) checkRegistration();
+  }, [client, publicKey, checkRegistration]);
 
   const shortAddress = publicKey
     ? publicKey.toBase58().slice(0, 8) + "…" + publicKey.toBase58().slice(-6)
@@ -102,9 +119,10 @@ export default function TreasurerPage() {
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
             <p className="text-white/25 text-[10px] uppercase tracking-widest mb-1">Status</p>
-            <p className="text-emerald-400 font-mono text-[11px]">
-              {client ? "● Active" : "○ Not connected"}
-            </p>
+            {(() => {
+              const s = !client ? SESSION_STATUS.idle : SESSION_STATUS[status] ?? SESSION_STATUS.idle;
+              return <p className={`font-mono text-[11px] ${s.color}`}>{s.label}</p>;
+            })()}
           </div>
           <div>
             <p className="text-white/25 text-[10px] uppercase tracking-widest mb-1">Mode</p>
