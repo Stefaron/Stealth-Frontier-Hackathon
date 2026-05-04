@@ -33,16 +33,27 @@ export default function WalletModal({ open, onClose, onSelect }: WalletModalProp
   const [mounted, setMounted] = useState(false);
   const [closing, setClosing] = useState(false);
   const [hovered, setHovered] = useState<string | null>(null);
+  // lastHovered never clears — right pane stays stable so button is always clickable
+  const [lastHovered, setLastHovered] = useState<string | null>(null);
 
   const backdropRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const leftRowsRef = useRef<HTMLDivElement>(null);
 
+  const handleRowEnter = (name: string) => {
+    setHovered(name);
+    setLastHovered(name);
+  };
+  const handleRowLeave = () => setHovered(null);
+
   useEffect(() => {
     if (open) {
       setMounted(true);
       setClosing(false);
+    } else if (mounted && !closing) {
+      triggerClose();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   useEffect(() => {
@@ -108,6 +119,7 @@ export default function WalletModal({ open, onClose, onSelect }: WalletModalProp
   );
 
   const hoveredWallet = solanaWallets.find((w) => w.adapter.name === hovered);
+  const displayWallet = solanaWallets.find((w) => w.adapter.name === lastHovered);
 
   return createPortal(
     <div
@@ -159,8 +171,8 @@ export default function WalletModal({ open, onClose, onSelect }: WalletModalProp
                     icon={w.adapter.icon}
                     badge="READY"
                     badgeColor="text-emerald-400"
-                    onMouseEnter={() => setHovered(w.adapter.name)}
-                    onMouseLeave={() => setHovered(null)}
+                    onMouseEnter={() => handleRowEnter(w.adapter.name)}
+                    onMouseLeave={handleRowLeave}
                     onClick={() => onSelect(w.adapter.name)}
                   />
                 ))}
@@ -180,8 +192,8 @@ export default function WalletModal({ open, onClose, onSelect }: WalletModalProp
                       badgeColor="text-white/35"
                       muted
                       href={url}
-                      onMouseEnter={() => setHovered(w.adapter.name)}
-                      onMouseLeave={() => setHovered(null)}
+                      onMouseEnter={() => handleRowEnter(w.adapter.name)}
+                      onMouseLeave={handleRowLeave}
                     />
                   );
                 })}
@@ -201,8 +213,8 @@ export default function WalletModal({ open, onClose, onSelect }: WalletModalProp
                       badgeColor="text-white/30"
                       muted
                       href={url}
-                      onMouseEnter={() => setHovered(w.adapter.name)}
-                      onMouseLeave={() => setHovered(null)}
+                      onMouseEnter={() => handleRowEnter(w.adapter.name)}
+                      onMouseLeave={handleRowLeave}
                     />
                   );
                 })}
@@ -222,14 +234,14 @@ export default function WalletModal({ open, onClose, onSelect }: WalletModalProp
           <span className="wallet-modal-mesh" aria-hidden />
           <span className="wallet-modal-orb" aria-hidden />
 
-          {hoveredWallet ? (
+          {displayWallet ? (
             <WalletPreview
-              key={hoveredWallet.adapter.name}
-              name={hoveredWallet.adapter.name}
-              icon={hoveredWallet.adapter.icon}
-              installed={hoveredWallet.readyState === "Installed"}
-              installUrl={INSTALL_LINKS[hoveredWallet.adapter.name]}
-              onSelect={() => onSelect(hoveredWallet.adapter.name)}
+              key={displayWallet.adapter.name}
+              name={displayWallet.adapter.name}
+              icon={displayWallet.adapter.icon}
+              installed={displayWallet.readyState === "Installed"}
+              installUrl={INSTALL_LINKS[displayWallet.adapter.name]}
+              onSelect={() => onSelect(displayWallet.adapter.name)}
             />
           ) : (
             <DefaultInfo />
@@ -362,7 +374,7 @@ function WalletPreview({
           // eslint-disable-next-line @next/next/no-img-element
           <img src={icon} alt={name} width={48} height={48} className="rounded-xl" />
         )}
-        <span className="absolute -inset-2 rounded-3xl border border-violet-400/15 animate-pulse-glow pointer-events-none" />
+        <span className="absolute -inset-2 rounded-3xl border border-violet-400/10 pointer-events-none" />
       </div>
       <h3 data-anim className="text-xl font-bold text-white mb-2 tracking-tight">{name}</h3>
       <p data-anim className="text-[13px] text-white/45 leading-relaxed mb-7">

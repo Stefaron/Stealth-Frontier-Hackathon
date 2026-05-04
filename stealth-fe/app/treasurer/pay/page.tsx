@@ -247,16 +247,33 @@ export default function PayPage() {
             if (cause?.cause) console.error("[Pay] Root cause:", cause.cause);
           }
         }
-        let errMsg = e instanceof Error ? e.message : "Unknown error";
-        if (errMsg.includes("#3012") || errMsg.includes("AccountNotInitialized")) {
-          errMsg = "Token not supported on devnet — use SOL";
-        } else if (errMsg.includes("insufficient funds") || errMsg.includes("0x1") ) {
-          errMsg = "Insufficient SOL balance — wrap more SOL in your wallet";
+        const errMsg = e instanceof Error ? e.message : "Unknown error";
+        const causeMsg = (e && typeof e === "object")
+          ? JSON.stringify(e).toLowerCase()
+          : "";
+        const isAlreadyProcessed =
+          errMsg.toLowerCase().includes("already been processed") ||
+          errMsg.toLowerCase().includes("already processed") ||
+          causeMsg.includes("already been processed") ||
+          causeMsg.includes("already processed");
+        if (isAlreadyProcessed) {
+          // TX landed on-chain — SDK failed on confirmation retry, not on send
+          updatedRows[i] = {
+            ...row,
+            status: { state: "sent", signature: "confirmed-on-chain" },
+          };
+        } else {
+          let displayErr = errMsg;
+          if (displayErr.includes("#3012") || displayErr.includes("AccountNotInitialized")) {
+            displayErr = "Token not supported on devnet — use SOL";
+          } else if (displayErr.includes("insufficient funds") || displayErr.includes("0x1")) {
+            displayErr = "Insufficient SOL balance — wrap more SOL in your wallet";
+          }
+          updatedRows[i] = {
+            ...row,
+            status: { state: "error", error: displayErr },
+          };
         }
-        updatedRows[i] = {
-          ...row,
-          status: { state: "error", error: errMsg },
-        };
       }
       setRows([...updatedRows]);
     }

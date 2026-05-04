@@ -95,6 +95,23 @@ export default function AppNav({ role, links }: AppNavProps) {
             </div>
           </div>
 
+          <div className="hidden md:flex items-center gap-2 mr-3">
+            {role !== "treasurer" && (
+              <Link href="/treasurer" className="font-mono text-[8px] tracking-[0.15em] uppercase text-white/25 hover:text-white/50 transition-colors">
+                Treasurer
+              </Link>
+            )}
+            {role !== "contributor" && (
+              <Link href="/contributor" className="font-mono text-[8px] tracking-[0.15em] uppercase text-white/25 hover:text-white/50 transition-colors">
+                Contributor
+              </Link>
+            )}
+            {role !== "auditor" && (
+              <Link href="/auditor" className="font-mono text-[8px] tracking-[0.15em] uppercase text-white/25 hover:text-white/50 transition-colors">
+                Auditor
+              </Link>
+            )}
+          </div>
           <WalletButton />
         </nav>
       </div>

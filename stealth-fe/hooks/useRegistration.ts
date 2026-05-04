@@ -62,7 +62,21 @@ export function useRegistration(walletAddress?: string) {
     setErrorMsg(null);
     try {
       await registerUser(client);
-      setStatus("registered");
+      // Re-check actual on-chain state — SDK may resolve before Arcium callback
+      const querier = getUserAccountQuerier(client);
+      const result = await querier(walletAddress as Address);
+      const x25519Done = result.state === "exists" && result.data?.isUserAccountX25519KeyRegistered === true;
+      const anonymousDone = result.state === "exists" && result.data?.isActiveForAnonymousUsage === true;
+      if (x25519Done && anonymousDone) {
+        setStatus("registered");
+      } else {
+        setStatus("pending");
+        setErrorMsg(
+          x25519Done && !anonymousDone
+            ? "X25519 key confirmed — waiting for Arcium to activate anonymous usage. Check again in 30s."
+            : "Registration is on-chain — waiting for privacy key to be confirmed. Check again in a few seconds."
+        );
+      }
     } catch (e) {
       console.error("[Umbra] Registration failed:", e);
       if (e && typeof e === "object") {
@@ -72,12 +86,19 @@ export function useRegistration(walletAddress?: string) {
       }
       const msg = e instanceof Error ? e.message : "Registration failed";
 
-      // TX already on-chain → re-check actual status
+      // TX already on-chain OR Arcium TTL timeout → re-check actual status
       const isAlreadyProcessed =
         containsMessage(e, "already been processed") ||
         containsMessage(e, "already processed") ||
         containsMessage(e, "transaction was already");
-      if (isAlreadyProcessed) {
+      const isArciumTimeout =
+        containsMessage(e, "expired") ||
+        containsMessage(e, "ttl") ||
+        containsMessage(e, "timeout") ||
+        containsMessage(e, "computation") ||
+        containsMessage(e, "slot") ||
+        containsMessage(e, "arcium");
+      if (isAlreadyProcessed || isArciumTimeout) {
         try {
           const querier = getUserAccountQuerier(client);
           const result = await querier(walletAddress as Address);
@@ -89,13 +110,13 @@ export function useRegistration(walletAddress?: string) {
             setStatus("pending");
             setErrorMsg(
               x25519Done2 && !anonymousDone2
-                ? "X25519 key confirmed — waiting for Arcium to activate anonymous usage. Check again in 30s."
-                : "Registration is on-chain — waiting for privacy key to be confirmed. Check again in a few seconds."
+                ? "X25519 key confirmed — Arcium MPC is processing (devnet can take several minutes). Check again shortly."
+                : "Registration is on-chain — waiting for Arcium privacy key confirmation. Check again shortly."
             );
           }
         } catch {
           setStatus("pending");
-          setErrorMsg("Registration confirmed on Solana. Waiting for final confirmation.");
+          setErrorMsg("Registration submitted. Waiting for Arcium MPC confirmation — check again in 30s.");
         }
         return;
       }

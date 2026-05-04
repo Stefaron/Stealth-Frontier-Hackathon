@@ -28,6 +28,16 @@ export async function privateSend(
     return result.createUtxoSignature as string;
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
+    const causeStr = JSON.stringify(e).toLowerCase();
+    if (
+      msg.toLowerCase().includes("already been processed") ||
+      msg.toLowerCase().includes("already processed") ||
+      causeStr.includes("already been processed") ||
+      causeStr.includes("already processed")
+    ) {
+      // TX confirmed on-chain — SDK failed on confirmation retry, not on send
+      return "confirmed-on-chain";
+    }
     if (msg.includes("invalid private or public key")) {
       throw new Error(
         "Recipient's stealth key is invalid — their Umbra registration may be incomplete. Ask them to re-register."
