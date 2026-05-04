@@ -1,7 +1,48 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { gsap } from "@/hooks/useGsap";
+
+function Hamburger({ open, onToggle }: { open: boolean; onToggle: () => void }) {
+  const l1 = useRef<SVGLineElement>(null);
+  const l2 = useRef<SVGLineElement>(null);
+  const l3 = useRef<SVGLineElement>(null);
+  const first = useRef(true);
+
+  useEffect(() => {
+    if (first.current) {
+      first.current = false;
+      return;
+    }
+    const a = l1.current, b = l2.current, c = l3.current;
+    if (!a || !b || !c) return;
+
+    if (open) {
+      gsap.to(a, { attr: { x1: 6, y1: 6, x2: 18, y2: 18 }, duration: 0.35, ease: "power3.inOut" });
+      gsap.to(b, { opacity: 0, duration: 0.15, ease: "power2.in" });
+      gsap.to(c, { attr: { x1: 6, y1: 18, x2: 18, y2: 6 }, duration: 0.35, ease: "power3.inOut" });
+    } else {
+      gsap.to(a, { attr: { x1: 4, y1: 7, x2: 20, y2: 7 }, duration: 0.35, ease: "power3.inOut" });
+      gsap.to(b, { opacity: 1, duration: 0.2, ease: "power2.out", delay: 0.15 });
+      gsap.to(c, { attr: { x1: 4, y1: 17, x2: 20, y2: 17 }, duration: 0.35, ease: "power3.inOut" });
+    }
+  }, [open]);
+
+  return (
+    <button
+      className="md:hidden p-2 rounded-lg hover:bg-white/[0.06] transition-colors press"
+      onClick={onToggle}
+      aria-label="Toggle menu"
+    >
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <line ref={l1} x1="4" y1="7" x2="20" y2="7" stroke="rgba(255,255,255,0.7)" strokeWidth="1.5" strokeLinecap="round" />
+        <line ref={l2} x1="4" y1="12" x2="20" y2="12" stroke="rgba(255,255,255,0.7)" strokeWidth="1.5" strokeLinecap="round" />
+        <line ref={l3} x1="4" y1="17" x2="20" y2="17" stroke="rgba(255,255,255,0.7)" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+    </button>
+  );
+}
 
 const NAV_LINKS = [
   { label: "Problem",      href: "#problem" },
@@ -83,21 +124,7 @@ export default function Navbar() {
               </svg>
             </a>
 
-            <button
-              className="md:hidden p-2 rounded-lg hover:bg-white/[0.06] transition-colors"
-              onClick={() => setMenuOpen((v) => !v)}
-              aria-label="Toggle menu"
-            >
-              <div className="w-5 flex flex-col gap-[5px]">
-                {[
-                  menuOpen ? "rotate-45 translate-y-[6px]" : "",
-                  menuOpen ? "opacity-0 scale-x-0" : "",
-                  menuOpen ? "-rotate-45 -translate-y-[6px]" : "",
-                ].map((cls, i) => (
-                  <span key={i} className={`block h-px bg-white/60 transition-all duration-300 origin-center ${cls}`} />
-                ))}
-              </div>
-            </button>
+            <Hamburger open={menuOpen} onToggle={() => setMenuOpen((v) => !v)} />
           </div>
         </nav>
 

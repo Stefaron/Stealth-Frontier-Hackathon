@@ -77,7 +77,7 @@ function RoleCard({ role }: { role: Role }) {
       ref={ref}
       onMouseMove={onMove}
       onMouseLeave={() => setPos({ x: 50, y: 50 })}
-      className="role-card relative h-full p-7 rounded-2xl border border-white/[0.06] bg-black overflow-hidden cursor-default"
+      className="role-card glass-card relative h-full p-7 rounded-2xl overflow-hidden cursor-default"
       style={
         {
           "--accent": role.accent,

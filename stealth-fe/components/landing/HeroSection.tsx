@@ -1,5 +1,7 @@
 "use client";
 
+import { useLayoutEffect, useRef } from "react";
+import { gsap } from "@/hooks/useGsap";
 import { ParticleTextEffect } from "@/components/ui/particle-text-effect";
 
 const TICKER = [
@@ -18,6 +20,46 @@ const HERO_WORDS = ["STEALTH", "PRIVATE", "ENCRYPTED", "AUDITABLE", "COMPLIANT"]
 export default function HeroSection() {
   const doubled = [...TICKER, ...TICKER];
 
+  const badgeRef = useRef<HTMLDivElement>(null);
+  const headlineRef = useRef<HTMLHeadingElement>(null);
+  const subRef = useRef<HTMLParagraphElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+  const particleRef = useRef<HTMLDivElement>(null);
+  const tickerRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const tl = gsap.timeline({ delay: 0.1 });
+
+    if (badgeRef.current) {
+      gsap.set(badgeRef.current, { opacity: 0, y: 14 });
+      tl.to(badgeRef.current, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" });
+    }
+    if (headlineRef.current) {
+      gsap.set(headlineRef.current, { opacity: 0, y: 25 });
+      tl.to(headlineRef.current, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, "-=0.25");
+    }
+    if (subRef.current) {
+      gsap.set(subRef.current, { opacity: 0, y: 18 });
+      tl.to(subRef.current, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, "-=0.4");
+    }
+    if (ctaRef.current) {
+      gsap.set(ctaRef.current, { opacity: 0, y: 16 });
+      tl.to(ctaRef.current, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, "-=0.35");
+    }
+    if (particleRef.current) {
+      gsap.set(particleRef.current, { opacity: 0, scale: 0.94 });
+      tl.to(
+        particleRef.current,
+        { opacity: 1, scale: 1, duration: 0.85, ease: "power3.out" },
+        "-=0.7"
+      );
+    }
+    if (tickerRef.current) {
+      gsap.set(tickerRef.current, { opacity: 0 });
+      tl.to(tickerRef.current, { opacity: 1, duration: 0.5, ease: "power2.out" }, "-=0.2");
+    }
+  }, []);
+
   return (
     <section className="min-h-svh flex flex-col relative">
       <div className="flex-1 flex items-center relative">
@@ -25,7 +67,7 @@ export default function HeroSection() {
           <div className="flex-1 max-w-[520px] relative">
             <span className="hero-headline-glow" aria-hidden />
 
-            <div className="flex items-center gap-2.5 mb-7 animate-fade-in">
+            <div ref={badgeRef} className="flex items-center gap-2.5 mb-7">
               <span className="relative flex h-1.5 w-1.5">
                 <span className="animate-pulse-glow absolute inline-flex h-full w-full rounded-full bg-violet-400/60" />
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-violet-400/80" />
@@ -36,7 +78,8 @@ export default function HeroSection() {
             </div>
 
             <h1
-              className="leading-[0.9] tracking-tight mb-9 animate-fade-in-up relative"
+              ref={headlineRef}
+              className="leading-[0.9] tracking-tight mb-9 relative"
               style={{ fontSize: "clamp(4rem, 8.5vw, 8rem)" }}
             >
               <span className="block font-bold text-white/75">Pay your</span>
@@ -52,16 +95,17 @@ export default function HeroSection() {
             </h1>
 
             <p
-              className="text-white/40 leading-relaxed mb-10 animate-fade-in-up delay-150"
+              ref={subRef}
+              className="text-white/40 leading-relaxed mb-10"
               style={{ fontSize: "clamp(0.9rem, 1.3vw, 1.05rem)", maxWidth: "34ch" }}
             >
               Confidential payroll for DAOs. Pay contributors with zero salary leaks — fully encrypted, auditable on demand, native to Solana.
             </p>
 
-            <div className="flex flex-wrap items-center gap-4 animate-fade-in-up delay-300">
+            <div ref={ctaRef} className="flex flex-wrap items-center gap-4">
               <a
                 href="/treasurer"
-                className="hero-cta-primary group inline-flex items-center gap-3 bg-white pl-6 pr-1.5 py-1.5 rounded-full transition-all duration-300 hover:scale-[1.03] active:scale-[0.98]"
+                className="hero-cta-primary press group inline-flex items-center gap-3 bg-white pl-6 pr-1.5 py-1.5 rounded-full transition-all duration-300 hover:scale-[1.03]"
               >
                 <span className="text-[10px] font-bold tracking-widest uppercase text-[#0d0c0a]">
                   Launch App
@@ -81,7 +125,7 @@ export default function HeroSection() {
 
               <a
                 href="#how-it-works"
-                className="group inline-flex items-center gap-1.5 text-white/35 text-[10px] font-semibold tracking-widest uppercase hover:text-white/80 transition-colors duration-300"
+                className="press group inline-flex items-center gap-1.5 text-white/35 text-[10px] font-semibold tracking-widest uppercase hover:text-white/80 transition-colors duration-300"
               >
                 How it works
                 <span className="inline-block group-hover:translate-y-[3px] transition-transform duration-400">↓</span>
@@ -89,7 +133,7 @@ export default function HeroSection() {
             </div>
           </div>
 
-          <div className="w-full lg:w-[560px] lg:flex-shrink-0 animate-fade-in delay-200 relative">
+          <div ref={particleRef} className="w-full lg:w-[560px] lg:flex-shrink-0 relative">
             <div
               className="absolute inset-0 pointer-events-none -z-10"
               style={{
@@ -116,7 +160,7 @@ export default function HeroSection() {
         </div>
       </div>
 
-      <div className="border-t border-white/[0.05] py-3.5 overflow-hidden relative">
+      <div ref={tickerRef} className="border-t border-white/[0.05] py-3.5 overflow-hidden relative">
         <div
           className="pointer-events-none absolute inset-y-0 left-0 w-24 z-10"
           style={{ background: "linear-gradient(90deg, #000, transparent)" }}

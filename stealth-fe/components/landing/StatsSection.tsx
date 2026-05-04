@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { gsap } from "@/hooks/useGsap";
 import GsapStagger from "./GsapStagger";
 
 interface Stat {
@@ -77,6 +78,8 @@ function StatItem({ stat, i }: { stat: Stat; i: number }) {
   const [visible, setVisible] = useState(false);
   const [pos, setPos] = useState({ x: 50, y: 50 });
   const ref = useRef<HTMLDivElement>(null);
+  const numRef = useRef<HTMLDivElement>(null);
+  const prevStr = useRef<string>("");
 
   useEffect(() => {
     const el = ref.current;
@@ -109,6 +112,21 @@ function StatItem({ stat, i }: { stat: Stat; i: number }) {
     }, 1500 / steps);
     return () => clearInterval(id);
   }, [visible, stat.value]);
+
+  useEffect(() => {
+    const str = `${count}${stat.suffix}`;
+    if (str === prevStr.current) return;
+    prevStr.current = str;
+    const el = numRef.current;
+    if (!el) return;
+    const chars = el.querySelectorAll<HTMLElement>(".digit-char");
+    if (!chars.length) return;
+    gsap.fromTo(
+      chars,
+      { opacity: 0, y: 12 },
+      { opacity: 1, y: 0, duration: 0.25, stagger: 0.03, ease: "power2.out" }
+    );
+  }, [count, stat.suffix]);
 
   const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const el = ref.current;
@@ -170,14 +188,27 @@ function StatItem({ stat, i }: { stat: Stat; i: number }) {
 
         <div className="relative mb-5">
           <div
+            ref={numRef}
             className="stat-number font-bold tabular-nums leading-none"
             style={{
               fontSize: "clamp(3.25rem, 4.5vw, 5.5rem)",
               color: "#ffffff",
             }}
           >
-            {count}
-            <span style={{ color: stat.accent, opacity: 0.85 }}>{stat.suffix}</span>
+            {String(count).split("").map((ch, idx) => (
+              <span key={`n-${idx}-${ch}`} className="digit-char inline-block">
+                {ch}
+              </span>
+            ))}
+            {stat.suffix.split("").map((ch, idx) => (
+              <span
+                key={`s-${idx}`}
+                className="digit-char inline-block"
+                style={{ color: stat.accent, opacity: 0.85 }}
+              >
+                {ch}
+              </span>
+            ))}
           </div>
           <div
             className="stat-glow"
