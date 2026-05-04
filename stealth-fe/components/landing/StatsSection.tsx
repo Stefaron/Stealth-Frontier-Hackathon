@@ -240,7 +240,7 @@ function StatItem({ stat, i }: { stat: Stat; i: number }) {
 
 export default function StatsSection() {
   return (
-    <section className="relative border-b border-white/[0.06] overflow-hidden pt-20 md:pt-28 pb-6 md:pb-10">
+    <section className="cv-section relative border-b border-white/[0.06] overflow-hidden pt-20 md:pt-28 pb-6 md:pb-10">
       <div
         className="absolute inset-0 pointer-events-none opacity-[0.03]"
         style={{

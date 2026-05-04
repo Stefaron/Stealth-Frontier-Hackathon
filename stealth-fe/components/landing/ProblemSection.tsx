@@ -1,37 +1,13 @@
 "use client";
 
 import {
-  useEffect,
-  useRef,
-  useState,
   type CSSProperties,
   type MouseEvent,
-  type ReactNode,
 } from "react";
 import { Code2, ShieldCheck } from "lucide-react";
 import { PixelCanvas } from "@/components/ui/pixel-canvas";
-
-function RevealUp({ children, delay = 0 }: { children: ReactNode; delay?: number }) {
-  const [v, setV] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const io = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) { setTimeout(() => setV(true), delay); io.unobserve(el); } },
-      { threshold: 0.12, rootMargin: "0px 0px -30px 0px" }
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [delay]);
-  return (
-    <div ref={ref} style={{
-      opacity: v ? 1 : 0,
-      transform: v ? "translateY(0)" : "translateY(22px)",
-      transition: `opacity 0.75s cubic-bezier(0.16,1,0.3,1) ${delay}ms, transform 0.75s cubic-bezier(0.16,1,0.3,1) ${delay}ms`,
-    }}>{children}</div>
-  );
-}
+import GsapReveal from "./GsapReveal";
+import GsapStagger from "./GsapStagger";
 
 const BROKEN = [
   {
@@ -71,18 +47,18 @@ function handleCardPointerLeave(event: MouseEvent<HTMLDivElement>) {
 
 export default function ProblemSection() {
   return (
-    <section className="bg-black py-24 md:py-32" id="problem">
+    <section className="cv-section bg-black py-24 md:py-32" id="problem">
       <div className="max-w-7xl mx-auto px-6 md:px-8">
 
         {/* Section label */}
-        <RevealUp>
+        <GsapReveal y={20} duration={0.55}>
           <p className="font-mono text-[9px] tracking-[0.28em] uppercase text-white/18 mb-6">
             The Problem
           </p>
-        </RevealUp>
+        </GsapReveal>
 
         {/* Headline */}
-        <RevealUp delay={70}>
+        <GsapReveal delay={0.1} y={28} duration={0.7}>
           <h2
             className="font-bold text-white leading-[0.97] tracking-tight mb-16"
             style={{ fontSize: "clamp(2.75rem, 5.5vw, 4.25rem)" }}
@@ -93,13 +69,19 @@ export default function ProblemSection() {
               One missing middle.
             </span>
           </h2>
-        </RevealUp>
+        </GsapReveal>
 
         {/* Broken options - hover cards */}
-        <div className="mx-auto grid max-w-5xl gap-6 md:grid-cols-2">
-          {BROKEN.map((opt, i) => (
-            <RevealUp key={opt.name} delay={120 + i * 70}>
-              <article className="problem-card-shell">
+        <GsapStagger
+          className="mx-auto grid max-w-5xl gap-6 md:grid-cols-2"
+          stagger={0.1}
+          duration={0.75}
+          y={32}
+          scale={0.95}
+          ease="back.out(1.3)"
+        >
+          {BROKEN.map((opt) => (
+            <article key={opt.name} className="problem-card-shell">
                 <span className="problem-card-light problem-card-light-a" />
                 <span className="problem-card-light problem-card-light-b" />
                 <div
@@ -174,13 +156,12 @@ export default function ProblemSection() {
                     </p>
                   </div>
                 </div>
-              </article>
-            </RevealUp>
+            </article>
           ))}
-        </div>
+        </GsapStagger>
 
         {/* Stealth - breaks the pattern entirely */}
-        <RevealUp delay={290}>
+        <GsapReveal delay={0.15} y={32} duration={0.8}>
           <div className="pt-14 md:pt-18">
 
             <div className="grid gap-10 md:grid-cols-[minmax(0,1fr)_minmax(360px,500px)] md:items-center">
@@ -262,7 +243,7 @@ export default function ProblemSection() {
             </div>
 
           </div>
-        </RevealUp>
+        </GsapReveal>
 
       </div>
     </section>

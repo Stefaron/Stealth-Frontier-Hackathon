@@ -126,8 +126,10 @@ export function ParticleTextEffect({
   const wordIndexRef   = useRef(0)
   const mouseRef       = useRef({ x: 0, y: 0, isPressed: false, isRightClick: false })
 
-  const pixelSteps  = 6
+  const pixelSteps  = 10
   const drawAsPoints = true
+  const visibleRef = useRef(true)
+  const reducedMotion = useRef(false)
 
   const randomPos = (x: number, y: number, mag: number, cw: number, ch: number): Vector2D => {
     const rx = Math.random() * cw
@@ -206,6 +208,10 @@ export function ParticleTextEffect({
   const animate = () => {
     const canvas = canvasRef.current
     if (!canvas) return
+    if (!visibleRef.current || document.hidden) {
+      animationRef.current = requestAnimationFrame(animate)
+      return
+    }
     const ctx       = canvas.getContext("2d")!
     const particles = particlesRef.current
 
@@ -241,11 +247,19 @@ export function ParticleTextEffect({
     const canvas = canvasRef.current
     if (!canvas) return
 
+    reducedMotion.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+
     canvas.width  = canvasWidth
     canvas.height = canvasHeight
 
     nextWord(words[0], canvas)
-    animate()
+    if (!reducedMotion.current) animate()
+
+    const io = new IntersectionObserver(
+      ([entry]) => { visibleRef.current = entry.isIntersecting },
+      { threshold: 0.05 }
+    )
+    io.observe(canvas)
 
     const rect    = () => canvas.getBoundingClientRect()
     const scaleX  = () => canvas.width / rect().width
@@ -270,6 +284,7 @@ export function ParticleTextEffect({
     canvas.addEventListener("contextmenu",  onCtx)
 
     return () => {
+      io.disconnect()
       if (animationRef.current) cancelAnimationFrame(animationRef.current)
       canvas.removeEventListener("mousedown",   onDown)
       canvas.removeEventListener("mouseup",     onUp)

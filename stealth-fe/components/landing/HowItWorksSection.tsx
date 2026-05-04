@@ -133,7 +133,7 @@ function RoleCard({ role }: { role: Role }) {
 
 export default function HowItWorksSection() {
   return (
-    <section className="py-24 md:py-32" id="how-it-works">
+    <section className="cv-section py-24 md:py-32" id="how-it-works">
       <div className="max-w-7xl mx-auto px-6 md:px-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
           <div>

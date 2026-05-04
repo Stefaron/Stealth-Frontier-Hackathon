@@ -115,7 +115,7 @@ export default function Navbar() {
 
           <div className="flex items-center gap-3">
             <a
-              href="/treasurer"
+              href="/welcome"
               className="nav-cta hidden md:flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase px-5 py-2.5 rounded-full"
             >
               <span>Launch App</span>
@@ -141,7 +141,7 @@ export default function Navbar() {
               </a>
             ))}
             <a
-              href="/treasurer"
+              href="/welcome"
               className="flex items-center justify-center gap-2 bg-white text-[#0d0c0a] text-[10px] font-bold tracking-widest uppercase px-5 py-3.5 rounded-full"
             >
               Launch App →

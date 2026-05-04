@@ -98,7 +98,7 @@ export default function FeaturesSection() {
   const [active, setActive] = useState<number | null>(null);
 
   return (
-    <section className="py-24 md:py-32 relative" id="features">
+    <section className="cv-section py-24 md:py-32 relative" id="features">
       <div className="max-w-7xl mx-auto px-6 md:px-8 relative">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-14">
           <div>

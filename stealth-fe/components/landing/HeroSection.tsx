@@ -3,6 +3,7 @@
 import { useLayoutEffect, useRef } from "react";
 import { gsap } from "@/hooks/useGsap";
 import { ParticleTextEffect } from "@/components/ui/particle-text-effect";
+import MagneticButton from "./MagneticButton";
 
 const TICKER = [
   "PRIVATE BY DEFAULT",
@@ -20,7 +21,6 @@ const HERO_WORDS = ["STEALTH", "PRIVATE", "ENCRYPTED", "AUDITABLE", "COMPLIANT"]
 export default function HeroSection() {
   const doubled = [...TICKER, ...TICKER];
 
-  const badgeRef = useRef<HTMLDivElement>(null);
   const headlineRef = useRef<HTMLHeadingElement>(null);
   const subRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
@@ -30,21 +30,27 @@ export default function HeroSection() {
   useLayoutEffect(() => {
     const tl = gsap.timeline({ delay: 0.1 });
 
-    if (badgeRef.current) {
-      gsap.set(badgeRef.current, { opacity: 0, y: 14 });
-      tl.to(badgeRef.current, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" });
-    }
     if (headlineRef.current) {
-      gsap.set(headlineRef.current, { opacity: 0, y: 25 });
-      tl.to(headlineRef.current, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, "-=0.25");
+      const lines = headlineRef.current.querySelectorAll<HTMLElement>(".hero-line");
+      if (lines.length) {
+        gsap.set(lines, { y: 24, opacity: 0 });
+        tl.to(lines, {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.12,
+          ease: "power3.out",
+        });
+      }
     }
+
     if (subRef.current) {
       gsap.set(subRef.current, { opacity: 0, y: 18 });
-      tl.to(subRef.current, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, "-=0.4");
+      tl.to(subRef.current, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, "-=0.5");
     }
     if (ctaRef.current) {
       gsap.set(ctaRef.current, { opacity: 0, y: 16 });
-      tl.to(ctaRef.current, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, "-=0.35");
+      tl.to(ctaRef.current, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, "-=0.4");
     }
     if (particleRef.current) {
       gsap.set(particleRef.current, { opacity: 0, scale: 0.94 });
@@ -67,23 +73,13 @@ export default function HeroSection() {
           <div className="flex-1 max-w-[520px] relative">
             <span className="hero-headline-glow" aria-hidden />
 
-            <div ref={badgeRef} className="flex items-center gap-2.5 mb-7">
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="animate-pulse-glow absolute inline-flex h-full w-full rounded-full bg-violet-400/60" />
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-violet-400/80" />
-              </span>
-              <p className="text-[9px] font-semibold tracking-[0.22em] uppercase text-white/35">
-                Solana Frontier Hackathon · Umbra Track
-              </p>
-            </div>
-
             <h1
               ref={headlineRef}
               className="leading-[0.9] tracking-tight mb-9 relative"
-              style={{ fontSize: "clamp(4rem, 8.5vw, 8rem)" }}
+              style={{ fontSize: "clamp(3.5rem, 6.5vw, 6.25rem)" }}
             >
-              <span className="block font-bold text-white/75">Pay your</span>
-              <span className="block">
+              <span className="hero-line block font-bold text-white/75">Pay your</span>
+              <span className="hero-line block">
                 <span className="font-bold text-white">DAO </span>
                 <span
                   className="font-serif-italic"
@@ -103,9 +99,10 @@ export default function HeroSection() {
             </p>
 
             <div ref={ctaRef} className="flex flex-wrap items-center gap-4">
-              <a
-                href="/treasurer"
-                className="hero-cta-primary press group inline-flex items-center gap-3 bg-white pl-6 pr-1.5 py-1.5 rounded-full transition-all duration-300 hover:scale-[1.03]"
+              <MagneticButton
+                href="/welcome"
+                strength={0.28}
+                className="hero-cta-primary press group items-center gap-3 bg-white pl-6 pr-1.5 py-1.5 rounded-full transition-shadow duration-300 hover:shadow-[0_18px_50px_-18px_rgba(167,139,250,0.6)]"
               >
                 <span className="text-[10px] font-bold tracking-widest uppercase text-[#0d0c0a]">
                   Launch App
@@ -121,11 +118,11 @@ export default function HeroSection() {
                     <path d="M2 10L10 2M10 2H4M10 2V8" stroke="white" strokeWidth="1.7" strokeLinecap="round" />
                   </svg>
                 </span>
-              </a>
+              </MagneticButton>
 
               <a
                 href="#how-it-works"
-                className="press group inline-flex items-center gap-1.5 text-white/35 text-[10px] font-semibold tracking-widest uppercase hover:text-white/80 transition-colors duration-300"
+                className="press link-fill group inline-flex items-center gap-1.5 text-white/35 text-[10px] font-semibold tracking-widest uppercase hover:text-white/85 transition-colors duration-300"
               >
                 How it works
                 <span className="inline-block group-hover:translate-y-[3px] transition-transform duration-400">↓</span>
@@ -146,9 +143,9 @@ export default function HeroSection() {
               words={HERO_WORDS}
               className="w-full"
               showDescription={false}
-              canvasWidth={1000}
-              canvasHeight={700}
-              fontSize={160}
+              canvasWidth={680}
+              canvasHeight={480}
+              fontSize={120}
             />
           </div>
         </div>

@@ -166,7 +166,7 @@ function PrimCard({ p }: { p: Primitive }) {
 
 export default function UmbraSection() {
   return (
-    <section className="bg-black py-24 md:py-32 relative overflow-hidden" id="umbra">
+    <section className="cv-section bg-black py-24 md:py-32 relative overflow-hidden" id="umbra">
       <div
         className="absolute inset-0 pointer-events-none opacity-[0.04]"
         style={{

@@ -9,10 +9,14 @@ import CtaSection from "@/components/landing/CtaSection";
 import Footer from "@/components/landing/Footer";
 import ScrollProgress from "@/components/landing/ScrollProgress";
 import PageTransition from "@/components/landing/PageTransition";
+import SmoothScroll from "@/components/landing/SmoothScroll";
+import CursorGlow from "@/components/landing/CursorGlow";
 
 export default function Home() {
   return (
     <>
+      <SmoothScroll />
+      <CursorGlow />
       <ScrollProgress />
       <Navbar />
       <PageTransition>
