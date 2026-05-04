@@ -7,7 +7,7 @@ export default function CtaSection() {
         <div className="border-t border-white/[0.07] pt-16 md:pt-24">
           <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-12">
 
-            <ScrollReveal className="flex-1">
+            <ScrollReveal className="flex-1" variant="left" distance={60} duration={900}>
               <h2
                 className="font-bold text-white leading-[0.95] tracking-tight mb-10"
                 style={{ fontSize: "clamp(3rem, 6.5vw, 6rem)" }}
@@ -29,10 +29,10 @@ export default function CtaSection() {
               </a>
             </ScrollReveal>
 
-            <ScrollReveal delay={160} className="flex-1 md:text-right">
+            <ScrollReveal delay={160} className="flex-1 md:text-right" variant="right" distance={60} duration={900}>
               <p
-                className="text-4xl md:text-5xl lg:text-[3.5rem] font-bold leading-[1.1] tracking-tight select-none"
-                style={{ color: "rgba(255,255,255,0.07)" }}
+                className="cta-aurora font-bold leading-[0.95] tracking-tight select-none"
+                style={{ fontSize: "clamp(3rem, 6.5vw, 6rem)" }}
               >
                 Private by default.{" "}
                 <span className="font-serif-italic" style={{ fontWeight: 400 }}>

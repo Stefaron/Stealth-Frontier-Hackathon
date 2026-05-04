@@ -7,19 +7,22 @@ import UmbraSection from "@/components/landing/UmbraSection";
 import FeaturesSection from "@/components/landing/FeaturesSection";
 import CtaSection from "@/components/landing/CtaSection";
 import Footer from "@/components/landing/Footer";
+import ScrollProgress from "@/components/landing/ScrollProgress";
+import SectionTransition from "@/components/landing/SectionTransition";
 
 export default function Home() {
   return (
     <>
+      <ScrollProgress />
       <Navbar />
       <main>
         <HeroSection />
-        <StatsSection />
-        <ProblemSection />
-        <HowItWorksSection />
-        <UmbraSection />
-        <FeaturesSection />
-        <CtaSection />
+        <SectionTransition><StatsSection /></SectionTransition>
+        <SectionTransition parallax={40}><ProblemSection /></SectionTransition>
+        <SectionTransition><HowItWorksSection /></SectionTransition>
+        <SectionTransition parallax={30}><UmbraSection /></SectionTransition>
+        <SectionTransition><FeaturesSection /></SectionTransition>
+        <SectionTransition><CtaSection /></SectionTransition>
       </main>
       <Footer />
     </>

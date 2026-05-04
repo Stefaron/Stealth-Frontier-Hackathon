@@ -1,12 +1,24 @@
+"use client";
+
+import { useRef, useState, type CSSProperties, type ReactNode } from "react";
 import ScrollReveal from "./ScrollReveal";
 
-const ROLES = [
+interface Role {
+  num: string;
+  label: string;
+  accent: string;
+  accentSoft: string;
+  headline: string;
+  sub: string;
+  icon: ReactNode;
+}
+
+const ROLES: Role[] = [
   {
     num: "01",
     label: "Treasurer",
-    accent: "text-violet-400",
-    accentBg: "bg-violet-500/10",
-    accentBorder: "border-violet-500/20",
+    accent: "#a78bfa",
+    accentSoft: "rgba(167,139,250,0.15)",
     headline: "Pay privately",
     sub: "CSV upload · tag recipients · multisig approval · bulk send.",
     icon: (
@@ -18,9 +30,8 @@ const ROLES = [
   {
     num: "02",
     label: "Contributor",
-    accent: "text-slate-400",
-    accentBg: "bg-slate-500/10",
-    accentBorder: "border-slate-500/20",
+    accent: "#38bdf8",
+    accentSoft: "rgba(56,189,248,0.15)",
     headline: "Receive privately",
     sub: "Encrypted balance. Withdraw anytime. No exposure.",
     icon: (
@@ -33,9 +44,8 @@ const ROLES = [
   {
     num: "03",
     label: "Auditor",
-    accent: "text-emerald-400",
-    accentBg: "bg-emerald-500/10",
-    accentBorder: "border-emerald-500/20",
+    accent: "#34d399",
+    accentSoft: "rgba(52,211,153,0.15)",
     headline: "Audit with scope",
     sub: "Scoped viewing key. Generate PDF report. Export CSV.",
     icon: (
@@ -47,18 +57,97 @@ const ROLES = [
   },
 ];
 
+function RoleCard({ role }: { role: Role }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState({ x: 50, y: 50 });
+
+  const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const el = ref.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    setPos({
+      x: ((e.clientX - r.left) / r.width) * 100,
+      y: ((e.clientY - r.top) / r.height) * 100,
+    });
+  };
+
+  return (
+    <div
+      ref={ref}
+      onMouseMove={onMove}
+      onMouseLeave={() => setPos({ x: 50, y: 50 })}
+      className="role-card relative h-full p-7 rounded-2xl border border-white/[0.06] bg-black overflow-hidden cursor-default"
+      style={
+        {
+          "--accent": role.accent,
+          "--accent-soft": role.accentSoft,
+          "--mx": `${pos.x}%`,
+          "--my": `${pos.y}%`,
+        } as CSSProperties
+      }
+    >
+      <span className="role-spotlight" />
+      <span className="role-grid" />
+      <span className="role-corner role-corner-tl" />
+      <span className="role-corner role-corner-br" />
+
+      <div className="relative z-10">
+        <div className="flex items-start justify-between mb-7">
+          <span
+            className="role-num font-mono text-[11px] font-bold tracking-widest"
+            style={{ color: role.accent }}
+          >
+            {role.num}
+          </span>
+          <div
+            className="role-icon w-10 h-10 rounded-xl border flex items-center justify-center"
+            style={{
+              color: role.accent,
+              background: role.accentSoft,
+              borderColor: `${role.accent}33`,
+            }}
+          >
+            {role.icon}
+          </div>
+        </div>
+
+        <span
+          className="role-label text-[8px] font-bold tracking-[0.22em] uppercase block mb-2.5"
+          style={{ color: role.accent }}
+        >
+          {role.label}
+        </span>
+
+        <h3 className="role-headline text-xl font-bold text-white mb-2.5">{role.headline}</h3>
+
+        <p className="text-sm text-white/40 leading-relaxed">{role.sub}</p>
+
+        <div className="role-bar mt-6">
+          <span className="role-bar-fill" style={{ background: `linear-gradient(90deg, ${role.accent}, transparent)` }} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function HowItWorksSection() {
   return (
     <section className="py-24 md:py-32" id="how-it-works">
       <div className="max-w-7xl mx-auto px-6 md:px-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
           <div>
-            <ScrollReveal>
-              <p className="text-[9px] font-semibold tracking-[0.22em] uppercase text-white/25 mb-4">
-                How it works
-              </p>
+            <ScrollReveal variant="blur">
+              <div className="flex items-center gap-2.5 mb-4">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-pulse-glow absolute inline-flex h-full w-full rounded-full bg-sky-400/60" />
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-sky-400/80" />
+                </span>
+                <p className="text-[9px] font-semibold tracking-[0.22em] uppercase text-white/30">
+                  How it works
+                </p>
+              </div>
             </ScrollReveal>
-            <ScrollReveal delay={80}>
+            <ScrollReveal delay={80} variant="left" distance={50}>
               <h2 className="text-4xl md:text-[3.25rem] font-bold text-white leading-[1.05] tracking-tight max-w-xl">
                 Three roles.{" "}
                 <span className="font-serif-italic text-white/35" style={{ fontWeight: 400 }}>One private</span>{" "}
@@ -70,22 +159,8 @@ export default function HowItWorksSection() {
 
         <div className="grid md:grid-cols-3 gap-4">
           {ROLES.map((role, i) => (
-            <ScrollReveal key={role.label} delay={160 + i * 90}>
-              <div className="bg-black border border-white/[0.06] rounded-2xl p-7 h-full card-lift group">
-                <div className="flex items-start justify-between mb-7">
-                  <span className={`font-mono text-[11px] font-bold ${role.accent} opacity-35`}>
-                    {role.num}
-                  </span>
-                  <div className={`w-9 h-9 rounded-xl ${role.accentBg} border ${role.accentBorder} flex items-center justify-center ${role.accent}`}>
-                    {role.icon}
-                  </div>
-                </div>
-                <span className={`text-[8px] font-bold tracking-[0.22em] uppercase ${role.accent} block mb-2.5`}>
-                  {role.label}
-                </span>
-                <h3 className="text-xl font-bold text-white mb-2.5">{role.headline}</h3>
-                <p className="text-sm text-white/35 leading-relaxed">{role.sub}</p>
-              </div>
+            <ScrollReveal key={role.label} delay={160 + i * 110} variant="scale" duration={800}>
+              <RoleCard role={role} />
             </ScrollReveal>
           ))}
         </div>
