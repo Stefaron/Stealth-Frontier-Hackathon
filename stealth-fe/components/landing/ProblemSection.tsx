@@ -71,7 +71,7 @@ function handleCardPointerLeave(event: MouseEvent<HTMLDivElement>) {
 
 export default function ProblemSection() {
   return (
-    <section className="py-24 md:py-32 relative" id="problem">
+    <section className="bg-black py-24 md:py-32" id="problem">
       <div className="max-w-7xl mx-auto px-6 md:px-8">
 
         {/* Section label */}

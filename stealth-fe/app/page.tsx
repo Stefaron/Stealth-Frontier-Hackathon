@@ -9,28 +9,23 @@ import CtaSection from "@/components/landing/CtaSection";
 import Footer from "@/components/landing/Footer";
 import ScrollProgress from "@/components/landing/ScrollProgress";
 import PageTransition from "@/components/landing/PageTransition";
-import ParticleField from "@/components/landing/ParticleField";
 
 export default function Home() {
   return (
     <>
-      <span className="bottom-halo" aria-hidden />
-      <ParticleField />
       <ScrollProgress />
       <Navbar />
       <PageTransition>
-        <div className="relative z-10">
-          <main>
-            <HeroSection />
-            <StatsSection />
-            <ProblemSection />
-            <HowItWorksSection />
-            <UmbraSection />
-            <FeaturesSection />
-            <CtaSection />
-          </main>
-          <Footer />
-        </div>
+        <main>
+          <HeroSection />
+          <StatsSection />
+          <ProblemSection />
+          <HowItWorksSection />
+          <UmbraSection />
+          <FeaturesSection />
+          <CtaSection />
+        </main>
+        <Footer />
       </PageTransition>
     </>
   );
