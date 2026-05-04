@@ -1,7 +1,8 @@
 "use client";
 
 import { useRef, useState, type CSSProperties, type ReactNode } from "react";
-import ScrollReveal from "./ScrollReveal";
+import GsapReveal from "./GsapReveal";
+import GsapStagger from "./GsapStagger";
 
 interface Role {
   num: string;
@@ -136,7 +137,7 @@ export default function HowItWorksSection() {
       <div className="max-w-7xl mx-auto px-6 md:px-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
           <div>
-            <ScrollReveal variant="blur">
+            <GsapReveal y={20} duration={0.55}>
               <div className="flex items-center gap-2.5 mb-4">
                 <span className="relative flex h-1.5 w-1.5">
                   <span className="animate-pulse-glow absolute inline-flex h-full w-full rounded-full bg-sky-400/60" />
@@ -146,24 +147,30 @@ export default function HowItWorksSection() {
                   How it works
                 </p>
               </div>
-            </ScrollReveal>
-            <ScrollReveal delay={80} variant="left" distance={50}>
+            </GsapReveal>
+            <GsapReveal delay={0.1} y={28} duration={0.7}>
               <h2 className="text-4xl md:text-[3.25rem] font-bold text-white leading-[1.05] tracking-tight max-w-xl">
                 Three roles.{" "}
                 <span className="font-serif-italic text-white/35" style={{ fontWeight: 400 }}>One private</span>{" "}
                 payroll.
               </h2>
-            </ScrollReveal>
+            </GsapReveal>
           </div>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-4">
-          {ROLES.map((role, i) => (
-            <ScrollReveal key={role.label} delay={160 + i * 110} variant="scale" duration={800}>
-              <RoleCard role={role} />
-            </ScrollReveal>
+        <GsapStagger
+          className="grid md:grid-cols-3 gap-4"
+          stagger={0.1}
+          duration={0.7}
+          y={32}
+          scale={0.95}
+          ease="back.out(1.4)"
+          delay={0.1}
+        >
+          {ROLES.map((role) => (
+            <RoleCard key={role.label} role={role} />
           ))}
-        </div>
+        </GsapStagger>
       </div>
     </section>
   );

@@ -1,7 +1,8 @@
 "use client";
 
 import { useRef, useState, type CSSProperties, type ReactNode } from "react";
-import ScrollReveal from "./ScrollReveal";
+import GsapReveal from "./GsapReveal";
+import GsapStagger from "./GsapStagger";
 
 interface Primitive {
   number: string;
@@ -175,7 +176,7 @@ export default function UmbraSection() {
       />
 
       <div className="max-w-7xl mx-auto px-6 md:px-8 relative">
-        <ScrollReveal variant="blur">
+        <GsapReveal y={20} duration={0.55}>
           <div className="flex items-center gap-2.5 mb-5">
             <div className="w-5 h-5 rounded-md bg-white/[0.06] border border-white/[0.05] grid place-items-center">
               <svg width="10" height="10" viewBox="0 0 16 16" fill="none">
@@ -189,32 +190,32 @@ export default function UmbraSection() {
             <span className="w-6 h-px bg-white/10" />
             <span className="text-[9px] font-mono tracking-[0.18em] text-white/20">v4.0.0</span>
           </div>
-        </ScrollReveal>
+        </GsapReveal>
 
-        <ScrollReveal delay={80} variant="left" distance={50}>
+        <GsapReveal delay={0.1} y={28} duration={0.7}>
           <h2 className="text-4xl md:text-[3.25rem] font-bold text-white leading-[1.05] tracking-tight max-w-2xl mb-16">
             Every primitive.{" "}
             <span className="font-serif-italic text-white/30" style={{ fontWeight: 400 }}>
               Fully used.
             </span>
           </h2>
-        </ScrollReveal>
+        </GsapReveal>
 
-        <div className="grid md:grid-cols-2 gap-4 md:gap-5">
-          {PRIMITIVES.map((p, i) => (
-            <ScrollReveal
-              key={p.number}
-              delay={160 + i * 90}
-              variant="rotate"
-              distance={30}
-              duration={850}
-            >
-              <PrimCard p={p} />
-            </ScrollReveal>
+        <GsapStagger
+          className="grid md:grid-cols-2 gap-4 md:gap-5"
+          stagger={0.09}
+          duration={0.7}
+          y={32}
+          scale={0.96}
+          ease="back.out(1.2)"
+          delay={0.1}
+        >
+          {PRIMITIVES.map((p) => (
+            <PrimCard key={p.number} p={p} />
           ))}
-        </div>
+        </GsapStagger>
 
-        <ScrollReveal delay={460}>
+        <GsapReveal delay={0.3} y={20}>
           <div className="mt-12 pt-8 border-t border-white/[0.06] flex items-center justify-between gap-4 flex-wrap">
             <div className="flex items-center gap-3">
               <span className="relative flex h-1.5 w-1.5">
@@ -233,7 +234,7 @@ export default function UmbraSection() {
               <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
             </a>
           </div>
-        </ScrollReveal>
+        </GsapReveal>
       </div>
     </section>
   );

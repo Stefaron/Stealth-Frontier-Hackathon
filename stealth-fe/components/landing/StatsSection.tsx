@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import GsapStagger from "./GsapStagger";
 
 interface Stat {
   value: number;
@@ -83,11 +84,11 @@ function StatItem({ stat, i }: { stat: Stat; i: number }) {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setTimeout(() => setVisible(true), i * 220);
+          setTimeout(() => setVisible(true), i * 180 + 200);
           observer.unobserve(el);
         }
       },
-      { threshold: 0.4, rootMargin: "0px 0px -80px 0px" }
+      { threshold: 0.3, rootMargin: "0px 0px -60px 0px" }
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -119,7 +120,7 @@ function StatItem({ stat, i }: { stat: Stat; i: number }) {
     });
   };
 
-  const delay = i * 220;
+  const delay = i * 180 + 200;
   const fillRatio = stat.value === 0 ? 1 : count / stat.value;
 
   return (
@@ -133,10 +134,6 @@ function StatItem({ stat, i }: { stat: Stat; i: number }) {
           "--accent": stat.accent,
           "--mx": `${pos.x}%`,
           "--my": `${pos.y}%`,
-          opacity: visible ? 1 : 0,
-          transform: visible ? "translateY(0) scale(1)" : "translateY(60px) scale(0.94)",
-          filter: visible ? "blur(0px)" : "blur(8px)",
-          transition: `opacity 0.95s cubic-bezier(0.16,1,0.3,1) ${delay}ms, transform 0.95s cubic-bezier(0.16,1,0.3,1) ${delay}ms, filter 0.7s ease ${delay}ms`,
         } as CSSProperties
       }
     >
@@ -232,11 +229,19 @@ export default function StatsSection() {
           <span className="flex-1 h-px bg-gradient-to-r from-white/10 via-white/[0.04] to-transparent" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4">
+        <GsapStagger
+          className="grid grid-cols-1 md:grid-cols-4"
+          stagger={0.12}
+          duration={0.8}
+          y={50}
+          scale={0.94}
+          ease="power3.out"
+          delay={0.05}
+        >
           {STATS.map((s, i) => (
             <StatItem key={s.label} stat={s} i={i} />
           ))}
-        </div>
+        </GsapStagger>
       </div>
     </section>
   );

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, type CSSProperties, type ReactNode } from "react";
-import ScrollReveal from "./ScrollReveal";
+import GsapReveal from "./GsapReveal";
+import GsapStagger from "./GsapStagger";
 
 interface Feature {
   label: string;
@@ -101,7 +102,7 @@ export default function FeaturesSection() {
       <div className="max-w-7xl mx-auto px-6 md:px-8 relative">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-14">
           <div>
-            <ScrollReveal variant="blur">
+            <GsapReveal y={20} duration={0.55}>
               <div className="flex items-center gap-2.5 mb-4">
                 <span className="relative flex h-1.5 w-1.5">
                   <span className="animate-pulse-glow absolute inline-flex h-full w-full rounded-full bg-violet-400/60" />
@@ -111,18 +112,18 @@ export default function FeaturesSection() {
                   Features
                 </p>
               </div>
-            </ScrollReveal>
-            <ScrollReveal delay={80} variant="left" distance={40}>
+            </GsapReveal>
+            <GsapReveal delay={0.1} y={28} duration={0.7}>
               <h2 className="text-4xl md:text-[3.25rem] font-bold text-white leading-[1.05] tracking-tight max-w-xl">
                 Everything DAOs need.{" "}
                 <span className="font-serif-italic text-white/30" style={{ fontWeight: 400 }}>
                   Nothing more.
                 </span>
               </h2>
-            </ScrollReveal>
+            </GsapReveal>
           </div>
 
-          <ScrollReveal delay={140} variant="right" distance={40}>
+          <GsapReveal delay={0.18} x={28} y={0} duration={0.6}>
             <div className="hidden md:flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.22em] text-white/25">
               <span>Hover any row</span>
               <span className="w-6 h-px bg-white/15" />
@@ -130,7 +131,7 @@ export default function FeaturesSection() {
               <span className="text-white/25">/</span>
               <span>{String(FEATURES.length).padStart(2, "0")}</span>
             </div>
-          </ScrollReveal>
+          </GsapReveal>
         </div>
 
         <div className="relative">
@@ -139,14 +140,10 @@ export default function FeaturesSection() {
             style={{ backgroundSize: "200% 100%", animation: "shimmerLine 6s linear infinite" }}
           />
 
-          {FEATURES.map((f, i) => (
-            <ScrollReveal
-              key={f.headline}
-              delay={60 + i * 70}
-              variant={i % 2 === 0 ? "left" : "right"}
-              distance={50}
-            >
+          <GsapStagger stagger={0.07} duration={0.55} y={24} delay={0.08}>
+            {FEATURES.map((f, i) => (
               <div
+                key={f.headline}
                 onMouseEnter={() => setActive(i)}
                 onMouseLeave={() => setActive(null)}
                 className="feature-row flex items-center gap-5 md:gap-8 py-6 px-4 md:px-5 -mx-3 border-b border-white/[0.05] cursor-default"
@@ -193,8 +190,8 @@ export default function FeaturesSection() {
                   →
                 </span>
               </div>
-            </ScrollReveal>
-          ))}
+            ))}
+          </GsapStagger>
         </div>
       </div>
     </section>

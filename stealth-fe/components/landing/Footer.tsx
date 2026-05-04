@@ -1,4 +1,5 @@
-import ScrollReveal from "./ScrollReveal";
+import GsapReveal from "./GsapReveal";
+import GsapStagger from "./GsapStagger";
 
 const APP_LINKS = [
   { label: "Treasurer",   href: "/treasurer" },
@@ -32,7 +33,7 @@ export default function Footer() {
 
       <div className="max-w-7xl mx-auto px-6 md:px-8 py-14 md:py-20 relative">
         <div className="flex flex-col md:flex-row justify-between gap-12">
-          <ScrollReveal variant="up" delay={0}>
+          <GsapReveal y={20} duration={0.6}>
             <div className="footer-brand md:max-w-[220px] flex flex-col">
               <div className="flex items-center gap-2.5 mb-4">
                 <div
@@ -63,39 +64,37 @@ export default function Footer() {
                 </span>
               </div>
             </div>
-          </ScrollReveal>
+          </GsapReveal>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-14">
+          <GsapStagger className="grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-14" stagger={0.1} y={20} duration={0.55}>
             {[
-              { title: "App",       links: APP_LINKS,       d: 60 },
-              { title: "Resources", links: RESOURCE_LINKS,  d: 120 },
-              { title: "Hackathon", links: HACKATHON_LINKS, d: 180 },
+              { title: "App",       links: APP_LINKS },
+              { title: "Resources", links: RESOURCE_LINKS },
+              { title: "Hackathon", links: HACKATHON_LINKS },
             ].map((col) => (
-              <ScrollReveal key={col.title} delay={col.d} variant="up">
-                <div>
-                  <p className="text-[8px] font-bold tracking-[0.24em] uppercase text-white/30 mb-5">
-                    {col.title}
-                  </p>
-                  <ul className="space-y-3">
-                    {col.links.map((item) => (
-                      <li key={item.label}>
-                        <a
-                          href={item.href}
-                          target={"external" in item && item.external ? "_blank" : undefined}
-                          rel={"external" in item && item.external ? "noopener noreferrer" : undefined}
-                          className="footer-link text-xs text-white/45 hover:text-white"
-                        >
-                          {item.label}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </ScrollReveal>
+              <div key={col.title}>
+                <p className="text-[8px] font-bold tracking-[0.24em] uppercase text-white/30 mb-5">
+                  {col.title}
+                </p>
+                <ul className="space-y-3">
+                  {col.links.map((item) => (
+                    <li key={item.label}>
+                      <a
+                        href={item.href}
+                        target={"external" in item && item.external ? "_blank" : undefined}
+                        rel={"external" in item && item.external ? "noopener noreferrer" : undefined}
+                        className="footer-link text-xs text-white/45 hover:text-white"
+                      >
+                        {item.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             ))}
-          </div>
+          </GsapStagger>
 
-          <ScrollReveal delay={240} variant="up">
+          <GsapReveal delay={0.3} y={20} duration={0.55}>
             <div className="hidden md:flex flex-col items-end justify-start gap-3">
               <a
                 href="#"
@@ -108,7 +107,7 @@ export default function Footer() {
                 v0.1.0
               </span>
             </div>
-          </ScrollReveal>
+          </GsapReveal>
         </div>
 
         <div className="border-t border-white/[0.05] mt-12 pt-7 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">

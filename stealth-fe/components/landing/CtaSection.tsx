@@ -1,4 +1,4 @@
-import ScrollReveal from "./ScrollReveal";
+import GsapReveal from "./GsapReveal";
 
 export default function CtaSection() {
   return (
@@ -7,7 +7,7 @@ export default function CtaSection() {
         <div className="border-t border-white/[0.07] pt-16 md:pt-24">
           <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-12">
 
-            <ScrollReveal className="flex-1" variant="left" distance={60} duration={900}>
+            <GsapReveal className="flex-1" x={-50} y={0} duration={0.85}>
               <h2
                 className="font-bold text-white leading-[0.95] tracking-tight mb-10"
                 style={{ fontSize: "clamp(3rem, 6.5vw, 6rem)" }}
@@ -27,9 +27,9 @@ export default function CtaSection() {
                   <path d="M2 10L10 2M10 2H4M10 2V8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
                 </svg>
               </a>
-            </ScrollReveal>
+            </GsapReveal>
 
-            <ScrollReveal delay={160} className="flex-1 md:text-right" variant="right" distance={60} duration={900}>
+            <GsapReveal delay={0.2} className="flex-1 md:text-right" x={50} y={0} duration={0.85}>
               <p
                 className="cta-aurora font-bold leading-[0.95] tracking-tight select-none"
                 style={{ fontSize: "clamp(3rem, 6.5vw, 6rem)" }}
@@ -39,7 +39,7 @@ export default function CtaSection() {
                   Auditable on demand.
                 </span>
               </p>
-            </ScrollReveal>
+            </GsapReveal>
 
           </div>
         </div>
