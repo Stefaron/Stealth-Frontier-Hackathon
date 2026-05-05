@@ -22,6 +22,7 @@ export interface ComplianceGrant {
   nonce: string;
   issuedAt: number;
   label?: string;
+  viewingKey?: string; // hex-encoded master viewing key; used by auditor compliance scanner
 }
 
 export interface AuditTransaction {

@@ -315,7 +315,7 @@ function WalletRow({
   );
 
   const cls =
-    "wallet-row press group relative flex items-center gap-3 w-full px-3 py-3 rounded-xl border border-transparent hover:border-white/[0.08] hover:bg-white/[0.04] transition-all duration-200";
+    "wallet-row press group relative flex items-center gap-3 w-full px-3 py-3 rounded-xl border border-transparent hover:border-white/[0.08] hover:bg-white/[0.04] transition-all duration-200 cursor-pointer";
 
   if (href) {
     return (
@@ -386,7 +386,7 @@ function WalletPreview({
         <button
           data-anim
           onClick={onSelect}
-          className="press inline-flex items-center gap-2 bg-white text-[#0d0c0a] px-5 py-3 rounded-full font-bold text-[11px] tracking-widest uppercase hover:scale-[1.02] transition-transform"
+          className="press inline-flex items-center gap-2 bg-white text-[#0d0c0a] px-5 py-3 rounded-full font-bold text-[11px] tracking-widest uppercase hover:scale-[1.02] transition-transform cursor-pointer"
         >
           Connect {name}
           <svg width="11" height="11" viewBox="0 0 12 12" fill="none">

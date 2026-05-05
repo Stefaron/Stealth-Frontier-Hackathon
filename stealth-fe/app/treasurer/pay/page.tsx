@@ -162,13 +162,13 @@ export default function PayPage() {
         !senderAcc.data?.isActiveForAnonymousUsage
       ) {
         setGlobalError(
-          "Akun Umbra Anda belum aktif untuk anonymous usage. Silakan klik 'Initialize Umbra Client' lalu 'Register' di dashboard lagi dan tunggu Arcium memproses."
+          "Your Umbra account is not active for anonymous usage. Click 'Initialize Umbra Client' then 'Register' on the dashboard and wait for Arcium to process."
         );
         setIsSending(false);
         return;
       }
     } catch {
-      setGlobalError("Gagal verifikasi status akun pengirim. Coba lagi.");
+      setGlobalError("Failed to verify sender account status. Please try again.");
       setIsSending(false);
       return;
     }
@@ -308,8 +308,8 @@ export default function PayPage() {
       {publicKey && (
         <div className="mb-6 bg-amber-500/[0.06] border border-amber-500/[0.15] rounded-2xl px-5 py-4 flex flex-wrap items-center gap-3">
           <div className="flex-1 min-w-0">
-            <p className="text-amber-400 text-[11px] font-semibold mb-0.5">Devnet: wrap SOL → WSOL sebelum kirim</p>
-            <p className="text-amber-400/50 text-[10px]">Umbra devnet hanya support Wrapped SOL</p>
+            <p className="text-amber-400 text-[11px] font-semibold mb-0.5">Devnet: wrap SOL → WSOL before sending</p>
+            <p className="text-amber-400/50 text-[10px]">Umbra devnet only supports Wrapped SOL</p>
           </div>
           <div className="flex items-center gap-2">
             <input

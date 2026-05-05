@@ -18,6 +18,7 @@
     "@solana/wallet-adapter-wallets": "^0.19.38",
     "@solana/web3.js": "^1.98.4",
     "@umbra-privacy/sdk": "^4.0.0",
+    "@umbra-privacy/umbra-codama": "^2.0.2",
     "@umbra-privacy/web-zk-prover": "^2.0.1",
     "gsap": "^3.15.0",
     "jspdf": "^4.2.1",
