@@ -110,6 +110,7 @@ Gets a role-based dashboard granted by the DAO. Generates industry-standard audi
 | Wallet adapter | `@solana/wallet-adapter-react` | Phantom, Solflare, Trust, Ledger, Torus |
 | Solana SDK | `@solana/kit` | Modern TS library |
 | Privacy | `@umbra-privacy/sdk` | Core SDK |
+| Umbra Codama | `@umbra-privacy/umbra-codama` v2.0.2 | Codama-generated IDL decoders for Anchor events |
 | Animations | `gsap` + `lenis` | **Must `npm install` after git pull** |
 | CSV | Papaparse | Browser-side |
 | Deployment | Vercel | |
@@ -187,15 +188,21 @@ When in doubt about SDK API shape, fetch docs — SDK released April 2026, not i
 stealth-fe/
 ├── app/
 │   ├── contributor/     — Contributor: balance, claim, withdraw
-│   ├── treasurer/       — Treasurer: pay, bulk CSV
-│   └── auditor/         — Auditor: compliance dashboard, report export
+│   ├── treasurer/
+│   │   ├── page.tsx     — Treasurer dashboard
+│   │   ├── pay/         — Send payments, wrap SOL → WSOL, bulk CSV
+│   │   └── auditors/    — Issue/revoke compliance grants + derive MVK
+│   └── auditor/
+│       ├── page.tsx     — Auditor: list of received grants
+│       └── [daoId]/     — Compliance scanner + report export (real Umbra data)
 ├── components/
 │   ├── app/             — Shared app components (WalletModal, AppNav, etc.)
 │   ├── contributor/
 │   ├── treasurer/
 │   └── auditor/
 ├── lib/
-│   └── umbra/           — SDK wrappers: balance.ts, withdraw.ts, claim.ts, transfers.ts
+│   ├── umbra/           — SDK wrappers: balance.ts, withdraw.ts, claim.ts, transfers.ts
+│   └── compliance/      — Compliance scanner pipeline (7 files — see Section 16)
 ├── context/
 │   ├── UmbraContext.tsx  — SDK client instance
 │   ├── WalletProvider.tsx — Solana wallet adapter setup
@@ -205,7 +212,7 @@ stealth-fe/
 └── lib/constants.ts      — SOLANA_RPC_URL, USDC_DEVNET_MINT, KNOWN_MINTS
 ```
 
-No backend database. State: on-chain (Umbra) + localStorage (UTXO claim tracking).
+No backend database. State: on-chain (Umbra) + localStorage (UTXO claim tracking + compliance grants).
 
 ---
 
@@ -290,6 +297,8 @@ Without `else if` branch: modal stays visible when parent calls `setModalOpen(fa
 
 Compliance grants stored in localStorage key `stealth:compliance-grants`. Works within same browser only. Across different browsers requires a backend (Vercel KV or Supabase free tier — acceptable v2 work).
 
+Each grant now stores an optional `viewingKey` hex string (the Master Viewing Key, MVK). Treasurer derives it via the "Derive from wallet ↗" button on `/treasurer/auditors` — triggers `getMasterViewingKeyDeriver({client})()` which returns `bigint`, converted to hex and stored with the grant. The auditor page reads this from the grant record to pre-fill the scanner.
+
 ---
 
 ## 11. Known Issues & Gotchas
@@ -297,10 +306,15 @@ Compliance grants stored in localStorage key `stealth:compliance-grants`. Works 
 | Issue | Cause | Fix |
 |-------|-------|-----|
 | `Transaction simulation failed` on withdraw | Stale client state after recent claim | Click Refresh → retry withdraw |
-| Callback `timed-out` / `pruned` | Arcium MPC devnet reliability | Wait 2-5 min; same 180-slot TTL; check wallet manually |
+| Callback `timed-out` / `pruned` | Arcium MPC devnet reliability — now extended to 600 slots (~4 min) + 6 min wall-clock | Wait 2-5 min; same 180-slot TTL; check wallet manually on Solscan devnet |
 | `Cannot find module 'gsap'` after git pull | `gsap`/`lenis` in package.json but `node_modules` not updated | `npm install` in `stealth-fe/` |
 | Registration TX expires | 180-slot Solana devnet TTL | Retry registration; happens rarely |
 | Balance shows MXE encrypted | Umbra balance in MXE mode, not Shared mode | This is encrypted state — use SDK to decrypt |
+| Scanner: Indexed = 0 | Devnet indexer lags 1–5 min after tx | Wait, click Load Transactions again |
+| Scanner: Events = 0 | Devnet RPC drops old logs | Retry; persistent = RPC doesn't archive logs |
+| Scanner: Decrypted = 0, Failed > 0 | MVK derived from wrong wallet | Re-issue grant with "Derive from wallet ↗" on correct Treasurer wallet |
+| Scanner: "More than 50% look invalid" | Wrong viewing key for these transactions | Same fix — re-derive MVK on correct wallet |
+| Wrap SOL fails "not confirmed in 30s" | Devnet congestion | Retry; need >0.01 SOL for fees |
 
 ---
 
@@ -355,10 +369,89 @@ Compliance grants stored in localStorage key `stealth:compliance-grants`. Works 
 | `lastHovered` never-clears pattern in WalletModal | Prevents race condition where mouse-leave unmounts right pane before click registers | Session 1 |
 | Surface `callbackStatus` in withdraw UI | Devnet MPC callbacks unreliable; users need to know queue success ≠ delivery | Session 1 |
 | Manual refresh button instead of polling | Polling wastes RPC quota; user-triggered is sufficient for hackathon | Session 1 |
+| Compliance scanner reads Anchor event logs, not UtxoDataItem | Linker ciphertexts live in `Program data:` log lines, not in indexer UTXO fields | Session 2 |
+| Hardcoded event discriminators (`sha256("event:<Name>")[0:8]`) | Codama exports instruction discriminators (`sha256("global:...")`), not event discriminators — must compute manually | Session 2 |
+| TVK descent uses `levelIdx > startIdx` (strict `<`, not `<=`) | Off-by-one silently produces garbage TVK — hashing AT the auditor's level produces wrong key | Session 2 |
+| Store MVK hex with compliance grant in localStorage | Auditor needs MVK to run scanner; passing it via URL would embed sensitive key in browser history | Session 2 |
+| Next.js rewrite proxy for Umbra indexer | Avoids CORS issues when fetching from `utxo-indexer.api-devnet.umbraprivacy.com` from browser | Session 2 |
+| `maxSlotWindow: 600` + `safetyTimeoutMs: 360_000` in withdraw | Default 200 slots (~80 sec) too short for devnet MPC — increased to ~4 min slot window, 6 min wall-clock | Session 2 |
 
 ---
 
-## 16. Contact
+## 16. Compliance Scanner — Deep Dive
+
+The auditor dashboard uses a custom scanner pipeline in `lib/compliance/` that reads real on-chain data without requiring the Umbra SDK client (auditor is read-only — no wallet signing needed).
+
+### 16.1 The 7 Files
+
+| File | Responsibility |
+|------|----------------|
+| `types.ts` | Shared types: `VkLevel`, `ScanScope`, `DecryptedUtxoTransaction`, `ScanResult`, `ScanProgress` |
+| `indexer.ts` | Step 1: fetch UTXOs from Umbra indexer via `/proxy/data-indexer/utxo?user=...` |
+| `rpc.ts` | Steps 3, 5b, 5c: JSON-RPC batch fetcher with 5-concurrent parallelism |
+| `anchor-events.ts` | Step 4: decode `Program data:` log lines → `ParsedEvent[]` |
+| `buffer-pda.ts` | Step 5a: derive `StealthPoolDepositInputBuffer` PDA for ETA fallback |
+| `tvk.ts` | Step 6: TVK descent + Poseidon decrypt + address reassembly |
+| `scanner.ts` | Orchestrator: calls all above steps, returns `ScanResult` |
+
+### 16.2 VK / TVK Hierarchy
+
+```
+MVK (Master Viewing Key)
+ └─► MintVK = Poseidon([MVK, mintLow, mintHigh])     ← 3-input, mint split into LE U128 halves
+      └─► YearlyVK  = Poseidon([MintVK, year])
+           └─► MonthlyVK = Poseidon([YearlyVK, month])
+                └─► DailyVK  = Poseidon([MonthlyVK, day])
+                     └─► HourlyVK = Poseidon([DailyVK, hour])
+                          └─► MinuteVK = Poseidon([HourlyVK, minute])
+                               └─► TVK (second-level) = Poseidon([MinuteVK, second])
+```
+
+**Auditor's grant level** determines WHERE in this chain they enter. Example: `"master"` level = auditor got MVK → can see all time. `"monthly"` level = auditor got MonthlyVK → can only see that month.
+
+TVK descent is **strictly `levelIdx > startIdx`** — hashing AT the auditor's own level would produce a wrong TVK silently.
+
+MVK derivation: `getMasterViewingKeyDeriver({ client: umbraClient })()` — zero-arg async function. Treasurer calls this on `/treasurer/auditors`, result stored as hex in the grant.
+
+### 16.3 Anchor Event Discriminators
+
+Umbra uses Anchor-style event discriminators: `sha256("event:<EventName>")[0:8]`. **Not** instruction discriminators (`sha256("global:...")`).
+
+Precomputed discriminators in `anchor-events.ts`:
+- **ATA** (`DepositIntoStealthPoolFromPublicBalance`): `[195,64,209,156,202,109,31,122]`  
+- **Buffer** (`DepositIntoStealthPoolFromEncryptedBalance`): `[130,179,215,123,55,205,252,5]`  
+- **ETA hint** (`DepositIntoStealthPoolFromEncryptedBalanceHint`): `[118,173,110,113,20,196,87,139]`
+
+### 16.4 What Gets Decrypted
+
+Each transaction has **linker ciphertexts** in its Anchor event logs:
+
+| Event Type | Linkers | Plaintext layout |
+|------------|---------|------------------|
+| ATA | 2 ciphertexts | `[destLow, destHigh]` — recipient address halves |
+| Buffer (ETA) | 3 ciphertexts | `[destLow, destHigh, amount]` — address + amount |
+
+Decryption: Poseidon stream cipher. `decryptLinkers(linkerBytes, tvk)` → `bigint[]`. Reassemble address with `reassembleAddress(destLow, destHigh)`.
+
+### 16.5 Wrong-Key Heuristic
+
+No auth tag in Poseidon cipher. Wrong key produces garbage values. Heuristic:
+- `destLow < 2^128 && destHigh < 2^128` (valid Solana address = 32 bytes)
+- `amount < 2^64` (for ETA)
+
+If `>50% of attempted decryptions look bogus` → surface warning to auditor. Root cause: MVK derived from wrong wallet or wrong VK level.
+
+### 16.6 Next.js Proxy Rewrite
+
+`next.config.ts` rewrites `/proxy/data-indexer/:path*` → `${NEXT_PUBLIC_UMBRA_INDEXER_URL}/:path*` to avoid browser CORS on indexer API. The env var `NEXT_PUBLIC_UMBRA_INDEXER_URL` must be set in `.env.local` (see `TESTING.md`).
+
+### 16.7 Testing the Scanner
+
+See `TESTING.md` (in repo root, one level above `stealth-fe/`) for full step-by-step walkthrough including how to get real devnet data into the auditor dashboard.
+
+---
+
+## 17. Contact
 
 - Hackathon coordinator: Telegram @abbasshaikh01
 - Umbra team: X @UmbraPrivacy or GitHub umbra-defi
