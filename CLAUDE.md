@@ -310,10 +310,12 @@ Each grant now stores an optional `viewingKey` hex string (the Master Viewing Ke
 | `Cannot find module 'gsap'` after git pull | `gsap`/`lenis` in package.json but `node_modules` not updated | `npm install` in `stealth-fe/` |
 | Registration TX expires | 180-slot Solana devnet TTL | Retry registration; happens rarely |
 | Balance shows MXE encrypted | Umbra balance in MXE mode, not Shared mode | This is encrypted state — use SDK to decrypt |
-| Scanner: Indexed = 0 | Devnet indexer lags 1–5 min after tx | Wait, click Load Transactions again |
+| Scanner: Indexed = 0 | Treasurer has no confirmed on-chain txs | Wait 30–60s after sending, retry |
 | Scanner: Events = 0 | Devnet RPC drops old logs | Retry; persistent = RPC doesn't archive logs |
 | Scanner: Decrypted = 0, Failed > 0 | MVK derived from wrong wallet | Re-issue grant with "Derive from wallet ↗" on correct Treasurer wallet |
-| Scanner: "More than 50% look invalid" | Wrong viewing key for these transactions | Same fix — re-derive MVK on correct wallet |
+| Scanner: Bogus = N (all decrypts invalid) | Wrong mint in scanner — TVK is per-mint | Change Mint field to match token treasurer actually sent (WSOL vs USDC) |
+| Scanner: "More than 50% look invalid" | Wrong mint OR wrong MVK | Fix mint first; if still bogus, re-derive MVK on correct wallet |
+| Amount shows 0.00 for small WSOL transfers | Old display code sliced frac to 2 chars — fixed in session 3 | `formatAmount` now trims trailing zeros, shows full precision |
 | Wrap SOL fails "not confirmed in 30s" | Devnet congestion | Retry; need >0.01 SOL for fees |
 
 ---
@@ -375,6 +377,9 @@ Each grant now stores an optional `viewingKey` hex string (the Master Viewing Ke
 | Store MVK hex with compliance grant in localStorage | Auditor needs MVK to run scanner; passing it via URL would embed sensitive key in browser history | Session 2 |
 | Next.js rewrite proxy for Umbra indexer | Avoids CORS issues when fetching from `utxo-indexer.api-devnet.umbraprivacy.com` from browser | Session 2 |
 | `maxSlotWindow: 600` + `safetyTimeoutMs: 360_000` in withdraw | Default 200 slots (~80 sec) too short for devnet MPC — increased to ~4 min slot window, 6 min wall-clock | Session 2 |
+| Replaced Umbra indexer REST with `getSignaturesForAddress` (Solana RPC) in `indexer.ts` | Umbra indexer uses protobuf binary responses + index-range pagination only — no per-depositor filter exists. `GET /utxo?user=...` never existed | Session 3 |
+| Default scanner mint changed to WSOL (`So111...112`) | Hackathon testing uses WSOL; TVK is mint-specific so wrong mint = all-bogus decryption | Session 3 |
+| `formatAmount` trims trailing zeros instead of slicing to 2 chars | 2-char slice turned 0.001 WSOL into "0.00" — unreadable for small devnet transfers | Session 3 |
 
 ---
 
@@ -387,7 +392,7 @@ The auditor dashboard uses a custom scanner pipeline in `lib/compliance/` that r
 | File | Responsibility |
 |------|----------------|
 | `types.ts` | Shared types: `VkLevel`, `ScanScope`, `DecryptedUtxoTransaction`, `ScanResult`, `ScanProgress` |
-| `indexer.ts` | Step 1: fetch UTXOs from Umbra indexer via `/proxy/data-indexer/utxo?user=...` |
+| `indexer.ts` | Step 1: fetch treasurer's recent tx signatures via Solana RPC `getSignaturesForAddress` (Umbra indexer has no per-depositor filter) |
 | `rpc.ts` | Steps 3, 5b, 5c: JSON-RPC batch fetcher with 5-concurrent parallelism |
 | `anchor-events.ts` | Step 4: decode `Program data:` log lines → `ParsedEvent[]` |
 | `buffer-pda.ts` | Step 5a: derive `StealthPoolDepositInputBuffer` PDA for ETA fallback |
@@ -439,11 +444,13 @@ No auth tag in Poseidon cipher. Wrong key produces garbage values. Heuristic:
 - `destLow < 2^128 && destHigh < 2^128` (valid Solana address = 32 bytes)
 - `amount < 2^64` (for ETA)
 
-If `>50% of attempted decryptions look bogus` → surface warning to auditor. Root cause: MVK derived from wrong wallet or wrong VK level.
+If `>50% of attempted decryptions look bogus` → surface warning to auditor. Root causes:
+1. **Wrong mint** — TVK is derived per-mint; scanner Mint field must match the token actually transferred
+2. MVK derived from wrong wallet or wrong VK level
 
 ### 16.6 Next.js Proxy Rewrite
 
-`next.config.ts` rewrites `/proxy/data-indexer/:path*` → `${NEXT_PUBLIC_UMBRA_INDEXER_URL}/:path*` to avoid browser CORS on indexer API. The env var `NEXT_PUBLIC_UMBRA_INDEXER_URL` must be set in `.env.local` (see `TESTING.md`).
+`next.config.ts` rewrites `/proxy/data-indexer/:path*` → `${NEXT_PUBLIC_UMBRA_INDEXER_URL}/:path*`. **No longer used by the compliance scanner** (session 3: replaced with Solana RPC). Kept in config in case other features need the indexer. `NEXT_PUBLIC_UMBRA_INDEXER_URL` is optional.
 
 ### 16.7 Testing the Scanner
 

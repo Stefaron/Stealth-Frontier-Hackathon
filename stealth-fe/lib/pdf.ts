@@ -7,8 +7,8 @@ function formatAmount(amount: bigint, mint: string): string {
   if (!info) return `${amount.toString()} raw`;
   const divisor = BigInt(10 ** info.decimals);
   const whole = amount / divisor;
-  const frac = amount % divisor;
-  return `${whole}.${frac.toString().padStart(info.decimals, "0").slice(0, 2)} ${info.symbol}`;
+  const frac = (amount % divisor).toString().padStart(info.decimals, "0");
+  return `${whole}.${frac.replace(/0+$/, "").padEnd(2, "0")} ${info.symbol}`;
 }
 
 export function generateAuditPdf(params: {

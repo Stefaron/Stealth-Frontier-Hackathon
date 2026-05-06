@@ -18,7 +18,8 @@ function formatAmount(amount: bigint, mint: string): string {
   if (!info) return `${amount}`;
   const divisor = BigInt(10 ** info.decimals);
   const whole = amount / divisor;
-  const frac = (amount % divisor).toString().padStart(info.decimals, "0").slice(0, 2);
+  const fracFull = (amount % divisor).toString().padStart(info.decimals, "0");
+  const frac = fracFull.replace(/0+$/, "").padEnd(2, "0");
   return `${whole}.${frac} ${info.symbol}`;
 }
 
@@ -45,7 +46,7 @@ export default function DaoAuditPage() {
   const [scanResult, setScanResult] = useState<ScanResult | null>(null);
   const [isScanning, setIsScanning] = useState(false);
   const [vkLevel, setVkLevel] = useState<VkLevel>("master");
-  const [scopeMint, setScopeMint] = useState<string>(USDC_DEVNET_MINT);
+  const [scopeMint, setScopeMint] = useState<string>("So11111111111111111111111111111111111111112");
 
   const auditorAddress = publicKey?.toBase58() ?? "unknown";
 

@@ -202,11 +202,12 @@ Settings → Developer Settings → Airdrop SOL (devnet only).
 
 #### 4B.3 Scan for real transactions
 1. On the report page, the scanner panel appears at the top
-2. **Mint** field — leave default (`4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPz...` = USDC devnet)  
-   Or change to WSOL mint if treasurer sent WSOL: `So11111111111111111111111111111111111111112`
+2. **Mint** field — default is WSOL (`So11111111111111111111111111111111111111112`)  
+   Change to USDC if treasurer sent USDC: `4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU`  
+   **Must match the token actually used by the treasurer** — mint determines TVK derivation
 3. **VK Level** — select `master` (sees all transactions for that mint)
 4. Click **Load Transactions**
-5. Wait 5–30 seconds (scanning Umbra indexer + decrypting)
+5. Wait 5–30 seconds (scanning on-chain tx history + decrypting)
 
 #### 4B.4 Reading the results
 
@@ -214,7 +215,7 @@ Settings → Developer Settings → Airdrop SOL (devnet only).
 
 | Counter | Meaning |
 |---------|---------|
-| Indexed | UTXOs found in Umbra indexer for this treasurer address |
+| Indexed | Transactions found on-chain for this treasurer address (via Solana RPC) |
 | In Scope | UTXOs matching the selected mint + time window |
 | Events | Anchor event logs found and decoded in transactions |
 | Decrypted | Successfully decrypted UTXOs |
@@ -239,9 +240,9 @@ Settings → Developer Settings → Airdrop SOL (devnet only).
 ## Part 5 — Troubleshooting
 
 ### Indexed = 0
-- Devnet indexer may lag 1–5 minutes after a transaction
-- Wait and click **Load Transactions** again
-- Check the mint address matches what treasurer used
+- Treasurer has no confirmed transactions on devnet yet
+- Wait 30–60 seconds after sending payment and retry
+- Confirm treasurer wallet has at least one Umbra transaction on-chain
 
 ### Events = 0
 - The transaction is indexed but its logs can't be fetched
@@ -254,8 +255,9 @@ Settings → Developer Settings → Airdrop SOL (devnet only).
 - Try re-issuing grant after re-deriving viewing key
 
 ### "More than 50% look invalid" warning
-- Viewing key is wrong for these transactions
-- Treasurer should re-issue grant using **"Derive from wallet ↗"** while connected to correct wallet
+Two possible causes:
+1. **Wrong mint** — Umbra TVK is mint-specific; if treasurer sent WSOL but scanner is set to USDC, decryption produces garbage. Change Mint field to match what was actually sent.
+2. **Wrong viewing key** — MVK derived from wrong wallet. Treasurer should re-issue grant using **"Derive from wallet ↗"** while connected to correct wallet.
 
 ### Wrap SOL fails "not confirmed in 30 seconds"
 - Pure devnet congestion — try again
