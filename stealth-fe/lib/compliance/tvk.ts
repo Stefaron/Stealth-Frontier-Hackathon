@@ -138,3 +138,49 @@ export function plaintextsLookValid(plaintexts: bigint[], isEta: boolean): boole
   if (isEta && (plaintexts.length < 3 || plaintexts[2] >= TWO_64)) return false;
   return true;
 }
+
+// Derive a scoped viewing key from a master viewing key down to the target level.
+export async function deriveScopedVk(
+  mvk: bigint,
+  targetLevel: VkLevel,
+  scope: ScanScope
+): Promise<bigint> {
+  const hasher = getPoseidonHasher();
+
+  let currentKey = mvk;
+  let startIdx = levelIndex("master");
+  const targetIdx = levelIndex(targetLevel);
+
+  if (targetIdx > startIdx) {
+    // master → mint step
+    const { low, high } = splitMintAddress(scope.mint);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    currentKey = await hasher([currentKey, low, high] as any);
+    startIdx = levelIndex("mint");
+  }
+
+  // Down through the time hierarchy
+  const descendOrder: Array<{ key: VkLevel; component: keyof ScanScope }> = [
+    { key: "yearly", component: "year" },
+    { key: "monthly", component: "month" },
+    { key: "daily", component: "day" },
+    { key: "hourly", component: "hour" },
+    { key: "minute", component: "minute" },
+    { key: "second", component: "second" },
+  ];
+
+  for (const { key, component } of descendOrder) {
+    const levelIdx = levelIndex(key);
+    // We stop AT the target level
+    if (levelIdx > startIdx && levelIdx <= targetIdx) {
+      const val = scope[component];
+      if (val === undefined) {
+        throw new Error(`Missing scope component ${component} for target level ${targetLevel}`);
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      currentKey = await hasher([currentKey, BigInt(val)] as any);
+    }
+  }
+
+  return currentKey;
+}

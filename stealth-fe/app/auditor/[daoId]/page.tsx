@@ -48,11 +48,16 @@ export default function DaoAuditPage() {
   const [vkLevel, setVkLevel] = useState<VkLevel>("master");
   const [scopeMint, setScopeMint] = useState<string>("So11111111111111111111111111111111111111112");
 
+  const [searchRecipient, setSearchRecipient] = useState("");
+
   const auditorAddress = publicKey?.toBase58() ?? "unknown";
 
   // Use real scan results or empty array
   const transactions: DecryptedUtxoTransaction[] = scanResult?.transactions ?? [];
-  const total = transactions.reduce((sum, t) => sum + t.amount, 0n);
+  const filteredTransactions = transactions.filter((t) =>
+    t.destination.toLowerCase().includes(searchRecipient.toLowerCase())
+  );
+  const total = filteredTransactions.reduce((sum, t) => sum + t.amount, 0n);
 
   const handleScan = useCallback(async () => {
     if (!grant?.viewingKey) return;
@@ -84,7 +89,7 @@ export default function DaoAuditPage() {
   }, [grant, daoId, vkLevel, scopeMint, toast]);
 
   // For PDF/CSV export, convert to AuditTransaction shape
-  const exportTxs: AuditTransaction[] = transactions.map((t) => ({
+  const exportTxs: AuditTransaction[] = filteredTransactions.map((t) => ({
     signature: t.signature,
     timestamp: t.timestamp * 1000,
     amount: t.amount,
@@ -218,14 +223,14 @@ export default function DaoAuditPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={handleExportCsv}
-            disabled={transactions.length === 0}
+            disabled={filteredTransactions.length === 0}
             className="inline-flex items-center gap-2 bg-white/[0.06] border border-white/[0.08] text-white/60 text-[10px] font-bold tracking-widest uppercase px-4 py-2.5 rounded-full hover:bg-white/[0.1] transition-all duration-200 disabled:opacity-30"
           >
             Export CSV
           </button>
           <button
             onClick={handleExportPdf}
-            disabled={isExportingPdf || transactions.length === 0}
+            disabled={isExportingPdf || filteredTransactions.length === 0}
             className="inline-flex items-center gap-2 bg-white text-[#0d0c0a] text-[10px] font-bold tracking-widest uppercase px-5 py-2.5 rounded-full hover:bg-white/90 transition-all duration-200 disabled:opacity-50"
           >
             {isExportingPdf ? "Generating…" : "Export PDF"}
@@ -237,13 +242,13 @@ export default function DaoAuditPage() {
       <div className="grid md:grid-cols-3 gap-4 mb-8">
         {[
           {
-            label: "Total Transactions",
-            value: transactions.length.toString(),
-            tag: scanResult ? `${scanResult.progress.indexerCount} indexed` : "Via Umbra Mixer",
+            label: "Filtered Transactions",
+            value: filteredTransactions.length.toString(),
+            tag: scanResult ? `${transactions.length} total decrypted` : "Via Umbra Mixer",
           },
           {
-            label: "Total Volume",
-            value: transactions.length > 0 ? formatAmount(total, scopeMint) : "—",
+            label: "Filtered Volume",
+            value: filteredTransactions.length > 0 ? formatAmount(total, scopeMint) : "—",
             tag: KNOWN_MINTS[scopeMint]?.symbol ?? "USDC",
           },
           {
@@ -341,6 +346,29 @@ export default function DaoAuditPage() {
 
       {/* Transactions table */}
       <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl overflow-hidden">
+        {scanResult && (
+          <div className="px-5 py-4 border-b border-white/[0.05] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h2 className="text-sm font-bold text-white mb-1">Decrypted Transactions</h2>
+              <p className="text-[10px] text-white/40">Filtered locally in your browser</p>
+            </div>
+            <div className="relative w-full sm:w-auto">
+              <input
+                type="text"
+                value={searchRecipient}
+                onChange={(e) => setSearchRecipient(e.target.value.trim())}
+                placeholder="Search recipient address…"
+                className="w-full sm:w-72 bg-white/[0.04] border border-white/[0.08] rounded-xl pl-9 pr-3 py-2 text-white/70 text-[11px] font-mono placeholder:text-white/20 focus:outline-none focus:border-violet-500/40 transition-colors"
+              />
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+              </div>
+            </div>
+          </div>
+        )}
         <div className="grid grid-cols-[1fr_auto_auto_auto] gap-4 px-5 py-3 border-b border-white/[0.05] text-[9px] font-semibold tracking-[0.15em] uppercase text-white/25">
           <span>Transaction</span>
           <span>Amount</span>
@@ -348,7 +376,7 @@ export default function DaoAuditPage() {
           <span>Date</span>
         </div>
 
-        {transactions.length === 0 ? (
+        {filteredTransactions.length === 0 ? (
           <div className="px-5 py-10 text-center">
             <p className="text-white/20 text-sm">
               {isScanning
@@ -359,7 +387,7 @@ export default function DaoAuditPage() {
             </p>
           </div>
         ) : (
-          transactions.map((tx) => (
+          filteredTransactions.map((tx) => (
             <div
               key={tx.signature}
               className="grid grid-cols-[1fr_auto_auto_auto] gap-4 items-center px-5 py-4 border-b border-white/[0.04] last:border-0"

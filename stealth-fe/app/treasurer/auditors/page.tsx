@@ -7,6 +7,9 @@ import { useToast } from "@/context/ToastContext";
 import { issueComplianceGrant, revokeComplianceGrant } from "@/lib/umbra/compliance";
 import { getMasterViewingKeyDeriver } from "@umbra-privacy/sdk";
 import { saveGrant, deleteGrant, getGrantsByTreasurer } from "@/lib/grants-store";
+import { deriveScopedVk } from "@/lib/compliance/tvk";
+import type { VkLevel, ScanScope } from "@/lib/compliance/types";
+import { VK_LEVEL_ORDER } from "@/lib/compliance/types";
 import type { ComplianceGrant } from "@/lib/types";
 import type { Address } from "@solana/kit";
 
@@ -19,9 +22,70 @@ export default function AuditorsPage() {
   const [auditorInput, setAuditorInput] = useState("");
   const [labelInput, setLabelInput] = useState("");
   const [viewingKeyInput, setViewingKeyInput] = useState("");
+  const [baseMvk, setBaseMvk] = useState<bigint | null>(null);
+  
+  const [targetLevel, setTargetLevel] = useState<VkLevel>("master");
+  const [scopeMint, setScopeMint] = useState("So11111111111111111111111111111111111111112");
+  const [scopeYear, setScopeYear] = useState(new Date().getUTCFullYear().toString());
+  const [scopeMonth, setScopeMonth] = useState((new Date().getUTCMonth() + 1).toString());
+  const [scopeDay, setScopeDay] = useState(new Date().getUTCDate().toString());
+
   const [isDerivingVk, setIsDerivingVk] = useState(false);
   const [isIssuing, setIsIssuing] = useState(false);
   const [isRevoking, setIsRevoking] = useState<string | null>(null);
+
+  // Auto-derive base MVK when client is ready
+  useEffect(() => {
+    if (!client || baseMvk || isDerivingVk) return;
+    
+    let isMounted = true;
+    const deriveMvk = async () => {
+      setIsDerivingVk(true);
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const mvk: bigint = await getMasterViewingKeyDeriver({ client: client as any })();
+        if (isMounted) setBaseMvk(mvk);
+      } catch (e) {
+        if (isMounted) toast.error("Failed to auto-derive master key. Please refresh to try again.");
+      } finally {
+        if (isMounted) setIsDerivingVk(false);
+      }
+    };
+    
+    deriveMvk();
+    return () => { isMounted = false; };
+  }, [client, baseMvk, isDerivingVk, toast]);
+
+  // Auto-update viewingKeyInput when scope or baseMvk changes
+  useEffect(() => {
+    if (!baseMvk) return;
+
+    let isMounted = true;
+    const updateScopedKey = async () => {
+      try {
+        let finalKey = baseMvk;
+        if (targetLevel !== "master") {
+          const scope: ScanScope = {
+            kind: targetLevel,
+            mint: scopeMint.trim(),
+            year: targetLevel !== "mint" ? parseInt(scopeYear, 10) : undefined,
+            month: targetLevel === "monthly" || targetLevel === "daily" || targetLevel === "hourly" || targetLevel === "minute" || targetLevel === "second" ? parseInt(scopeMonth, 10) : undefined,
+            day: targetLevel === "daily" || targetLevel === "hourly" || targetLevel === "minute" || targetLevel === "second" ? parseInt(scopeDay, 10) : undefined,
+            hour: 0,
+            minute: 0,
+            second: 0,
+          };
+          finalKey = await deriveScopedVk(baseMvk, targetLevel, scope);
+        }
+        if (isMounted) setViewingKeyInput(finalKey.toString(16));
+      } catch (e) {
+        console.error("Failed to derive scoped key", e);
+      }
+    };
+
+    updateScopedKey();
+    return () => { isMounted = false; };
+  }, [baseMvk, targetLevel, scopeMint, scopeYear, scopeMonth, scopeDay]);
 
   useEffect(() => {
     if (publicKey) {
@@ -58,23 +122,6 @@ export default function AuditorsPage() {
       toast.error(e instanceof Error ? e.message : "Failed to issue grant");
     } finally {
       setIsIssuing(false);
-    }
-  };
-
-  const handleDeriveVk = async () => {
-    if (!client) return;
-    setIsDerivingVk(true);
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const mvk: bigint = await getMasterViewingKeyDeriver({ client: client as any })();
-      const hex = mvk.toString(16);
-      setViewingKeyInput(hex);
-      await navigator.clipboard.writeText(hex).catch(() => {});
-      toast.success("Viewing key derived and copied to clipboard");
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Failed to derive viewing key");
-    } finally {
-      setIsDerivingVk(false);
     }
   };
 
@@ -142,30 +189,100 @@ export default function AuditorsPage() {
             />
           </label>
 
+          <div className="mb-4 p-4 rounded-xl bg-white/[0.015] border border-white/[0.04]">
+            <h3 className="text-[10px] font-bold text-white/50 uppercase tracking-widest mb-3">Access Scope</h3>
+            <label className="block mb-3">
+              <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-white/30 block mb-1.5">
+                VK Level
+              </span>
+              <select
+                value={targetLevel}
+                onChange={(e) => setTargetLevel(e.target.value as VkLevel)}
+                className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-3 py-2 text-white/70 text-[11px] font-mono focus:outline-none focus:border-violet-500/40 transition-colors appearance-none"
+              >
+                {VK_LEVEL_ORDER.slice(0, 5).map((l) => (
+                  <option key={l} value={l} className="bg-[#1a1917]">
+                    {l.charAt(0).toUpperCase() + l.slice(1)}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            {targetLevel !== "master" && (
+              <label className="block mb-3">
+                <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-white/30 block mb-1.5">
+                  Mint Address
+                </span>
+                <input
+                  type="text"
+                  value={scopeMint}
+                  onChange={(e) => setScopeMint(e.target.value)}
+                  className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-3 py-2 text-white/70 text-[11px] font-mono focus:outline-none focus:border-violet-500/40 transition-colors"
+                />
+              </label>
+            )}
+
+            {["yearly", "monthly", "daily"].includes(targetLevel) && (
+              <div className="grid grid-cols-3 gap-2">
+                <label className="block">
+                  <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-white/30 block mb-1.5">Year</span>
+                  <input
+                    type="number"
+                    value={scopeYear}
+                    onChange={(e) => setScopeYear(e.target.value)}
+                    className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-3 py-2 text-white/70 text-[11px] font-mono focus:outline-none focus:border-violet-500/40 transition-colors"
+                  />
+                </label>
+                {["monthly", "daily"].includes(targetLevel) && (
+                  <label className="block">
+                    <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-white/30 block mb-1.5">Month</span>
+                    <input
+                      type="number"
+                      min="1"
+                      max="12"
+                      value={scopeMonth}
+                      onChange={(e) => setScopeMonth(e.target.value)}
+                      className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-3 py-2 text-white/70 text-[11px] font-mono focus:outline-none focus:border-violet-500/40 transition-colors"
+                    />
+                  </label>
+                )}
+                {targetLevel === "daily" && (
+                  <label className="block">
+                    <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-white/30 block mb-1.5">Day</span>
+                    <input
+                      type="number"
+                      min="1"
+                      max="31"
+                      value={scopeDay}
+                      onChange={(e) => setScopeDay(e.target.value)}
+                      className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-3 py-2 text-white/70 text-[11px] font-mono focus:outline-none focus:border-violet-500/40 transition-colors"
+                    />
+                  </label>
+                )}
+              </div>
+            )}
+          </div>
+
           <div className="block mb-5">
             <div className="flex items-center justify-between mb-1.5">
               <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-white/30">
-                Viewing Key{" "}
-                <span className="text-white/15 normal-case tracking-normal">(optional)</span>
+                Generated Viewing Key
               </span>
-              <button
-                type="button"
-                onClick={handleDeriveVk}
-                disabled={isDerivingVk || !client}
-                className="font-mono text-[8px] text-violet-400/70 tracking-widest uppercase hover:text-violet-400 transition-colors disabled:opacity-30"
-              >
-                {isDerivingVk ? "Deriving…" : "Derive from wallet ↗"}
-              </button>
+              {isDerivingVk && (
+                <span className="font-mono text-[8px] text-violet-400/70 tracking-widest uppercase">
+                  Deriving from wallet…
+                </span>
+              )}
             </div>
             <textarea
+              readOnly
               value={viewingKeyInput}
-              onChange={(e) => setViewingKeyInput(e.target.value)}
-              placeholder="Paste hex master viewing key, or click 'Derive from wallet'…"
+              placeholder="Awaiting wallet signature to derive master key…"
               rows={2}
-              className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-2.5 text-white/70 text-[11px] font-mono placeholder:text-white/20 focus:outline-none focus:border-violet-500/40 transition-colors resize-none"
+              className="w-full bg-white/[0.02] border border-white/[0.04] rounded-xl px-4 py-2.5 text-white/50 text-[11px] font-mono placeholder:text-white/20 focus:outline-none resize-none cursor-not-allowed"
             />
             <span className="font-mono text-[8px] text-white/15 mt-1 block">
-              Stored locally with grant · enables auditor compliance scanner
+              Auto-generated based on the selected scope. Stored locally with grant.
             </span>
           </div>
 
