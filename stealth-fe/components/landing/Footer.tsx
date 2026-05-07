@@ -1,5 +1,5 @@
-import GsapReveal from "./GsapReveal";
-import GsapStagger from "./GsapStagger";
+import Link from "next/link";
+import Image from "next/image";
 
 const APP_LINKS = [
   { label: "Treasurer",   href: "/treasurer" },
@@ -13,114 +13,77 @@ const RESOURCE_LINKS = [
   { label: "GitHub",     href: "https://github.com/Stefaron/Stealth-Frontier-Hackathon", external: true },
 ];
 
-const HACKATHON_LINKS = [
-  { label: "Umbra Side Track", href: "https://superteam.fun/earn/listing/umbra-side-track", external: true },
-  { label: "Umbra Privacy",    href: "https://www.umbraprivacy.com/",                        external: true },
+const LEARN_LINKS = [
+  { label: "How it works",   href: "#how-it-works" },
+  { label: "Features",       href: "#features" },
+  { label: "Umbra SDK",      href: "#umbra" },
 ];
 
 export default function Footer() {
   return (
-    <footer className="relative border-t border-white/[0.06] overflow-hidden">
-      <div
-        className="absolute inset-0 pointer-events-none opacity-[0.04]"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at 20% 100%, rgba(167,139,250,0.7), transparent 40%), radial-gradient(circle at 80% 100%, rgba(56,189,248,0.6), transparent 40%)",
-        }}
-      />
+    <footer className="border-t border-zinc-100">
+      <div className="max-w-6xl mx-auto px-5 md:px-8 py-14 md:py-16">
+        <div className="grid grid-cols-2 md:grid-cols-[1.6fr_1fr_1fr_1fr] gap-10">
+          <div className="col-span-2 md:col-span-1">
+            <Link href="/" className="inline-flex items-center gap-2 group">
+              <Image
+                src="/stealth_logo.png"
+                alt="Stealth"
+                width={28}
+                height={28}
+                className="rounded-lg"
+              />
+              <span className="font-semibold text-[15px] text-zinc-900 tracking-tight">Stealth</span>
+            </Link>
+            <p className="mt-4 text-[13.5px] text-zinc-500 leading-relaxed max-w-xs">
+              Private payroll for modern teams.
+            </p>
+          </div>
 
-      <div className="footer-rule" />
-
-      <div className="max-w-7xl mx-auto px-6 md:px-8 py-14 md:py-20 relative">
-        <div className="flex flex-col md:flex-row justify-between gap-12">
-          <GsapReveal y={20} duration={0.6}>
-            <div className="footer-brand md:max-w-[220px] flex flex-col">
-              <div className="flex items-center gap-2.5 mb-4">
-                <div
-                  className="footer-brand-mark w-8 h-8 rounded-lg border flex items-center justify-center"
-                  style={{
-                    background: "rgba(255,255,255,0.04)",
-                    borderColor: "rgba(255,255,255,0.08)",
-                    color: "rgba(255,255,255,0.7)",
-                  }}
-                >
-                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-                    <path d="M8 1L14 4.5V11.5L8 15L2 11.5V4.5L8 1Z" stroke="currentColor" strokeWidth="1.4" fill="none" />
-                    <path d="M8 5L11 6.75V10.25L8 12L5 10.25V6.75L8 5Z" fill="currentColor" opacity="0.65" />
-                  </svg>
-                </div>
-                <span className="font-semibold text-white/85 text-sm tracking-tight">Stealth</span>
-              </div>
-              <p className="text-white/35 text-xs leading-relaxed">
-                Private payroll for DAOs. Built on the Umbra SDK for Solana Frontier Hackathon 2026.
-              </p>
-              <div className="mt-5 flex items-center gap-2">
-                <span className="relative flex h-1.5 w-1.5">
-                  <span className="animate-pulse-glow absolute inline-flex h-full w-full rounded-full bg-emerald-400/60" />
-                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400/80" />
-                </span>
-                <span className="text-[9px] font-mono tracking-[0.22em] uppercase text-white/40">
-                  Solana devnet · live
-                </span>
-              </div>
-            </div>
-          </GsapReveal>
-
-          <GsapStagger className="grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-14" stagger={0.1} y={20} duration={0.55}>
-            {[
-              { title: "App",       links: APP_LINKS },
-              { title: "Resources", links: RESOURCE_LINKS },
-              { title: "Hackathon", links: HACKATHON_LINKS },
-            ].map((col) => (
-              <div key={col.title}>
-                <p className="text-[8px] font-bold tracking-[0.24em] uppercase text-white/30 mb-5">
-                  {col.title}
-                </p>
-                <ul className="space-y-3">
-                  {col.links.map((item) => (
-                    <li key={item.label}>
-                      <a
-                        href={item.href}
-                        target={"external" in item && item.external ? "_blank" : undefined}
-                        rel={"external" in item && item.external ? "noopener noreferrer" : undefined}
-                        className="footer-link text-xs text-white/45 hover:text-white"
-                      >
-                        {item.label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </GsapStagger>
-
-          <GsapReveal delay={0.3} y={20} duration={0.55}>
-            <div className="hidden md:flex flex-col items-end justify-start gap-3">
-              <a
-                href="#"
-                className="group flex items-center gap-2 text-xs text-white/40 hover:text-white transition-colors duration-300"
-              >
-                <span className="inline-block transition-transform duration-400 group-hover:-translate-y-1">↑</span>
-                <span>Back to top</span>
-              </a>
-              <span className="text-[9px] font-mono tracking-[0.22em] uppercase text-white/22">
-                v0.1.0
-              </span>
-            </div>
-          </GsapReveal>
+          <FooterCol title="App"       links={APP_LINKS} />
+          <FooterCol title="Resources" links={RESOURCE_LINKS} />
+          <FooterCol title="Learn"     links={LEARN_LINKS} />
         </div>
 
-        <div className="border-t border-white/[0.05] mt-12 pt-7 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
-          <p className="text-[10px] text-white/28 tracking-wide">
-            Built for Solana Frontier Hackathon 2026 · Umbra Side Track · MIT License
+        <div className="mt-12 pt-7 border-t border-zinc-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+          <p className="text-[12.5px] text-zinc-500">
+            © 2026 Stealth · MIT License
           </p>
-          <p className="text-[10px] text-white/28 flex items-center gap-2">
-            Powered by the Umbra SDK
-            <span className="text-white/15">·</span>
-            Deployed on Solana devnet
+          <p className="text-[12.5px] text-zinc-500">
+            Built on Umbra · Solana devnet
           </p>
         </div>
       </div>
     </footer>
+  );
+}
+
+function FooterCol({
+  title,
+  links,
+}: {
+  title: string;
+  links: { label: string; href: string; external?: boolean }[];
+}) {
+  return (
+    <div>
+      <p className="text-[11px] font-semibold tracking-wider uppercase text-zinc-400 mb-4">
+        {title}
+      </p>
+      <ul className="space-y-2.5">
+        {links.map((item) => (
+          <li key={item.label}>
+            <a
+              href={item.href}
+              target={item.external ? "_blank" : undefined}
+              rel={item.external ? "noopener noreferrer" : undefined}
+              className="text-[13.5px] text-zinc-600 hover:text-zinc-900 transition-colors duration-200"
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }

@@ -39,23 +39,23 @@ export default function RegistrationBanner() {
   const isCancelled = status === "unregistered" && !!errorMsg;
 
   return (
-    <div className="mx-6 md:mx-8 mt-4">
+    <div className="max-w-7xl mx-auto px-5 md:px-8 mt-4">
       <div
-        className={`border rounded-2xl px-5 py-4 flex items-center gap-4 ${
+        className={`border rounded-xl px-5 py-4 flex items-center gap-4 ${
           isError
-            ? "bg-red-500/10 border-red-500/20"
+            ? "bg-red-50 border-red-200"
             : isPending
-            ? "bg-blue-500/10 border-blue-500/20"
-            : "bg-amber-500/10 border-amber-500/20"
+            ? "bg-blue-50 border-blue-200"
+            : "bg-amber-50 border-amber-200"
         }`}
       >
         <div
-          className={`w-8 h-8 rounded-xl border flex items-center justify-center flex-shrink-0 ${
+          className={`w-9 h-9 rounded-xl border flex items-center justify-center flex-shrink-0 ${
             isError
-              ? "bg-red-500/15 border-red-500/20 text-red-400"
+              ? "bg-white border-red-200 text-red-600"
               : isPending
-              ? "bg-blue-500/15 border-blue-500/20 text-blue-400"
-              : "bg-amber-500/15 border-amber-500/20 text-amber-400"
+              ? "bg-white border-blue-200 text-blue-600"
+              : "bg-white border-amber-200 text-amber-600"
           }`}
         >
           {isPending ? (
@@ -82,8 +82,8 @@ export default function RegistrationBanner() {
 
         <div className="flex-1 min-w-0">
           <p
-            className={`font-semibold text-[13px] ${
-              isError ? "text-red-400" : isPending ? "text-blue-400" : "text-amber-400"
+            className={`font-semibold text-[13.5px] ${
+              isError ? "text-red-700" : isPending ? "text-blue-700" : "text-amber-700"
             }`}
           >
             {isError
@@ -92,7 +92,7 @@ export default function RegistrationBanner() {
               ? "Confirming registration…"
               : "Not registered with Umbra"}
           </p>
-          <p className="text-white/35 text-[11px] mt-0.5 truncate">
+          <p className="text-zinc-600 text-[12px] mt-0.5 truncate">
             {isPending
               ? isChecking
                 ? "Re-checking on-chain status…"
@@ -109,10 +109,10 @@ export default function RegistrationBanner() {
           <button
             onClick={isError ? retry : register}
             disabled={status === "registering"}
-            className={`flex-shrink-0 text-[9px] font-bold tracking-widest uppercase px-4 py-2 rounded-full transition-colors disabled:opacity-50 ${
+            className={`press flex-shrink-0 text-[12px] font-semibold px-3.5 py-2 rounded-lg transition-colors disabled:opacity-50 ${
               isError
-                ? "bg-red-400/20 text-red-300 hover:bg-red-400/30"
-                : "bg-amber-400 text-[#0d0c0a] hover:bg-amber-300"
+                ? "bg-red-600 text-white hover:bg-red-700"
+                : "bg-zinc-900 text-white hover:bg-zinc-800"
             }`}
           >
             {status === "registering"
@@ -126,7 +126,7 @@ export default function RegistrationBanner() {
           <button
             onClick={checkRegistration}
             disabled={isChecking}
-            className="flex-shrink-0 text-[9px] font-bold tracking-widest uppercase px-4 py-2 rounded-full bg-blue-400/15 text-blue-300 hover:bg-blue-400/25 transition-colors disabled:opacity-40"
+            className="press flex-shrink-0 text-[12px] font-semibold px-3.5 py-2 rounded-lg bg-white border border-blue-200 text-blue-700 hover:bg-blue-50 transition-colors disabled:opacity-40"
           >
             {isChecking ? "Checking…" : "Check Status"}
           </button>

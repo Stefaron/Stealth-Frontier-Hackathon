@@ -18,7 +18,7 @@ export default function TreasurerLayout({
   return (
     <>
       <AppNav role="treasurer" links={LINKS} />
-      <main className="pt-14 min-h-svh">
+      <main className="pt-[58px] min-h-svh bg-white">
         <ConnectGate role="treasurer">
           <RegistrationBanner />
           {children}

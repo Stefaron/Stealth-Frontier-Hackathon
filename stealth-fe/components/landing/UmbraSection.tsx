@@ -1,240 +1,123 @@
-"use client";
-
-import { useRef, useState, type CSSProperties, type ReactNode } from "react";
-import GsapReveal from "./GsapReveal";
-import GsapStagger from "./GsapStagger";
+import Reveal from "./Reveal";
 
 interface Primitive {
-  number: string;
+  num: string;
   name: string;
   tag: string;
-  id: string;
   desc: string;
-  accent: string;
-  accent2: string;
-  icon: ReactNode;
+  icon: React.ReactNode;
 }
 
 const PRIMITIVES: Primitive[] = [
   {
-    number: "01",
-    name: "Encrypted Token Accounts",
-    tag: "Contributor balances",
-    id: "ETA·x25519·ed25519",
-    desc: "Per-recipient sealed balances. Owner-only decrypt.",
-    accent: "#a78bfa",
-    accent2: "#38bdf8",
+    num: "01",
+    name: "Private balances",
+    tag: "Wallet-owner decrypt",
+    desc: "Each contributor has an encrypted balance only their wallet can decrypt.",
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-        <rect x="3" y="6" width="18" height="13" rx="2" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M3 10h18" stroke="currentColor" strokeWidth="1.5" />
-        <circle cx="17" cy="14.5" r="1.5" fill="currentColor" />
+      <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
+        <rect x="2" y="5" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M2 8h14" stroke="currentColor" strokeWidth="1.5" />
+        <circle cx="12" cy="11.5" r="1" fill="currentColor" />
       </svg>
     ),
   },
   {
-    number: "02",
-    name: "Mixer Pool (UTXOs)",
-    tag: "Bulk transfers",
-    id: "POOL·UTXO·zk-hidden",
-    desc: "Anonymity set for payouts. ZK-hidden senders.",
-    accent: "#38bdf8",
-    accent2: "#34d399",
+    num: "02",
+    name: "Confidential transfers",
+    tag: "Bulk payouts",
+    desc: "Send to many recipients in one transaction. Amounts and addresses stay private.",
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-        <circle cx="8" cy="9" r="3.5" stroke="currentColor" strokeWidth="1.5" />
-        <circle cx="16" cy="15" r="3.5" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M11 10.5l2 3" stroke="currentColor" strokeWidth="1.5" />
+      <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
+        <path d="M3 9l12-5-4 14-2-6-6-3Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
       </svg>
     ),
   },
   {
-    number: "03",
-    name: "X25519 Compliance Grants",
-    tag: "Auditor access",
-    id: "GRANT·ECDH·scoped-key",
-    desc: "ECDH viewing keys. Scoped, revocable, time-bound.",
-    accent: "#fbbf24",
-    accent2: "#f87171",
+    num: "03",
+    name: "Auditor access",
+    tag: "ECDH read keys",
+    desc: "Grant or revoke read-only access to auditors with surgical precision.",
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-        <path d="M14 12a4 4 0 1 1-4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M14 12l4 4 2-2 1 1-1 1 1 1-2 2-4-4" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+      <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
+        <circle cx="11.5" cy="6.5" r="3" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M9 9l-7 7M14 13l3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
       </svg>
     ),
   },
   {
-    number: "04",
-    name: "Mixer Pool Viewing Keys",
-    tag: "Audit reports",
-    id: "VK·POOL·read-only",
-    desc: "Read-only proofs. Verifiable without decrypting amounts.",
-    accent: "#f472b6",
-    accent2: "#a78bfa",
+    num: "04",
+    name: "Audit reports",
+    tag: "Verifiable proofs",
+    desc: "Auditors verify totals and produce reports without ever decrypting amounts.",
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-        <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" stroke="currentColor" strokeWidth="1.5" />
-        <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.5" />
+      <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
+        <path d="M11 2H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V6l-4-4Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+        <path d="M11 2v4h4M6 10h6M6 13h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
       </svg>
     ),
   },
 ];
 
-function PrimCard({ p }: { p: Primitive }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [tilt, setTilt] = useState({ rx: 0, ry: 0, ang: 0 });
-
-  const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const el = ref.current;
-    if (!el) return;
-    const r = el.getBoundingClientRect();
-    const x = (e.clientX - r.left) / r.width;
-    const y = (e.clientY - r.top) / r.height;
-    const ry = (x - 0.5) * 10;
-    const rx = (0.5 - y) * 10;
-    const ang = Math.atan2(y - 0.5, x - 0.5) * (180 / Math.PI);
-    setTilt({ rx, ry, ang });
-  };
-
-  const onLeave = () => setTilt({ rx: 0, ry: 0, ang: 0 });
-
-  return (
-    <div
-      ref={ref}
-      onMouseMove={onMove}
-      onMouseLeave={onLeave}
-      className="prim-card p-7 md:p-8"
-      style={
-        {
-          "--accent-solid": p.accent,
-          "--accent-solid-2": p.accent2,
-          "--ang": `${tilt.ang}deg`,
-          transform: `perspective(900px) rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg)`,
-        } as CSSProperties
-      }
-    >
-      <span className="prim-orb prim-orb-a" />
-      <span className="prim-orb prim-orb-b" />
-      <span className="prim-grid" />
-
-      <div className="prim-content">
-        <div className="flex items-start justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <span className="font-mono text-[10px] text-white/22 tracking-widest">{p.number}</span>
-            <span className="w-8 h-px bg-white/10" />
-            <div
-              className="prim-icon w-9 h-9 rounded-xl border border-white/[0.08] flex items-center justify-center"
-              style={{
-                color: p.accent,
-                background: `radial-gradient(circle at 30% 20%, ${p.accent}22, transparent 70%)`,
-              }}
-            >
-              {p.icon}
-            </div>
-          </div>
-          <span
-            className="prim-tag text-[8px] font-semibold tracking-widest uppercase text-white/35 border border-white/[0.08] rounded-full px-3 py-1"
-            style={{ background: "rgba(255,255,255,0.015)" }}
-          >
-            {p.tag}
-          </span>
-        </div>
-
-        <h3 className="prim-name text-xl md:text-2xl font-bold leading-tight mb-3">
-          {p.name}
-        </h3>
-
-        <p className="text-[13px] text-white/45 leading-relaxed mb-5 max-w-sm">{p.desc}</p>
-
-        <div className="prim-bar mb-4">
-          <span className="prim-bar-fill" />
-        </div>
-
-        <div className="flex items-center justify-between">
-          <p className="prim-id font-mono text-[10px] text-white/25">{p.id}</p>
-          <span
-            className="font-mono text-[10px] tracking-widest uppercase opacity-60"
-            style={{ color: p.accent }}
-          >
-            ↗
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function UmbraSection() {
   return (
-    <section className="cv-section bg-black py-24 md:py-32 relative overflow-hidden" id="umbra">
-      <div
-        className="absolute inset-0 pointer-events-none opacity-[0.04]"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at 20% 30%, rgba(167,139,250,0.5) 0%, transparent 40%), radial-gradient(circle at 80% 70%, rgba(56,189,248,0.4) 0%, transparent 40%)",
-        }}
-      />
-
-      <div className="max-w-7xl mx-auto px-6 md:px-8 relative">
-        <GsapReveal y={20} duration={0.55}>
-          <div className="flex items-center gap-2.5 mb-5">
-            <div className="w-5 h-5 rounded-md bg-white/[0.06] border border-white/[0.05] grid place-items-center">
-              <svg width="10" height="10" viewBox="0 0 16 16" fill="none">
-                <path d="M8 1L14 4.5V11.5L8 15L2 11.5V4.5L8 1Z" stroke="rgba(255,255,255,0.4)" strokeWidth="1.4" />
-                <path d="M8 5L11 6.75V10.25L8 12L5 10.25V6.75L8 5Z" fill="rgba(255,255,255,0.25)" />
-              </svg>
-            </div>
-            <p className="text-[9px] font-semibold tracking-[0.22em] uppercase text-white/30">
-              Built on Umbra SDK
-            </p>
-            <span className="w-6 h-px bg-white/10" />
-            <span className="text-[9px] font-mono tracking-[0.18em] text-white/20">v4.0.0</span>
-          </div>
-        </GsapReveal>
-
-        <GsapReveal delay={0.1} y={28} duration={0.7}>
-          <h2 className="text-4xl md:text-[3.25rem] font-bold text-white leading-[1.05] tracking-tight max-w-2xl mb-16">
-            Every primitive.{" "}
-            <span className="font-serif-italic text-white/30" style={{ fontWeight: 400 }}>
-              Fully used.
-            </span>
-          </h2>
-        </GsapReveal>
-
-        <GsapStagger
-          className="grid md:grid-cols-2 gap-4 md:gap-5"
-          stagger={0.09}
-          duration={0.7}
-          y={32}
-          scale={0.96}
-          ease="back.out(1.2)"
-          delay={0.1}
-        >
-          {PRIMITIVES.map((p) => (
-            <PrimCard key={p.number} p={p} />
-          ))}
-        </GsapStagger>
-
-        <GsapReveal delay={0.3} y={20}>
-          <div className="mt-12 pt-8 border-t border-white/[0.06] flex items-center justify-between gap-4 flex-wrap">
-            <div className="flex items-center gap-3">
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="animate-pulse-glow absolute inline-flex h-full w-full rounded-full bg-emerald-400/60" />
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400/80" />
+    <section id="umbra" className="cv-section relative py-24 md:py-32 px-5 md:px-8">
+      <div className="max-w-6xl mx-auto">
+        <Reveal>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+            <div className="max-w-xl">
+              <span className="eyebrow">
+                <span className="eyebrow-dot" />
+                Built on Umbra
               </span>
-              <p className="text-white/40 text-xs">Cannot be built without Umbra.</p>
+              <h2
+                className="mt-4 font-bold text-zinc-900 tracking-tight"
+                style={{
+                  fontSize: "clamp(1.875rem, 3.4vw, 2.5rem)",
+                  lineHeight: 1.05,
+                  letterSpacing: "-0.02em",
+                }}
+              >
+                Real privacy primitives. Not just promises.
+              </h2>
             </div>
             <a
               href="https://sdk.umbraprivacy.com/introduction"
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-center gap-2 text-white/50 text-[10px] font-semibold tracking-widest uppercase hover:text-white transition-colors"
+              className="inline-flex items-center gap-1.5 text-[13px] font-medium text-zinc-600 hover:text-zinc-900 transition-colors group"
             >
-              <span>SDK docs</span>
-              <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
+              Read the docs
+              <span className="inline-block transition-transform duration-300 group-hover:translate-x-0.5">↗</span>
             </a>
           </div>
-        </GsapReveal>
+        </Reveal>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {PRIMITIVES.map((p, i) => (
+            <Reveal key={p.num} delay={i * 70} y={14}>
+              <article className="group h-full card card-hover p-6 cursor-default">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-9 h-9 rounded-lg bg-zinc-50 text-zinc-700 grid place-items-center group-hover:bg-zinc-900 group-hover:text-white transition-colors duration-300">
+                      {p.icon}
+                    </span>
+                    <div>
+                      <div className="text-[14.5px] font-semibold text-zinc-900 tracking-tight">
+                        {p.name}
+                      </div>
+                      <div className="text-[11px] text-zinc-500 mt-0.5">{p.tag}</div>
+                    </div>
+                  </div>
+                  <span className="text-[10.5px] font-mono text-zinc-400 tracking-wide">
+                    {p.num}
+                  </span>
+                </div>
+                <p className="text-[13px] leading-relaxed text-zinc-500">{p.desc}</p>
+              </article>
+            </Reveal>
+          ))}
+        </div>
       </div>
     </section>
   );

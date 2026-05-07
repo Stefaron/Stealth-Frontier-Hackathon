@@ -14,7 +14,7 @@ export default function ContributorLayout({
   return (
     <>
       <AppNav role="contributor" links={LINKS} />
-      <main className="pt-14 min-h-svh">
+      <main className="pt-[58px] min-h-svh bg-white">
         <ConnectGate role="contributor">
           <RegistrationBanner />
           {children}

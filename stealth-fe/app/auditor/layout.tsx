@@ -13,7 +13,7 @@ export default function AuditorLayout({
   return (
     <>
       <AppNav role="auditor" links={LINKS} />
-      <main className="pt-14 min-h-svh">
+      <main className="pt-[58px] min-h-svh bg-white">
         <ConnectGate role="auditor">{children}</ConnectGate>
       </main>
     </>

@@ -13,6 +13,18 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  turbopack: {
+    ignoreIssue: [
+      { path: "**/node_modules/web-worker/**" },
+      { path: "**/node_modules/ffjavascript/**" },
+      { path: "**/node_modules/snarkjs/**" },
+    ],
+  },
+  webpack: (config) => {
+    config.module = config.module || {};
+    config.module.exprContextCritical = false;
+    return config;
+  },
 };
 
 export default nextConfig;

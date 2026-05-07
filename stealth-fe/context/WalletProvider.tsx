@@ -5,13 +5,10 @@ import {
   ConnectionProvider,
   WalletProvider as SolanaWalletProvider,
 } from "@solana/wallet-adapter-react";
-import {
-  PhantomWalletAdapter,
-  SolflareWalletAdapter,
-  TrustWalletAdapter,
-  LedgerWalletAdapter,
-  TorusWalletAdapter,
-} from "@solana/wallet-adapter-wallets";
+import { SolflareWalletAdapter } from "@solana/wallet-adapter-solflare";
+import { TrustWalletAdapter } from "@solana/wallet-adapter-trust";
+import { LedgerWalletAdapter } from "@solana/wallet-adapter-ledger";
+import { TorusWalletAdapter } from "@solana/wallet-adapter-torus";
 import { SOLANA_RPC_URL } from "@/lib/constants";
 
 export default function WalletProvider({
@@ -21,7 +18,6 @@ export default function WalletProvider({
 }) {
   const wallets = useMemo(
     () => [
-      new PhantomWalletAdapter(),
       new SolflareWalletAdapter(),
       new TrustWalletAdapter(),
       new LedgerWalletAdapter(),

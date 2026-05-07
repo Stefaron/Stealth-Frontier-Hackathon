@@ -59,7 +59,7 @@ export default function WalletButton() {
         <button
           onClick={() => setModalOpen(true)}
           disabled={connecting || pendingConnect}
-          className="inline-flex items-center gap-2 bg-white text-[#0d0c0a] text-[10px] font-bold tracking-widest uppercase px-5 py-2.5 rounded-full hover:bg-white/90 transition-all duration-200 hover:scale-[1.03] active:scale-[0.98] disabled:opacity-50"
+          className="press inline-flex items-center gap-1.5 bg-zinc-900 text-white text-[12.5px] font-semibold px-3.5 py-1.5 rounded-lg hover:bg-zinc-800 transition-all duration-200 disabled:opacity-50"
         >
           {connecting || pendingConnect ? "Connecting…" : "Connect Wallet"}
         </button>
@@ -74,20 +74,20 @@ export default function WalletButton() {
 
   if (!client) {
     return (
-      <div className="flex items-center gap-3">
-        <span className="font-mono text-[9px] text-white/35 tracking-widest">
-          {publicKey?.toBase58().slice(0, 8)}…
+      <div className="flex items-center gap-2.5">
+        <span className="font-mono text-[11px] text-zinc-500 tracking-wide">
+          {publicKey?.toBase58().slice(0, 6)}…{publicKey?.toBase58().slice(-4)}
         </span>
         <button
           onClick={initClient}
           disabled={isInitializing}
-          className="inline-flex items-center gap-2 bg-violet-500/15 border border-violet-500/30 text-violet-300 text-[10px] font-bold tracking-widest uppercase px-4 py-2 rounded-full hover:bg-violet-500/25 transition-all duration-200 disabled:opacity-50"
+          className="press inline-flex items-center gap-1.5 bg-indigo-50 border border-indigo-200 text-indigo-700 text-[11.5px] font-semibold px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition-all duration-200 disabled:opacity-50"
         >
-          {isInitializing ? "Initializing…" : "Activate Stealth"}
+          {isInitializing ? "Activating…" : "Activate Stealth"}
         </button>
         <button
           onClick={handleDisconnect}
-          className="text-white/25 text-[9px] tracking-widest uppercase hover:text-white/55 transition-colors"
+          className="text-[11px] text-zinc-400 hover:text-zinc-700 transition-colors press"
         >
           Disconnect
         </button>
@@ -96,18 +96,20 @@ export default function WalletButton() {
   }
 
   return (
-    <div className="flex items-center gap-3">
-      <div className="flex items-center gap-1.5">
-        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-        <span className="font-mono text-[9px] text-white/35 tracking-widest">
-          {publicKey?.toBase58().slice(0, 8)}…
-        </span>
-      </div>
+    <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-zinc-50 border border-zinc-200">
+      <span className="relative flex h-1.5 w-1.5">
+        <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60 animate-soft-pulse" />
+        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+      </span>
+      <span className="font-mono text-[11px] text-zinc-700 tracking-wide">
+        {publicKey?.toBase58().slice(0, 6)}…{publicKey?.toBase58().slice(-4)}
+      </span>
       <button
         onClick={handleDisconnect}
-        className="text-white/25 text-[9px] tracking-widest uppercase hover:text-white/55 transition-colors"
+        className="text-zinc-400 hover:text-zinc-900 transition-colors text-[14px] leading-none"
+        aria-label="Disconnect"
       >
-        Disconnect
+        ×
       </button>
     </div>
   );

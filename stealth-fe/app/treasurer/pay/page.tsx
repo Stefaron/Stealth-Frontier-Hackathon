@@ -293,23 +293,26 @@ export default function PayPage() {
   const errorCount = rows.filter((r) => r.status.state === "error").length;
 
   return (
-    <div className="max-w-7xl mx-auto px-6 md:px-8 py-12">
+    <div className="max-w-7xl mx-auto px-5 md:px-8 py-10 md:py-12">
       <div className="mb-8">
-        <p className="font-mono text-[9px] tracking-[0.22em] uppercase text-white/25 mb-3">
+        <span className="eyebrow mb-3">
+          <span className="eyebrow-dot" />
           Treasurer · Pay
-        </p>
-        <h1 className="text-3xl font-bold text-white mb-1">Bulk Private Pay</h1>
-        <p className="text-white/35 text-sm">
-          Upload a CSV, preview recipients, then send privately via Umbra mixer.
+        </span>
+        <h1 className="mt-3 text-[1.75rem] md:text-[2rem] font-bold text-zinc-900 tracking-tight" style={{ letterSpacing: "-0.02em" }}>
+          Bulk private payout
+        </h1>
+        <p className="mt-2 text-[14px] text-zinc-500">
+          Upload a CSV, preview recipients, then send privately via Umbra.
         </p>
       </div>
 
       {/* Wrap SOL utility */}
       {publicKey && (
-        <div className="mb-6 bg-amber-500/[0.06] border border-amber-500/[0.15] rounded-2xl px-5 py-4 flex flex-wrap items-center gap-3">
+        <div className="mb-6 bg-amber-50 border border-amber-200 rounded-xl px-5 py-4 flex flex-wrap items-center gap-3">
           <div className="flex-1 min-w-0">
-            <p className="text-amber-400 text-[11px] font-semibold mb-0.5">Devnet: wrap SOL → WSOL before sending</p>
-            <p className="text-amber-400/50 text-[10px]">Umbra devnet only supports Wrapped SOL</p>
+            <p className="text-amber-800 text-[13px] font-semibold mb-0.5">Wrap SOL → WSOL first</p>
+            <p className="text-amber-700 text-[12px]">Umbra devnet only supports Wrapped SOL.</p>
           </div>
           <div className="flex items-center gap-2">
             <input
@@ -318,13 +321,13 @@ export default function PayPage() {
               step="0.01"
               value={wrapAmount}
               onChange={(e) => setWrapAmount(e.target.value)}
-              className="w-24 bg-white/[0.05] border border-white/[0.1] rounded-lg px-3 py-1.5 text-white text-xs text-right focus:outline-none focus:border-amber-400/40"
+              className="w-24 bg-white border border-zinc-200 rounded-lg px-3 py-1.5 text-zinc-900 text-[13px] text-right focus:outline-none focus:border-amber-400"
             />
-            <span className="text-white/30 text-xs">SOL</span>
+            <span className="text-zinc-500 text-[12px]">SOL</span>
             <button
               onClick={handleWrapSol}
               disabled={isWrapping || !publicKey}
-              className="bg-amber-500/20 border border-amber-500/30 text-amber-300 text-[10px] font-bold tracking-widest uppercase px-4 py-1.5 rounded-full hover:bg-amber-500/30 transition-all disabled:opacity-40"
+              className="press bg-zinc-900 text-white text-[12px] font-semibold px-3.5 py-1.5 rounded-lg hover:bg-zinc-800 transition-all disabled:opacity-40"
             >
               {isWrapping ? "Wrapping…" : "Wrap SOL"}
             </button>
@@ -333,20 +336,21 @@ export default function PayPage() {
       )}
 
       {!rows.length ? (
-        <div className="grid md:grid-cols-2 gap-6">
-          <div
-            className="bg-white/[0.025] border-2 border-dashed border-white/[0.08] rounded-2xl p-10 flex flex-col items-center justify-center gap-4 cursor-pointer hover:border-violet-500/30 hover:bg-white/[0.035] transition-all duration-200"
+        <div className="grid md:grid-cols-2 gap-4">
+          <button
+            type="button"
+            className="card border-dashed p-10 flex flex-col items-center justify-center gap-4 hover:border-zinc-400 hover:bg-zinc-50/50 transition-all duration-200 cursor-pointer"
             onClick={() => fileRef.current?.click()}
           >
-            <div className="w-12 h-12 rounded-2xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400">
+            <div className="w-12 h-12 rounded-2xl bg-zinc-900 text-white grid place-items-center">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
                 <path d="M12 3v12M8 8l4-5 4 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
               </svg>
             </div>
             <div className="text-center">
-              <p className="text-white font-semibold mb-1">Upload CSV</p>
-              <p className="text-white/35 text-sm">address, amount, mint (SOL), note</p>
+              <p className="text-zinc-900 font-semibold text-[14px] mb-1">Upload CSV</p>
+              <p className="text-zinc-500 text-[12.5px]">address, amount, mint (SOL), note</p>
             </div>
             <input
               ref={fileRef}
@@ -355,36 +359,36 @@ export default function PayPage() {
               className="hidden"
               onChange={handleFileChange}
             />
-          </div>
+          </button>
 
-          <div className="bg-white/[0.025] border border-white/[0.06] rounded-2xl p-6">
-            <h3 className="text-sm font-bold text-white mb-3">CSV Format</h3>
-            <pre className="bg-white/[0.03] rounded-lg p-4 text-[10px] font-mono text-white/40 overflow-x-auto">
+          <div className="card p-6">
+            <h3 className="text-[14px] font-semibold text-zinc-900 mb-3 tracking-tight">CSV format</h3>
+            <pre className="bg-zinc-50 border border-zinc-100 rounded-lg p-4 text-[11px] font-mono text-zinc-600 overflow-x-auto">
               {`address,amount,mint,note\n8xH3...,0.01,SOL,Q1 salary\n7yJ2...,0.05,SOL,Bounty`}
             </pre>
-            <p className="mt-2 text-amber-400/60 text-[9px]">Devnet: only SOL (wrapped) is supported</p>
+            <p className="mt-3 text-amber-700 text-[11px]">Devnet: only SOL (wrapped) supported.</p>
             <button
               onClick={downloadTemplate}
-              className="mt-3 text-violet-400 text-[10px] font-semibold tracking-widest uppercase hover:text-violet-300 transition-colors"
+              className="press mt-3 text-zinc-700 text-[12.5px] font-semibold hover:text-zinc-900 transition-colors inline-flex items-center gap-1"
             >
-              Download template →
+              Download template <span aria-hidden>→</span>
             </button>
           </div>
         </div>
       ) : (
         <>
-          <div className="flex items-center gap-4 mb-6">
-            <div className="flex items-center gap-6 text-sm">
-              <span className="text-white/35">
-                <span className="text-white font-bold">{rows.length}</span> recipients
+          <div className="flex flex-wrap items-center gap-3 mb-5">
+            <div className="flex items-center gap-5 text-[13px]">
+              <span className="text-zinc-500">
+                <span className="text-zinc-900 font-semibold">{rows.length}</span> recipients
               </span>
               {sentCount > 0 && (
-                <span className="text-emerald-400 font-mono text-[11px]">
+                <span className="text-emerald-700 font-medium text-[12.5px]">
                   ✓ {sentCount} sent
                 </span>
               )}
               {errorCount > 0 && (
-                <span className="text-red-400 font-mono text-[11px]">
+                <span className="text-red-700 font-medium text-[12.5px]">
                   ✕ {errorCount} failed
                 </span>
               )}
@@ -392,27 +396,27 @@ export default function PayPage() {
             <div className="flex-1" />
             <button
               onClick={() => setRows([])}
-              className="text-white/25 text-[9px] tracking-widest uppercase hover:text-white/50 transition-colors"
+              className="press text-zinc-500 text-[12.5px] font-medium hover:text-zinc-900 transition-colors"
             >
               Clear
             </button>
             <button
               onClick={sendAll}
               disabled={isSending || pendingCount === 0}
-              className="inline-flex items-center gap-2 bg-white text-[#0d0c0a] text-[10px] font-bold tracking-widest uppercase px-6 py-2.5 rounded-full hover:bg-white/90 transition-all duration-200 disabled:opacity-40"
+              className="btn-primary press disabled:opacity-40"
             >
               {isSending ? "Sending…" : `Send ${pendingCount} privately`}
             </button>
           </div>
 
           {globalError && (
-            <div className="mb-4 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-red-400 text-sm">
+            <div className="mb-4 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-red-700 text-[13px]">
               {globalError}
             </div>
           )}
 
-          <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl overflow-hidden">
-            <div className="grid grid-cols-[1fr_auto_auto_auto] gap-4 px-5 py-3 border-b border-white/[0.05] text-[9px] font-semibold tracking-[0.15em] uppercase text-white/25">
+          <div className="card overflow-hidden">
+            <div className="grid grid-cols-[1fr_auto_auto_auto] gap-4 px-5 py-3 border-b border-zinc-100 bg-zinc-50/50 text-[10.5px] font-semibold tracking-wider uppercase text-zinc-500">
               <span>Recipient</span>
               <span>Amount</span>
               <span>Token</span>
@@ -421,34 +425,34 @@ export default function PayPage() {
             {rows.map((row) => (
               <div
                 key={row.index}
-                className="grid grid-cols-[1fr_auto_auto_auto] gap-4 items-center px-5 py-3.5 border-b border-white/[0.04] last:border-0"
+                className="grid grid-cols-[1fr_auto_auto_auto] gap-4 items-center px-5 py-3.5 border-b border-zinc-100 last:border-0"
               >
                 <div>
-                  <p className="font-mono text-[11px] text-white/60">
+                  <p className="font-mono text-[12px] text-zinc-900">
                     {row.address.slice(0, 12)}…{row.address.slice(-6)}
                   </p>
                   {row.note && (
-                    <p className="text-[10px] text-white/25 mt-0.5">{row.note}</p>
+                    <p className="text-[11px] text-zinc-500 mt-0.5">{row.note}</p>
                   )}
                 </div>
-                <span className="text-white/70 text-sm font-medium">{row.amount}</span>
-                <span className="font-mono text-[10px] text-white/40 uppercase">
+                <span className="text-zinc-900 text-[13px] font-medium">{row.amount}</span>
+                <span className="font-mono text-[11px] text-zinc-500 uppercase">
                   {row.mint || "SOL"}
                 </span>
                 <div className="text-right">
                   {row.status.state === "pending" && (
-                    <span className="text-white/25 text-[10px]">Pending</span>
+                    <span className="text-zinc-400 text-[11px]">Pending</span>
                   )}
                   {row.status.state === "sending" && (
-                    <span className="text-violet-400 text-[10px] animate-pulse">Proving…</span>
+                    <span className="text-indigo-700 text-[11px] font-medium animate-pulse">Proving…</span>
                   )}
                   {row.status.state === "sent" && (
-                    <span className="text-emerald-400 text-[10px]">✓ Sent</span>
+                    <span className="text-emerald-700 text-[11px] font-medium">✓ Sent</span>
                   )}
                   {row.status.state === "error" && (
                     <div className="text-right">
-                      <span className="text-red-400 text-[10px]">✕ Error</span>
-                      <p className="text-red-400/50 text-[9px] max-w-[160px] truncate" title={row.status.error}>
+                      <span className="text-red-700 text-[11px] font-medium">✕ Error</span>
+                      <p className="text-red-600/80 text-[10px] max-w-[180px] truncate" title={row.status.error}>
                         {row.status.error}
                       </p>
                     </div>

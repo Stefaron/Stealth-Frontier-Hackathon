@@ -178,70 +178,67 @@ export default function ContributorPage() {
     if (isLoadingBalances) {
       return (
         <div className="animate-pulse">
-          <div className="h-10 bg-white/[0.04] rounded-lg mb-2 w-32" />
-          <div className="h-3 bg-white/[0.02] rounded w-20" />
+          <div className="h-9 bg-zinc-100 rounded-lg mb-2 w-32" />
+          <div className="h-3 bg-zinc-100 rounded w-20" />
         </div>
       );
     }
     if (bal?.state === "shared") {
       return (
         <>
-          <p className="text-4xl font-bold text-white mb-1 tabular-nums">
+          <p className="text-[34px] font-bold text-zinc-900 mb-1 tabular-nums tracking-tight" style={{ lineHeight: 1 }}>
             {formatBalance(bal.balance!, mint)}
           </p>
-          <p className="font-mono text-[10px] text-white/25">{label} · Shared mode</p>
+          <p className="text-[12px] text-zinc-500">{label} · Shared mode</p>
         </>
       );
     }
     if (bal?.state === "mxe") {
       return (
         <>
-          <p className="text-2xl font-bold text-white/40 mb-1">••••••</p>
-          <p className="font-mono text-[10px] text-white/25">MXE encrypted — request MPC decrypt</p>
+          <p className="text-[28px] font-bold text-zinc-400 mb-1">••••••</p>
+          <p className="text-[12px] text-zinc-500">MXE encrypted — request MPC decrypt</p>
         </>
       );
     }
     if (bal?.state === "uninitialized") {
       return (
         <>
-          <p className="text-4xl font-bold text-white mb-1">0.00</p>
-          <p className="font-mono text-[10px] text-white/25">{label} · Not yet activated</p>
+          <p className="text-[34px] font-bold text-zinc-900 mb-1 tabular-nums tracking-tight" style={{ lineHeight: 1 }}>0.00</p>
+          <p className="text-[12px] text-zinc-500">{label} · Not yet activated</p>
         </>
       );
     }
     return (
       <>
-        <p className="text-white/25 text-sm">No encrypted balance.</p>
-        <p className="font-mono text-[9px] text-white/15 mt-1">Ask treasurer to send payment first.</p>
+        <p className="text-zinc-500 text-[13.5px]">No encrypted balance.</p>
+        <p className="text-[11px] text-zinc-400 mt-1">Ask treasurer to send payment first.</p>
       </>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-6 md:px-8 py-12">
-      <div className="mb-8">
-        <p className="font-mono text-[9px] tracking-[0.22em] uppercase text-white/25 mb-3">
-          Contributor · Balance
-        </p>
-        <h1 className="text-3xl font-bold text-white mb-1">
-          Your Encrypted{" "}
-          <span className="font-serif-italic text-white/30" style={{ fontWeight: 400 }}>
-            Balance
+    <div className="max-w-4xl mx-auto px-5 md:px-8 py-10 md:py-12">
+      <div className="mb-8 flex items-end justify-between gap-4 flex-wrap">
+        <div>
+          <span className="eyebrow mb-3">
+            <span className="eyebrow-dot" />
+            Contributor · Balance
           </span>
-        </h1>
-        <p className="text-white/35 text-sm">
-          Withdraw anytime to your public wallet.
-        </p>
-      </div>
-
-      <div className="flex justify-end mb-4">
+          <h1 className="mt-3 text-[1.75rem] md:text-[2rem] font-bold text-zinc-900 tracking-tight" style={{ letterSpacing: "-0.02em" }}>
+            Your encrypted balance
+          </h1>
+          <p className="mt-2 text-[14px] text-zinc-500">
+            Withdraw anytime to your public wallet.
+          </p>
+        </div>
         <button
           onClick={loadBalancesAndScan}
           disabled={isLoadingBalances || isScanning}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-mono tracking-widest uppercase text-white/30 hover:text-white/60 hover:bg-white/[0.04] transition-all disabled:opacity-30"
+          className="press btn-secondary text-[12.5px] disabled:opacity-50"
         >
           <svg
-            width="11" height="11" viewBox="0 0 16 16" fill="none"
+            width="12" height="12" viewBox="0 0 16 16" fill="none"
             className={isLoadingBalances || isScanning ? "animate-spin" : ""}
           >
             <path d="M13.5 8A5.5 5.5 0 1 1 8 2.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
@@ -255,60 +252,59 @@ export default function ContributorPage() {
         const unclaimedUtxos = pendingUtxos.filter(u => !claimedIndices.has(String(u.insertionIndex)));
         if (!isScanning && unclaimedUtxos.length === 0) return null;
         return (
-          <div className="mb-6 flex items-center justify-between bg-amber-500/10 border border-amber-500/20 rounded-2xl px-6 py-4">
+          <div className="mb-6 flex items-center justify-between bg-amber-50 border border-amber-200 rounded-xl px-5 py-4 gap-4 flex-wrap">
             <div>
-              <p className="text-amber-400 text-sm font-medium">
-                {isScanning ? "Scanning for pending payments…" : `${unclaimedUtxos.length} unclaimed payment(s) found`}
+              <p className="text-amber-800 text-[13.5px] font-semibold">
+                {isScanning ? "Scanning for pending payments…" : `${unclaimedUtxos.length} unclaimed payment${unclaimedUtxos.length === 1 ? "" : "s"} found`}
               </p>
-              <p className="text-amber-400/60 text-xs mt-0.5">
-                Claim to move into your encrypted balance
+              <p className="text-amber-700 text-[12px] mt-0.5">
+                Claim to move them into your encrypted balance.
               </p>
             </div>
             {!isScanning && (
               <button
                 onClick={() => handleClaim(unclaimedUtxos)}
                 disabled={isClaiming}
-                className="bg-amber-500 hover:bg-amber-400 text-black text-[10px] font-bold tracking-widest uppercase px-5 py-2.5 rounded-full transition-all duration-200 disabled:opacity-50"
+                className="press bg-zinc-900 text-white text-[12.5px] font-semibold px-4 py-2 rounded-lg hover:bg-zinc-800 transition-all disabled:opacity-50"
               >
-                {isClaiming ? "Claiming…" : "Claim Now"}
+                {isClaiming ? "Claiming…" : "Claim now"}
               </button>
             )}
           </div>
         );
       })()}
 
-      <div className="grid md:grid-cols-2 gap-6 mb-8">
+      <div className="grid md:grid-cols-2 gap-4 mb-6">
         <div className="space-y-4">
-          <div className="bg-white/[0.025] border border-white/[0.06] rounded-2xl p-7">
+          <div className="card p-7">
             <div className="flex items-center gap-2 mb-5">
-              <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
-              <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-white/30">SOL Balance</span>
+              <span className="text-[10.5px] font-semibold uppercase tracking-wider text-zinc-500">SOL Balance</span>
             </div>
             {renderBalance(solBalance, SOL_MINT, "SOL")}
           </div>
-          <div className="bg-white/[0.025] border border-white/[0.06] rounded-2xl p-7">
+          <div className="card p-7">
             <div className="flex items-center gap-2 mb-5">
-              <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
-              <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-white/30">USDC Balance</span>
+              <span className="text-[10.5px] font-semibold uppercase tracking-wider text-zinc-500">USDC Balance</span>
             </div>
             {renderBalance(usdcBalance, USDC_DEVNET_MINT, "USDC")}
           </div>
         </div>
 
-        <div className="bg-white/[0.025] border border-white/[0.06] rounded-2xl p-7">
-          <h2 className="text-sm font-bold text-white mb-5">Withdraw to Wallet</h2>
+        <div className="card p-7">
+          <h2 className="text-[15px] font-semibold text-zinc-900 mb-5 tracking-tight">Withdraw to wallet</h2>
 
-          <div className="flex gap-2 mb-4">
+          <div className="flex gap-1 mb-4 p-1 rounded-full border border-zinc-200 bg-white w-fit">
             {([SOL_MINT, USDC_DEVNET_MINT] as Address[]).map((mint) => {
               const sym = KNOWN_MINTS[mint]?.symbol ?? mint.slice(0, 4);
+              const isActive = withdrawMint === mint;
               return (
                 <button
                   key={mint}
                   onClick={() => setWithdrawMint(mint)}
-                  className={`px-3 py-1 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-all ${
-                    withdrawMint === mint
-                      ? "bg-white/10 text-white"
-                      : "text-white/30 hover:text-white/60"
+                  className={`px-3.5 py-1.5 rounded-full text-[12px] font-semibold transition-colors ${
+                    isActive
+                      ? "bg-zinc-900 text-white"
+                      : "text-zinc-500 hover:text-zinc-900"
                   }`}
                 >
                   {sym}
@@ -317,7 +313,7 @@ export default function ContributorPage() {
             })}
           </div>
           <label className="block mb-4">
-            <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-white/30 block mb-1.5">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 block mb-1.5">
               Amount ({KNOWN_MINTS[withdrawMint]?.symbol ?? "Token"})
             </span>
             <input
@@ -327,24 +323,24 @@ export default function ContributorPage() {
               value={withdrawAmount}
               onChange={(e) => setWithdrawAmount(e.target.value)}
               placeholder="0.00"
-              className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-2.5 text-white/70 text-sm font-mono placeholder:text-white/20 focus:outline-none focus:border-slate-500/40 transition-colors"
+              className="w-full bg-white border border-zinc-200 rounded-lg px-3.5 py-2.5 text-zinc-900 text-[14px] font-mono placeholder:text-zinc-400 focus:outline-none focus:border-zinc-400 transition-colors"
             />
           </label>
 
-          <div className="mb-5 bg-white/[0.02] border border-white/[0.05] rounded-xl px-4 py-3">
-            <p className="font-mono text-[9px] text-white/30 mb-1">Destination</p>
-            <p className="font-mono text-[11px] text-white/50 truncate">
+          <div className="mb-5 bg-zinc-50/60 border border-zinc-100 rounded-lg px-4 py-3">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-1">Destination</p>
+            <p className="font-mono text-[12px] text-zinc-700 truncate">
               {publicKey?.toBase58() ?? "Not connected"}
             </p>
           </div>
 
           {error && (
-            <div className="mb-3 bg-red-500/10 border border-red-500/20 rounded-xl px-3 py-2 text-red-400 text-xs">
+            <div className="mb-3 bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-red-700 text-[12.5px]">
               {error}
             </div>
           )}
           {withdrawResult && (
-            <div className="mb-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-3 py-2 text-emerald-400 text-xs font-mono">
+            <div className="mb-3 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2 text-emerald-700 text-[12px] font-mono">
               Queued: {withdrawResult.slice(0, 24)}…
             </div>
           )}
@@ -352,31 +348,29 @@ export default function ContributorPage() {
           <button
             onClick={handleWithdraw}
             disabled={isWithdrawing || !withdrawAmount || balances.get(withdrawMint)?.state !== "shared"}
-            className="w-full bg-white text-[#0d0c0a] text-[10px] font-bold tracking-widest uppercase px-6 py-3 rounded-full hover:bg-white/90 transition-all duration-200 disabled:opacity-40"
+            className="btn-primary press w-full disabled:opacity-40"
           >
             {isWithdrawing ? "Withdrawing…" : "Withdraw"}
           </button>
         </div>
       </div>
 
-      <div className="bg-white/[0.015] border border-white/[0.05] rounded-2xl p-6">
-        <div className="flex items-center gap-2 mb-3">
-          <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-white/20">
-            Privacy Model
-          </span>
-        </div>
-        <div className="grid md:grid-cols-3 gap-4 text-sm">
+      <div className="card p-6">
+        <p className="text-[10.5px] font-semibold uppercase tracking-wider text-zinc-500 mb-4">
+          Privacy model
+        </p>
+        <div className="grid md:grid-cols-3 gap-4">
           {[
-            { label: "Balance", value: "Rescue cipher", tag: "ETA·x25519" },
-            { label: "Withdraw", value: "Direct (MPC)", tag: "Arcium·MXE" },
+            { label: "Balance", value: "Rescue cipher", tag: "ETA · x25519" },
+            { label: "Withdraw", value: "Direct (MPC)", tag: "Arcium · MXE" },
             { label: "History", value: "Encrypted", tag: "No on-chain leak" },
           ].map((item) => (
             <div key={item.label}>
-              <p className="text-white/25 text-[10px] uppercase tracking-widest mb-1">
+              <p className="text-zinc-400 text-[10.5px] uppercase tracking-wider font-semibold mb-1">
                 {item.label}
               </p>
-              <p className="text-white/55 font-medium">{item.value}</p>
-              <p className="font-mono text-[9px] text-white/15 mt-0.5">{item.tag}</p>
+              <p className="text-zinc-900 text-[14px] font-medium">{item.value}</p>
+              <p className="font-mono text-[11px] text-zinc-400 mt-0.5">{item.tag}</p>
             </div>
           ))}
         </div>

@@ -24,7 +24,7 @@ const playfairDisplay = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Stealth — Private Payroll for DAOs",
+  title: "Stealth",
   description:
     "Private by default. Auditable on demand. Stealth brings confidential payroll to Solana DAOs using the Umbra SDK — built for the Solana Frontier Hackathon 2026.",
   keywords: ["DAO", "payroll", "Solana", "Umbra", "privacy", "DeFi", "compliance"],
@@ -40,7 +40,7 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#0d0c0a] text-[#f0ede8]" suppressHydrationWarning>
+      <body className="min-h-full flex flex-col bg-white text-[#0f1115]" suppressHydrationWarning>
         <WalletProvider>
           <UmbraProvider>
             <ToastProvider>

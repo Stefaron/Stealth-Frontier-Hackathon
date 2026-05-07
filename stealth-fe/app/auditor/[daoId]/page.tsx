@@ -148,47 +148,42 @@ export default function DaoAuditPage() {
     }
   };
 
+  const backLink = (
+    <Link
+      href="/auditor"
+      className="inline-flex items-center gap-1 text-[12.5px] font-medium text-zinc-500 hover:text-zinc-900 transition-colors press"
+    >
+      <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
+        <path d="M9 2L3 6L9 10M3 6H10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+      All grants
+    </Link>
+  );
+
   if (!publicKey) {
     return (
-      <div className="max-w-7xl mx-auto px-6 md:px-8 py-12 text-center">
-        <p className="text-white/40 text-sm mb-2">Wallet not connected.</p>
-        <Link
-          href="/auditor"
-          className="text-white/30 text-[10px] font-semibold tracking-widest uppercase hover:text-white/60 transition-colors"
-        >
-          ← Grants
-        </Link>
+      <div className="max-w-7xl mx-auto px-5 md:px-8 py-12 text-center">
+        <p className="text-zinc-500 text-[14px] mb-3">Wallet not connected.</p>
+        {backLink}
       </div>
     );
   }
 
   if (!hasAccess) {
     return (
-      <div className="max-w-7xl mx-auto px-6 md:px-8 py-12">
-        <div className="mb-6">
-          <Link
-            href="/auditor"
-            className="text-white/30 text-[10px] font-semibold tracking-widest uppercase hover:text-white/60 transition-colors"
-          >
-            ← Grants
-          </Link>
-        </div>
-        <div className="bg-red-500/[0.06] border border-red-500/20 rounded-2xl p-12 text-center">
-          <div className="w-12 h-12 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto mb-4">
+      <div className="max-w-7xl mx-auto px-5 md:px-8 py-10 md:py-12">
+        <div className="mb-6">{backLink}</div>
+        <div className="card p-12 text-center">
+          <div className="w-12 h-12 rounded-2xl bg-red-50 border border-red-200 grid place-items-center mx-auto mb-4 text-red-600">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path
-                d="M10 6v4M10 14h.01M19 10A9 9 0 1 1 1 10a9 9 0 0 1 18 0Z"
-                stroke="#f87171"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
+              <path d="M10 6v4M10 14h.01M19 10A9 9 0 1 1 1 10a9 9 0 0 1 18 0Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
             </svg>
           </div>
-          <p className="text-red-400 font-bold text-base mb-2">Access Denied</p>
-          <p className="text-white/30 text-sm mb-1">
+          <p className="text-red-700 font-bold text-[15px] mb-1.5">Access denied</p>
+          <p className="text-zinc-600 text-[13.5px] mb-1">
             The connected wallet does not have a grant for this report.
           </p>
-          <p className="font-mono text-[10px] text-white/15">
+          <p className="font-mono text-[11px] text-zinc-400">
             {publicKey.toBase58().slice(0, 16)}… does not have permission
           </p>
         </div>
@@ -197,41 +192,37 @@ export default function DaoAuditPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-6 md:px-8 py-12">
-      <div className="mb-2">
-        <Link
-          href="/auditor"
-          className="text-white/30 text-[10px] font-semibold tracking-widest uppercase hover:text-white/60 transition-colors"
-        >
-          ← Grants
-        </Link>
-      </div>
+    <div className="max-w-7xl mx-auto px-5 md:px-8 py-10 md:py-12">
+      <div className="mb-3">{backLink}</div>
 
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
         <div>
-          <p className="font-mono text-[9px] tracking-[0.22em] uppercase text-white/25 mb-3">
+          <span className="eyebrow mb-3">
+            <span className="eyebrow-dot" />
             Auditor · DAO Report
-          </p>
-          <h1 className="text-3xl font-bold text-white mb-1">Treasury Report</h1>
-          <p className="font-mono text-[10px] text-white/30 truncate max-w-sm">{daoId}</p>
+          </span>
+          <h1 className="mt-3 text-[1.75rem] md:text-[2rem] font-bold text-zinc-900 tracking-tight" style={{ letterSpacing: "-0.02em" }}>
+            Treasury report
+          </h1>
+          <p className="font-mono text-[11.5px] text-zinc-500 truncate max-w-sm mt-1.5">{daoId}</p>
           {nonce && (
-            <p className="font-mono text-[9px] text-white/15 mt-0.5">
+            <p className="font-mono text-[10.5px] text-zinc-400 mt-0.5">
               Grant nonce: {nonce.slice(0, 16)}…
             </p>
           )}
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button
             onClick={handleExportCsv}
             disabled={filteredTransactions.length === 0}
-            className="inline-flex items-center gap-2 bg-white/[0.06] border border-white/[0.08] text-white/60 text-[10px] font-bold tracking-widest uppercase px-4 py-2.5 rounded-full hover:bg-white/[0.1] transition-all duration-200 disabled:opacity-30"
+            className="btn-secondary press text-[12.5px] disabled:opacity-40"
           >
             Export CSV
           </button>
           <button
             onClick={handleExportPdf}
             disabled={isExportingPdf || filteredTransactions.length === 0}
-            className="inline-flex items-center gap-2 bg-white text-[#0d0c0a] text-[10px] font-bold tracking-widest uppercase px-5 py-2.5 rounded-full hover:bg-white/90 transition-all duration-200 disabled:opacity-50"
+            className="btn-primary press text-[12.5px] disabled:opacity-50"
           >
             {isExportingPdf ? "Generating…" : "Export PDF"}
           </button>
@@ -239,43 +230,40 @@ export default function DaoAuditPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid md:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
         {[
           {
-            label: "Filtered Transactions",
+            label: "Filtered transactions",
             value: filteredTransactions.length.toString(),
-            tag: scanResult ? `${transactions.length} total decrypted` : "Via Umbra Mixer",
+            tag: scanResult ? `${transactions.length} total decrypted` : "Via Umbra mixer",
           },
           {
-            label: "Filtered Volume",
+            label: "Filtered volume",
             value: filteredTransactions.length > 0 ? formatAmount(total, scopeMint) : "—",
             tag: KNOWN_MINTS[scopeMint]?.symbol ?? "USDC",
           },
           {
-            label: "Grant Status",
+            label: "Grant status",
             value: "Active",
-            tag: grant?.viewingKey ? "VK·ATTACHED" : "VK·NOT·SET",
+            tag: grant?.viewingKey ? "VK · attached" : "VK · not set",
           },
         ].map((s) => (
-          <div
-            key={s.label}
-            className="bg-white/[0.025] border border-white/[0.06] rounded-2xl p-5"
-          >
-            <p className="font-mono text-[9px] tracking-[0.2em] uppercase text-white/20 mb-2">
+          <div key={s.label} className="card p-5">
+            <p className="text-[11px] uppercase tracking-wider text-zinc-400 font-medium mb-2">
               {s.label}
             </p>
-            <p className="text-xl font-bold text-white">{s.value}</p>
-            <p className="font-mono text-[8px] text-white/15 tracking-widest mt-1">{s.tag}</p>
+            <p className="text-[18px] font-semibold text-zinc-900 tracking-tight">{s.value}</p>
+            <p className="text-[11px] text-zinc-400 font-mono tracking-wide mt-1">{s.tag}</p>
           </div>
         ))}
       </div>
 
       {/* Scanner controls */}
       {grant?.viewingKey ? (
-        <div className="bg-white/[0.025] border border-white/[0.06] rounded-2xl p-5 mb-6 flex flex-col sm:flex-row items-start sm:items-end gap-4">
-          <div className="flex-1 grid sm:grid-cols-2 gap-3">
+        <div className="card p-5 mb-6 flex flex-col sm:flex-row items-start sm:items-end gap-4">
+          <div className="flex-1 grid sm:grid-cols-2 gap-3 w-full">
             <label className="block">
-              <span className="font-mono text-[9px] tracking-[0.18em] uppercase text-white/25 block mb-1.5">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 block mb-1.5">
                 Mint
               </span>
               <input
@@ -283,20 +271,20 @@ export default function DaoAuditPage() {
                 value={scopeMint}
                 onChange={(e) => setScopeMint(e.target.value.trim())}
                 placeholder="Token mint address…"
-                className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-3 py-2 text-white/70 text-[11px] font-mono placeholder:text-white/20 focus:outline-none focus:border-violet-500/40 transition-colors"
+                className="w-full bg-white border border-zinc-200 rounded-lg px-3 py-2 text-zinc-900 text-[12px] font-mono placeholder:text-zinc-400 focus:outline-none focus:border-zinc-400 transition-colors"
               />
             </label>
             <label className="block">
-              <span className="font-mono text-[9px] tracking-[0.18em] uppercase text-white/25 block mb-1.5">
-                VK Level
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 block mb-1.5">
+                VK level
               </span>
               <select
                 value={vkLevel}
                 onChange={(e) => setVkLevel(e.target.value as VkLevel)}
-                className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-3 py-2 text-white/70 text-[11px] font-mono focus:outline-none focus:border-violet-500/40 transition-colors appearance-none"
+                className="w-full bg-white border border-zinc-200 rounded-lg px-3 py-2 text-zinc-900 text-[12px] font-mono focus:outline-none focus:border-zinc-400 transition-colors"
               >
                 {VK_LEVELS.map((l) => (
-                  <option key={l} value={l} className="bg-[#1a1917]">
+                  <option key={l} value={l}>
                     {l}
                   </option>
                 ))}
@@ -306,51 +294,48 @@ export default function DaoAuditPage() {
           <button
             onClick={handleScan}
             disabled={isScanning}
-            className="flex-shrink-0 bg-violet-500/20 border border-violet-500/30 text-violet-300 text-[10px] font-bold tracking-widest uppercase px-6 py-2.5 rounded-full hover:bg-violet-500/30 transition-all duration-200 disabled:opacity-40"
+            className="btn-primary press flex-shrink-0 disabled:opacity-40"
           >
-            {isScanning ? "Scanning…" : "Load Transactions"}
+            {isScanning ? "Scanning…" : "Load transactions"}
           </button>
         </div>
       ) : (
-        <div className="bg-white/[0.015] border border-white/[0.04] rounded-2xl p-5 mb-6 text-center">
-          <p className="text-white/30 text-sm mb-1">No viewing key attached to this grant.</p>
-          <p className="font-mono text-[9px] text-white/15">
-            Ask the DAO treasurer to re-issue the grant with a viewing key to enable live scanning.
+        <div className="card p-5 mb-6 text-center">
+          <p className="text-zinc-700 text-[13.5px] mb-1 font-medium">No viewing key attached to this grant.</p>
+          <p className="text-zinc-500 text-[12px]">
+            Ask the DAO treasurer to re-issue the grant with a viewing key to enable scanning.
           </p>
         </div>
       )}
 
-      {/* Progress counters (shown after scan) */}
+      {/* Progress counters */}
       {scanResult && (
-        <div className="flex flex-wrap gap-3 mb-5">
+        <div className="flex flex-wrap gap-2 mb-5">
           {[
             { label: "Indexed", value: scanResult.progress.indexerCount },
-            { label: "In Scope", value: scanResult.progress.inScopeCount },
+            { label: "In scope", value: scanResult.progress.inScopeCount },
             { label: "Events", value: scanResult.progress.eventsFound },
             { label: "Decrypted", value: scanResult.progress.decrypted },
             { label: "Failed", value: scanResult.progress.decryptionFailed },
             { label: "Bogus", value: scanResult.progress.looksBogus },
           ].map((s) => (
-            <div
-              key={s.label}
-              className="bg-white/[0.02] border border-white/[0.05] rounded-xl px-3 py-1.5 flex items-center gap-2"
-            >
-              <span className="font-mono text-[8px] text-white/25 uppercase tracking-widest">
+            <div key={s.label} className="card px-3 py-1.5 flex items-center gap-2">
+              <span className="text-[10.5px] text-zinc-500 uppercase tracking-wider font-medium">
                 {s.label}
               </span>
-              <span className="font-mono text-[10px] text-white/50 font-bold">{s.value}</span>
+              <span className="font-mono text-[12px] text-zinc-900 font-semibold">{s.value}</span>
             </div>
           ))}
         </div>
       )}
 
       {/* Transactions table */}
-      <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl overflow-hidden">
+      <div className="card overflow-hidden">
         {scanResult && (
-          <div className="px-5 py-4 border-b border-white/[0.05] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="px-5 py-4 border-b border-zinc-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-zinc-50/40">
             <div>
-              <h2 className="text-sm font-bold text-white mb-1">Decrypted Transactions</h2>
-              <p className="text-[10px] text-white/40">Filtered locally in your browser</p>
+              <h2 className="text-[14px] font-semibold text-zinc-900 tracking-tight">Decrypted transactions</h2>
+              <p className="text-[11.5px] text-zinc-500 mt-0.5">Filtered locally in your browser</p>
             </div>
             <div className="relative w-full sm:w-auto">
               <input
@@ -358,9 +343,9 @@ export default function DaoAuditPage() {
                 value={searchRecipient}
                 onChange={(e) => setSearchRecipient(e.target.value.trim())}
                 placeholder="Search recipient address…"
-                className="w-full sm:w-72 bg-white/[0.04] border border-white/[0.08] rounded-xl pl-9 pr-3 py-2 text-white/70 text-[11px] font-mono placeholder:text-white/20 focus:outline-none focus:border-violet-500/40 transition-colors"
+                className="w-full sm:w-72 bg-white border border-zinc-200 rounded-lg pl-9 pr-3 py-2 text-zinc-900 text-[12px] font-mono placeholder:text-zinc-400 focus:outline-none focus:border-zinc-400 transition-colors"
               />
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="11" cy="11" r="8"></circle>
                   <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -369,7 +354,7 @@ export default function DaoAuditPage() {
             </div>
           </div>
         )}
-        <div className="grid grid-cols-[1fr_auto_auto_auto] gap-4 px-5 py-3 border-b border-white/[0.05] text-[9px] font-semibold tracking-[0.15em] uppercase text-white/25">
+        <div className="grid grid-cols-[1fr_auto_auto_auto] gap-4 px-5 py-3 border-b border-zinc-100 text-[10.5px] font-semibold tracking-wider uppercase text-zinc-500">
           <span>Transaction</span>
           <span>Amount</span>
           <span>Source</span>
@@ -377,12 +362,12 @@ export default function DaoAuditPage() {
         </div>
 
         {filteredTransactions.length === 0 ? (
-          <div className="px-5 py-10 text-center">
-            <p className="text-white/20 text-sm">
+          <div className="px-5 py-12 text-center">
+            <p className="text-zinc-500 text-[13.5px]">
               {isScanning
                 ? "Scanning Umbra indexer…"
                 : grant?.viewingKey
-                ? 'Click "Load Transactions" to decrypt treasury activity.'
+                ? 'Click "Load transactions" to decrypt treasury activity.'
                 : "Attach a viewing key to this grant to enable scanning."}
             </p>
           </div>
@@ -390,29 +375,29 @@ export default function DaoAuditPage() {
           filteredTransactions.map((tx) => (
             <div
               key={tx.signature}
-              className="grid grid-cols-[1fr_auto_auto_auto] gap-4 items-center px-5 py-4 border-b border-white/[0.04] last:border-0"
+              className="grid grid-cols-[1fr_auto_auto_auto] gap-4 items-center px-5 py-4 border-b border-zinc-100 last:border-0"
             >
               <div>
-                <p className="font-mono text-[10px] text-white/50">
+                <p className="font-mono text-[12px] text-zinc-900">
                   {tx.signature.slice(0, 16)}…
                 </p>
-                <p className="font-mono text-[9px] text-white/20 mt-0.5">
+                <p className="font-mono text-[10.5px] text-zinc-500 mt-0.5">
                   → {tx.destination.slice(0, 12)}…
                 </p>
               </div>
-              <span className="text-white/70 text-sm font-medium tabular-nums">
+              <span className="text-zinc-900 text-[13.5px] font-medium tabular-nums">
                 {formatAmount(tx.amount, tx.mint)}
               </span>
               <span
-                className={`font-mono text-[9px] tracking-widest uppercase px-2 py-0.5 rounded-full ${
+                className={`text-[10.5px] tracking-wider uppercase px-2 py-0.5 rounded-full font-semibold ${
                   tx.sourceVariant === "ATA"
-                    ? "bg-violet-500/10 text-violet-400"
-                    : "bg-blue-500/10 text-blue-400"
+                    ? "bg-indigo-50 text-indigo-700"
+                    : "bg-blue-50 text-blue-700"
                 }`}
               >
                 {tx.sourceVariant}
               </span>
-              <span className="text-white/30 text-[10px] tabular-nums">
+              <span className="text-zinc-500 text-[11.5px] tabular-nums">
                 {new Date(tx.timestamp * 1000).toLocaleDateString()}
               </span>
             </div>
@@ -420,15 +405,18 @@ export default function DaoAuditPage() {
         )}
       </div>
 
-      <div className="mt-6 pt-6 border-t border-white/[0.05] flex items-center justify-between gap-4">
+      <div className="mt-6 pt-6 border-t border-zinc-100 flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-2">
-          <span className="w-1 h-1 rounded-full bg-emerald-400" />
-          <span className="font-mono text-[9px] text-white/20 tracking-widest">
-            Data decrypted via X25519 compliance grant · VK·POOL·read-only
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60 animate-soft-pulse" />
+            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+          </span>
+          <span className="text-[11.5px] text-zinc-500 font-medium">
+            Data decrypted via X25519 compliance grant · read-only
           </span>
         </div>
         {grant?.viewingKey && (
-          <span className="font-mono text-[8px] text-violet-400/50 tracking-widest truncate max-w-xs">
+          <span className="font-mono text-[10.5px] text-zinc-400 truncate max-w-xs">
             VK: {grant.viewingKey.slice(0, 20)}…
           </span>
         )}

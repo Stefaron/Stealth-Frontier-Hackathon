@@ -1,72 +1,21 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { gsap } from "@/hooks/useGsap";
-
-function Hamburger({ open, onToggle }: { open: boolean; onToggle: () => void }) {
-  const l1 = useRef<SVGLineElement>(null);
-  const l2 = useRef<SVGLineElement>(null);
-  const l3 = useRef<SVGLineElement>(null);
-  const first = useRef(true);
-
-  useEffect(() => {
-    if (first.current) {
-      first.current = false;
-      return;
-    }
-    const a = l1.current, b = l2.current, c = l3.current;
-    if (!a || !b || !c) return;
-
-    if (open) {
-      gsap.to(a, { attr: { x1: 6, y1: 6, x2: 18, y2: 18 }, duration: 0.35, ease: "power3.inOut" });
-      gsap.to(b, { opacity: 0, duration: 0.15, ease: "power2.in" });
-      gsap.to(c, { attr: { x1: 6, y1: 18, x2: 18, y2: 6 }, duration: 0.35, ease: "power3.inOut" });
-    } else {
-      gsap.to(a, { attr: { x1: 4, y1: 7, x2: 20, y2: 7 }, duration: 0.35, ease: "power3.inOut" });
-      gsap.to(b, { opacity: 1, duration: 0.2, ease: "power2.out", delay: 0.15 });
-      gsap.to(c, { attr: { x1: 4, y1: 17, x2: 20, y2: 17 }, duration: 0.35, ease: "power3.inOut" });
-    }
-  }, [open]);
-
-  return (
-    <button
-      className="md:hidden p-2 rounded-lg hover:bg-white/[0.06] transition-colors press"
-      onClick={onToggle}
-      aria-label="Toggle menu"
-    >
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-        <line ref={l1} x1="4" y1="7" x2="20" y2="7" stroke="rgba(255,255,255,0.7)" strokeWidth="1.5" strokeLinecap="round" />
-        <line ref={l2} x1="4" y1="12" x2="20" y2="12" stroke="rgba(255,255,255,0.7)" strokeWidth="1.5" strokeLinecap="round" />
-        <line ref={l3} x1="4" y1="17" x2="20" y2="17" stroke="rgba(255,255,255,0.7)" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
-    </button>
-  );
-}
+import Image from "next/image";
 
 const NAV_LINKS = [
-  { label: "Problem",      href: "#problem" },
-  { label: "How it Works", href: "#how-it-works" },
-  { label: "Umbra SDK",    href: "#umbra" },
+  { label: "How it works", href: "#how-it-works" },
   { label: "Features",     href: "#features" },
+  { label: "Umbra SDK",    href: "#umbra" },
 ];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [active, setActive] = useState<string>("");
 
   useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 24);
-      const y = window.scrollY + 200;
-      let curr = "";
-      for (const l of NAV_LINKS) {
-        const el = document.querySelector(l.href);
-        if (el && (el as HTMLElement).offsetTop <= y) curr = l.href;
-      }
-      setActive(curr);
-    };
+    const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -74,80 +23,89 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,backdrop-filter,border-color] duration-300 ${
         scrolled
-          ? "bg-black/75 backdrop-blur-xl border-b border-white/[0.06]"
+          ? "bg-white/85 backdrop-blur-xl border-b border-zinc-200/70"
           : "bg-transparent border-b border-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 md:px-8">
-        <nav className="flex items-center justify-between h-16">
-          <Link href="/" className="nav-logo flex items-center gap-2.5 group">
-            <div className="nav-logo-mark w-8 h-8 rounded-lg flex items-center justify-center">
-              <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
-                <path d="M8 1L14 4.5V11.5L8 15L2 11.5V4.5L8 1Z" stroke="currentColor" strokeWidth="1.4" fill="none" />
-                <path d="M8 5L11 6.75V10.25L8 12L5 10.25V6.75L8 5Z" fill="currentColor" opacity="0.65" />
-              </svg>
-            </div>
-            <span className="font-semibold tracking-tight text-sm text-white/85 group-hover:text-white transition-colors">
-              Stealth
-            </span>
-          </Link>
+      <div className="max-w-6xl mx-auto px-5 md:px-8">
+        <nav className="flex items-center justify-between h-[58px]">
+          <div className="flex items-center gap-7">
+            <Link href="/" className="flex items-center gap-2 group press">
+              <Image
+                src="/stealth_logo.png"
+                alt="Stealth"
+                width={28}
+                height={28}
+                priority
+                className="rounded-[8px]"
+              />
+              <span className="font-semibold tracking-tight text-[14.5px] text-zinc-900">Stealth</span>
+            </Link>
 
-          <div className="hidden md:flex items-center gap-1">
-            {NAV_LINKS.map((item) => {
-              const isActive = active === item.href;
-              return (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  className={`nav-link relative px-3.5 py-2 text-[10px] font-medium tracking-widest uppercase transition-colors duration-300 ${
-                    isActive ? "text-white" : "text-white/45 hover:text-white/85"
-                  }`}
-                >
-                  <span className="relative z-10">{item.label}</span>
-                  {isActive && <span className="nav-link-dot" />}
-                  <span className="nav-link-underline" />
+            <span className="hidden md:block w-px h-4 bg-zinc-200" />
+
+            <div className="hidden md:flex items-center gap-1">
+              {NAV_LINKS.map((item) => (
+                <a key={item.label} href={item.href} className="nav-link">
+                  {item.label}
                 </a>
-              );
-            })}
+              ))}
+            </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <a
-              href="/welcome"
-              className="nav-cta hidden md:flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase px-5 py-2.5 rounded-full"
+              href="https://github.com/Stefaron/Stealth-Frontier-Hackathon"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[12.5px] font-medium text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50 transition-colors"
             >
-              <span>Launch App</span>
-              <svg className="nav-cta-arrow" width="10" height="10" viewBox="0 0 12 12" fill="none">
-                <path d="M2 10L10 2M10 2H4M10 2V8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 005.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
               </svg>
+              GitHub
             </a>
 
-            <Hamburger open={menuOpen} onToggle={() => setMenuOpen((v) => !v)} />
+            <Link
+              href="/welcome"
+              className="hidden md:inline-flex items-center gap-1.5 bg-zinc-900 text-white text-[12.5px] font-semibold px-3.5 py-1.5 rounded-lg hover:bg-zinc-800 transition-all duration-200 press group"
+            >
+              Get started
+              <svg width="10" height="10" viewBox="0 0 12 12" fill="none" className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+                <path d="M2 10L10 2M10 2H4M10 2V8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+              </svg>
+            </Link>
+
+            <button
+              className="md:hidden w-9 h-9 rounded-lg hover:bg-zinc-100 transition-colors flex items-center justify-center press"
+              onClick={() => setMenuOpen((v) => !v)}
+              aria-label="Toggle menu"
+            >
+              <span className="relative w-4 h-3.5 block">
+                <span className={`absolute left-0 right-0 h-[1.5px] bg-zinc-900 rounded transition-all duration-300 ${menuOpen ? "top-1.5 rotate-45" : "top-0"}`} />
+                <span className={`absolute left-0 right-0 top-1.5 h-[1.5px] bg-zinc-900 rounded transition-all duration-300 ${menuOpen ? "opacity-0 scale-x-0" : "opacity-100"}`} />
+                <span className={`absolute left-0 right-0 h-[1.5px] bg-zinc-900 rounded transition-all duration-300 ${menuOpen ? "top-1.5 -rotate-45" : "top-3"}`} />
+              </span>
+            </button>
           </div>
         </nav>
 
-        {menuOpen && (
-          <div className="md:hidden pb-6 pt-4 border-t border-white/[0.06] flex flex-col gap-5 animate-fade-in">
-            {NAV_LINKS.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                onClick={() => setMenuOpen(false)}
-                className="text-sm font-medium text-white/45 hover:text-white/85 transition-colors"
-              >
-                {item.label}
-              </a>
-            ))}
-            <a
-              href="/welcome"
-              className="flex items-center justify-center gap-2 bg-white text-[#0d0c0a] text-[10px] font-bold tracking-widest uppercase px-5 py-3.5 rounded-full"
-            >
-              Launch App →
-            </a>
+        <div className={`md:hidden grid transition-[grid-template-rows,opacity] duration-300 ease-out ${menuOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}>
+          <div className="overflow-hidden">
+            <div className="pb-5 pt-3 border-t border-zinc-100 flex flex-col gap-1">
+              {NAV_LINKS.map((item) => (
+                <a key={item.label} href={item.href} onClick={() => setMenuOpen(false)} className="text-sm font-medium text-zinc-700 hover:text-zinc-900 hover:bg-zinc-50 rounded-lg px-3 py-2.5 transition-colors">
+                  {item.label}
+                </a>
+              ))}
+              <Link href="/welcome" onClick={() => setMenuOpen(false)} className="mt-2 inline-flex items-center justify-center gap-1.5 bg-zinc-900 text-white text-[13px] font-semibold py-3 rounded-lg">
+                Get started →
+              </Link>
+            </div>
           </div>
-        )}
+        </div>
       </div>
     </header>
   );

@@ -147,61 +147,64 @@ export default function AuditorsPage() {
     }
   };
 
+  const inputCls =
+    "w-full bg-white border border-zinc-200 rounded-lg px-3.5 py-2 text-zinc-900 text-[13px] placeholder:text-zinc-400 focus:outline-none focus:border-zinc-400 transition-colors";
+  const inputMonoCls =
+    "w-full bg-white border border-zinc-200 rounded-lg px-3 py-2 text-zinc-900 text-[12px] font-mono placeholder:text-zinc-400 focus:outline-none focus:border-zinc-400 transition-colors";
+  const labelCls = "text-[11px] font-semibold uppercase tracking-wider text-zinc-500 block mb-1.5";
+
   return (
-    <div className="max-w-7xl mx-auto px-6 md:px-8 py-12">
+    <div className="max-w-7xl mx-auto px-5 md:px-8 py-10 md:py-12">
       <div className="mb-8">
-        <p className="font-mono text-[9px] tracking-[0.22em] uppercase text-white/25 mb-3">
+        <span className="eyebrow mb-3">
+          <span className="eyebrow-dot" />
           Treasurer · Auditors
-        </p>
-        <h1 className="text-3xl font-bold text-white mb-1">Compliance Grants</h1>
-        <p className="text-white/35 text-sm">
-          Grant auditors scoped viewing access via X25519 compliance grants.
+        </span>
+        <h1 className="mt-3 text-[1.75rem] md:text-[2rem] font-bold text-zinc-900 tracking-tight" style={{ letterSpacing: "-0.02em" }}>
+          Compliance grants
+        </h1>
+        <p className="mt-2 text-[14px] text-zinc-500">
+          Grant auditors scoped viewing access. Revocable on-chain anytime.
         </p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6 mb-8">
-        <div className="bg-white/[0.025] border border-white/[0.06] rounded-2xl p-6">
-          <h2 className="text-sm font-bold text-white mb-5">Issue New Grant</h2>
+      <div className="grid md:grid-cols-2 gap-4 mb-8">
+        <div className="card p-6">
+          <h2 className="text-[15px] font-semibold text-zinc-900 mb-5 tracking-tight">Issue new grant</h2>
 
-          <label className="block mb-3">
-            <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-white/30 block mb-1.5">
-              Auditor Wallet Address
-            </span>
+          <label className="block mb-4">
+            <span className={labelCls}>Auditor wallet address</span>
             <input
               type="text"
               value={auditorInput}
               onChange={(e) => setAuditorInput(e.target.value)}
               placeholder="Base58 address…"
-              className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-2.5 text-white/70 text-sm font-mono placeholder:text-white/20 focus:outline-none focus:border-violet-500/40 transition-colors"
+              className={inputMonoCls}
             />
           </label>
 
-          <label className="block mb-4">
-            <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-white/30 block mb-1.5">
-              Label (optional)
-            </span>
+          <label className="block mb-5">
+            <span className={labelCls}>Label (optional)</span>
             <input
               type="text"
               value={labelInput}
               onChange={(e) => setLabelInput(e.target.value)}
-              placeholder="e.g. Deloitte Q2 2025"
-              className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-2.5 text-white/70 text-sm placeholder:text-white/20 focus:outline-none focus:border-violet-500/40 transition-colors"
+              placeholder="e.g. Deloitte Q2 2026"
+              className={inputCls}
             />
           </label>
 
-          <div className="mb-4 p-4 rounded-xl bg-white/[0.015] border border-white/[0.04]">
-            <h3 className="text-[10px] font-bold text-white/50 uppercase tracking-widest mb-3">Access Scope</h3>
+          <div className="mb-5 p-4 rounded-xl bg-zinc-50/60 border border-zinc-100">
+            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-3">Access scope</h3>
             <label className="block mb-3">
-              <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-white/30 block mb-1.5">
-                VK Level
-              </span>
+              <span className={labelCls}>VK level</span>
               <select
                 value={targetLevel}
                 onChange={(e) => setTargetLevel(e.target.value as VkLevel)}
-                className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-3 py-2 text-white/70 text-[11px] font-mono focus:outline-none focus:border-violet-500/40 transition-colors appearance-none"
+                className={inputMonoCls}
               >
                 {VK_LEVEL_ORDER.slice(0, 5).map((l) => (
-                  <option key={l} value={l} className="bg-[#1a1917]">
+                  <option key={l} value={l}>
                     {l.charAt(0).toUpperCase() + l.slice(1)}
                   </option>
                 ))}
@@ -210,14 +213,12 @@ export default function AuditorsPage() {
 
             {targetLevel !== "master" && (
               <label className="block mb-3">
-                <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-white/30 block mb-1.5">
-                  Mint Address
-                </span>
+                <span className={labelCls}>Mint address</span>
                 <input
                   type="text"
                   value={scopeMint}
                   onChange={(e) => setScopeMint(e.target.value)}
-                  className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-3 py-2 text-white/70 text-[11px] font-mono focus:outline-none focus:border-violet-500/40 transition-colors"
+                  className={inputMonoCls}
                 />
               </label>
             )}
@@ -225,37 +226,37 @@ export default function AuditorsPage() {
             {["yearly", "monthly", "daily"].includes(targetLevel) && (
               <div className="grid grid-cols-3 gap-2">
                 <label className="block">
-                  <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-white/30 block mb-1.5">Year</span>
+                  <span className={labelCls}>Year</span>
                   <input
                     type="number"
                     value={scopeYear}
                     onChange={(e) => setScopeYear(e.target.value)}
-                    className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-3 py-2 text-white/70 text-[11px] font-mono focus:outline-none focus:border-violet-500/40 transition-colors"
+                    className={inputMonoCls}
                   />
                 </label>
                 {["monthly", "daily"].includes(targetLevel) && (
                   <label className="block">
-                    <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-white/30 block mb-1.5">Month</span>
+                    <span className={labelCls}>Month</span>
                     <input
                       type="number"
                       min="1"
                       max="12"
                       value={scopeMonth}
                       onChange={(e) => setScopeMonth(e.target.value)}
-                      className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-3 py-2 text-white/70 text-[11px] font-mono focus:outline-none focus:border-violet-500/40 transition-colors"
+                      className={inputMonoCls}
                     />
                   </label>
                 )}
                 {targetLevel === "daily" && (
                   <label className="block">
-                    <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-white/30 block mb-1.5">Day</span>
+                    <span className={labelCls}>Day</span>
                     <input
                       type="number"
                       min="1"
                       max="31"
                       value={scopeDay}
                       onChange={(e) => setScopeDay(e.target.value)}
-                      className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-3 py-2 text-white/70 text-[11px] font-mono focus:outline-none focus:border-violet-500/40 transition-colors"
+                      className={inputMonoCls}
                     />
                   </label>
                 )}
@@ -263,13 +264,11 @@ export default function AuditorsPage() {
             )}
           </div>
 
-          <div className="block mb-5">
+          <div className="mb-5">
             <div className="flex items-center justify-between mb-1.5">
-              <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-white/30">
-                Generated Viewing Key
-              </span>
+              <span className={labelCls.replace("mb-1.5", "")}>Generated viewing key</span>
               {isDerivingVk && (
-                <span className="font-mono text-[8px] text-violet-400/70 tracking-widest uppercase">
+                <span className="text-[10.5px] font-medium text-indigo-600">
                   Deriving from wallet…
                 </span>
               )}
@@ -279,31 +278,31 @@ export default function AuditorsPage() {
               value={viewingKeyInput}
               placeholder="Awaiting wallet signature to derive master key…"
               rows={2}
-              className="w-full bg-white/[0.02] border border-white/[0.04] rounded-xl px-4 py-2.5 text-white/50 text-[11px] font-mono placeholder:text-white/20 focus:outline-none resize-none cursor-not-allowed"
+              className="w-full bg-zinc-50 border border-zinc-100 rounded-lg px-3.5 py-2.5 text-zinc-700 text-[11.5px] font-mono placeholder:text-zinc-400 focus:outline-none resize-none cursor-not-allowed"
             />
-            <span className="font-mono text-[8px] text-white/15 mt-1 block">
-              Auto-generated based on the selected scope. Stored locally with grant.
+            <span className="text-[11px] text-zinc-400 mt-1.5 block">
+              Auto-generated from the selected scope. Stored locally with grant.
             </span>
           </div>
 
           <button
             onClick={handleIssue}
             disabled={isIssuing || !auditorInput.trim()}
-            className="w-full bg-white text-[#0d0c0a] text-[10px] font-bold tracking-widest uppercase px-6 py-3 rounded-full hover:bg-white/90 transition-all duration-200 disabled:opacity-40"
+            className="btn-primary press w-full disabled:opacity-40"
           >
-            {isIssuing ? "Issuing Grant…" : "Issue Grant"}
+            {isIssuing ? "Issuing grant…" : "Issue grant"}
           </button>
         </div>
 
-        <div className="bg-white/[0.015] border border-white/[0.05] rounded-2xl p-6">
-          <h3 className="text-sm font-bold text-white mb-2">How it works</h3>
-          <div className="space-y-3 text-sm text-white/35 leading-relaxed">
+        <div className="card p-6">
+          <h3 className="text-[15px] font-semibold text-zinc-900 mb-3 tracking-tight">How it works</h3>
+          <div className="space-y-3 text-[13.5px] text-zinc-600 leading-relaxed">
             <p>
               A compliance grant reencrypts your encrypted outputs under the
               auditor&apos;s X25519 key using Arcium MPC.
             </p>
             <p>
-              The auditor can then view your transaction history within the
+              The auditor can view your transaction history within the
               scoped grant without accessing your private key.
             </p>
             <p>
@@ -311,50 +310,54 @@ export default function AuditorsPage() {
               nonce to prevent replay.
             </p>
           </div>
-          <div className="mt-4 pt-4 border-t border-white/[0.05]">
-            <span className="font-mono text-[9px] text-white/15 tracking-widest">
-              GRANT·ECDH·scoped-key
+          <div className="mt-5 pt-4 border-t border-zinc-100">
+            <span className="text-[11px] font-mono text-zinc-400 tracking-wider">
+              GRANT · ECDH · scoped-key
             </span>
           </div>
         </div>
       </div>
 
       <div>
-        <h2 className="text-sm font-bold text-white/60 mb-4 uppercase tracking-widest">
-          Active Grants ({grants.length})
+        <h2 className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-4">
+          Active grants ({grants.length})
         </h2>
         {grants.length === 0 ? (
-          <div className="bg-white/[0.015] border border-white/[0.05] rounded-2xl p-8 text-center">
-            <p className="text-white/25 text-sm">No active grants. Issue one above.</p>
+          <div className="card p-10 text-center">
+            <p className="text-zinc-500 text-[13.5px]">No active grants yet. Issue one above.</p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             {grants.map((grant) => (
               <div
                 key={grant.nonce}
-                className="bg-white/[0.025] border border-white/[0.06] rounded-2xl px-5 py-4 flex items-center justify-between gap-4"
+                className="card card-hover px-5 py-4 flex items-center justify-between gap-4"
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                    {grant.label && (
-                      <span className="text-white/60 text-sm font-medium truncate">
+                    <span className="relative flex h-1.5 w-1.5">
+                      <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60 animate-soft-pulse" />
+                      <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+                    </span>
+                    {grant.label ? (
+                      <span className="text-zinc-900 text-[13.5px] font-semibold truncate">
                         {grant.label}
                       </span>
+                    ) : (
+                      <span className="text-zinc-500 text-[12.5px]">Untitled grant</span>
                     )}
                   </div>
-                  <p className="font-mono text-[10px] text-white/35 truncate">
+                  <p className="font-mono text-[11.5px] text-zinc-700 truncate">
                     {grant.auditorAddress}
                   </p>
-                  <p className="font-mono text-[9px] text-white/20 mt-0.5">
-                    {new Date(grant.issuedAt).toLocaleDateString()} · nonce:{" "}
-                    {grant.nonce.slice(0, 12)}…
+                  <p className="font-mono text-[10.5px] text-zinc-400 mt-0.5">
+                    {new Date(grant.issuedAt).toLocaleDateString()} · nonce {grant.nonce.slice(0, 12)}…
                   </p>
                 </div>
                 <button
                   onClick={() => handleRevoke(grant)}
                   disabled={isRevoking === grant.nonce}
-                  className="flex-shrink-0 text-red-400/60 text-[9px] font-semibold tracking-widest uppercase hover:text-red-400 transition-colors disabled:opacity-40"
+                  className="press flex-shrink-0 text-[12px] font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-40"
                 >
                   {isRevoking === grant.nonce ? "Revoking…" : "Revoke"}
                 </button>
