@@ -92,19 +92,50 @@ export default function HowItWorksSection() {
 
 function ThumbConnect() {
   return (
-    <div className="card p-3 bg-white">
-      <div className="flex items-center gap-2.5">
-        <span className="w-7 h-7 rounded-md bg-zinc-900 grid place-items-center text-white">
+    <div className="card relative p-3 bg-white overflow-hidden">
+      {/* Scanning sweep across entire card */}
+      <span className="thumb-scan-sweep" />
+
+      <div className="relative flex items-center gap-2.5">
+        {/* Wallet icon with pulse ring */}
+        <span className="relative w-7 h-7 rounded-md bg-zinc-900 grid place-items-center text-white flex-shrink-0">
+          <span className="thumb-ring-pulse" />
           <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
             <rect x="2" y="4" width="12" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.4" />
             <path d="M2 7h12" stroke="currentColor" strokeWidth="1.4" />
+            <circle cx="11.5" cy="10" r="0.8" fill="currentColor" />
           </svg>
         </span>
-        <div className="flex-1 min-w-0 space-y-1.5">
-          <span className="block h-1.5 w-16 rounded bg-zinc-200 thumb-shimmer" style={{ animationDelay: "0s" }} />
-          <span className="block h-1.5 w-10 rounded bg-zinc-100 thumb-shimmer" style={{ animationDelay: "0.4s" }} />
-        </div>
-        <span className="inline-flex items-center gap-1 text-[9px] font-semibold px-1.5 py-0.5 rounded thumb-ready">
+
+        {/* Connecting line + flowing dashes */}
+        <svg width="100%" height="14" viewBox="0 0 80 14" preserveAspectRatio="none" className="flex-1 min-w-0 overflow-visible">
+          <line
+            x1="0"
+            y1="7"
+            x2="80"
+            y2="7"
+            stroke="rgb(228, 228, 231)"
+            strokeWidth="1.2"
+          />
+          <line
+            x1="0"
+            y1="7"
+            x2="80"
+            y2="7"
+            stroke="rgb(99, 102, 241)"
+            strokeWidth="1.5"
+            className="thumb-line"
+            strokeLinecap="round"
+          />
+        </svg>
+
+        {/* Ready badge w/ pop checkmark */}
+        <span className="inline-flex items-center gap-1 text-[9px] font-semibold px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+          <span className="thumb-ready-pop">
+            <svg width="9" height="9" viewBox="0 0 14 14" fill="none">
+              <path d="M3 7l3 3 5-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
           Ready
         </span>
       </div>

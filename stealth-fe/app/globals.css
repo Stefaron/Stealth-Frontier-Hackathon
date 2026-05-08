@@ -142,6 +142,74 @@ body {
 }
 
 .thumb-shimmer { animation: thumbShimmer 1.6s ease-in-out infinite; transform-origin: left; }
+
+@keyframes thumbScanSweep {
+  0%   { transform: translateX(-100%); opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+
+@keyframes thumbRingPulse {
+  0%, 100% { transform: scale(0.9); opacity: 0; }
+  50%      { transform: scale(1.4); opacity: 0.5; }
+}
+
+@keyframes thumbDotFlow {
+  0%   { stroke-dashoffset: 12; }
+  100% { stroke-dashoffset: 0; }
+}
+
+@keyframes thumbReadyPop {
+  0%, 60% { transform: scale(0); opacity: 0; }
+  70%     { transform: scale(1.1); opacity: 1; }
+  100%    { transform: scale(1); opacity: 1; }
+}
+
+.thumb-scan-sweep {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(99, 102, 241, 0.15) 50%,
+    transparent 100%
+  );
+  animation: thumbScanSweep 2.6s ease-in-out infinite;
+}
+
+.thumb-ring-pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid rgb(99, 102, 241);
+  animation: thumbRingPulse 2s ease-out infinite;
+  pointer-events: none;
+}
+
+.thumb-line {
+  stroke-dasharray: 4 2;
+  animation: thumbDotFlow 0.7s linear infinite;
+}
+
+.thumb-ready-pop {
+  display: inline-flex;
+  animation: thumbReadyPop 2.6s cubic-bezier(0.5, 0, 0.3, 1.4) infinite;
+  transform-origin: center;
+}
+
+/* CTA card hover — extra shadow lift */
+.cta-card:hover {
+  box-shadow: 0 50px 120px -40px rgba(99, 102, 241, 0.28),
+              0 30px 80px -40px rgba(11, 13, 18, 0.18) !important;
+}
+
+/* Floating chips wiggle on card hover */
+.cta-card:hover .chip-float-1 { animation-duration: 3s; transform: translateX(-2px); }
+.cta-card:hover .chip-float-2 { animation-duration: 3s; transform: translateX(2px); }
+.cta-card:hover .chip-float-3 { animation-duration: 3s; transform: translateX(-2px); }
+.cta-card:hover .chip-float-4 { animation-duration: 3s; transform: translateX(2px); }
 .thumb-row     { animation: thumbRowFill 3.5s cubic-bezier(0.16,1,0.3,1) infinite; transform-origin: left; }
 .thumb-bar     { animation: thumbBarLoop 4s cubic-bezier(0.16,1,0.3,1) infinite; transform-origin: bottom; }
 .thumb-ready   { animation: thumbReadyPulse 2.4s ease-in-out infinite; }

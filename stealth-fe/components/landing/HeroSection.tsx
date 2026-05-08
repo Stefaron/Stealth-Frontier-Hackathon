@@ -250,15 +250,11 @@ function CommandPreview() {
       >
         <div className="flex items-center justify-between px-4 py-2.5 border-b border-zinc-100 bg-zinc-50/60">
           <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-zinc-200" />
-            <span className="w-2 h-2 rounded-full bg-zinc-200" />
-            <span className="w-2 h-2 rounded-full bg-zinc-200" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#ff5f57] border border-[#e04540]" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#febc2e] border border-[#dca029]" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#28c840] border border-[#1faa31]" />
             <span className="ml-2 text-[10.5px] font-mono text-zinc-400">stealth.app</span>
           </div>
-          <span className="hidden md:inline-flex items-center gap-1 text-[10px] text-zinc-400">
-            <span className="kbd">⌘</span>
-            <span className="kbd">K</span>
-          </span>
         </div>
 
         <div className="flex items-center gap-3 px-4 py-3.5 border-b border-zinc-100">

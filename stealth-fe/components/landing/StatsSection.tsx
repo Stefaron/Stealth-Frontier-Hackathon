@@ -26,7 +26,8 @@ const ITEMS: Item[] = [
     accent: "rgba(245,158,11,0.14)",
     icon: (
       <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
-        <path d="M9 2L4 10h4l-1 6 6-9h-4l1-5Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+        <path d="M7 2v3M7 11v3M2 7h3M11 7h3M3.2 3.2l2.1 2.1M11.2 11.2l2.1 2.1M3.2 11.2l2.1-2.1M11.2 3.2l-2.1 2.1" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+        <path d="M7 7l9 4-3.5 1L11 16l-4-9Z" fill="currentColor" stroke="currentColor" strokeWidth="0.6" strokeLinejoin="round" />
       </svg>
     ),
   },
