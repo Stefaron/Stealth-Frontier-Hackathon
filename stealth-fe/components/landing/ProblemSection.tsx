@@ -1,3 +1,5 @@
+"use client";
+
 import Reveal from "./Reveal";
 
 interface Card {
@@ -60,9 +62,18 @@ export default function ProblemSection() {
           {CARDS.map((c, i) => (
             <Reveal key={c.title} delay={i * 80} y={14}>
               <article
-                className={`h-full card card-hover p-6 cursor-default ${
-                  c.primary ? "border-zinc-300" : ""
+                className={`h-full p-6 cursor-default ${
+                  c.primary ? "card-gradient spotlight-glow" : "card card-hover"
                 }`}
+                onMouseMove={
+                  c.primary
+                    ? (e) => {
+                        const r = e.currentTarget.getBoundingClientRect();
+                        e.currentTarget.style.setProperty("--mx", `${e.clientX - r.left}px`);
+                        e.currentTarget.style.setProperty("--my", `${e.clientY - r.top}px`);
+                      }
+                    : undefined
+                }
               >
                 <div className="flex items-center justify-between mb-5">
                   <span

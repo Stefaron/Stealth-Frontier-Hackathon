@@ -66,25 +66,21 @@ export default function HowItWorksSection() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {STEPS.map((s, i) => (
             <Reveal key={s.num} delay={i * 70} y={12}>
-              <article className="group r-card cursor-default">
-                <div className="r-thumb h-32 grid place-items-center px-5">
-                  <div className="r-thumb-inner w-full">{s.thumb}</div>
+              <article className="group bento-card cursor-default h-full p-5 flex flex-col">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-[10.5px] font-mono text-zinc-400 tracking-wide">
+                    {s.num}
+                  </span>
+                  <span className="w-1 h-1 rounded-full bg-zinc-300" />
+                  <span className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">
+                    Step
+                  </span>
                 </div>
-                <div className="p-5">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-[10.5px] font-mono text-zinc-400 tracking-wide">
-                      {s.num}
-                    </span>
-                    <span className="w-1 h-1 rounded-full bg-zinc-300" />
-                    <span className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">
-                      Step
-                    </span>
-                  </div>
-                  <h3 className="text-[14.5px] font-semibold text-zinc-900 mb-1 tracking-tight">
-                    {s.title}
-                  </h3>
-                  <p className="text-[12.5px] leading-relaxed text-zinc-500">{s.desc}</p>
-                </div>
+                <h3 className="text-[14.5px] font-semibold text-zinc-900 mb-1 tracking-tight">
+                  {s.title}
+                </h3>
+                <p className="text-[12.5px] leading-relaxed text-zinc-500 mb-4">{s.desc}</p>
+                <div className="mt-auto">{s.thumb}</div>
               </article>
             </Reveal>
           ))}

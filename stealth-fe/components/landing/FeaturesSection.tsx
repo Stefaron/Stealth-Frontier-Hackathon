@@ -167,7 +167,7 @@ export default function FeaturesSection() {
             <Reveal key={f.title} delay={i * 50} y={12}>
               <article className="group h-full card card-hover p-5 cursor-default">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="w-9 h-9 rounded-lg bg-zinc-50 text-zinc-700 grid place-items-center group-hover:bg-zinc-900 group-hover:text-white transition-colors duration-300">
+                  <span className="w-9 h-9 rounded-lg bg-zinc-50 text-zinc-700 grid place-items-center group-hover:bg-zinc-900 group-hover:text-white transition-colors duration-300 icon-wiggle">
                     {f.icon}
                   </span>
                   <span className="text-[10.5px] font-medium uppercase tracking-wider text-zinc-400">

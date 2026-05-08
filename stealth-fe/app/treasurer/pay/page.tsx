@@ -339,19 +339,52 @@ export default function PayPage() {
         <div className="grid md:grid-cols-2 gap-4">
           <button
             type="button"
-            className="card border-dashed p-10 flex flex-col items-center justify-center gap-4 hover:border-zinc-400 hover:bg-zinc-50/50 transition-all duration-200 cursor-pointer"
+            className="group relative card border-dashed p-10 flex flex-col items-center justify-center gap-5 hover:border-zinc-900 hover:bg-zinc-50/50 transition-all duration-300 cursor-pointer overflow-hidden"
             onClick={() => fileRef.current?.click()}
           >
-            <div className="w-12 h-12 rounded-2xl bg-zinc-900 text-white grid place-items-center">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            {/* Halo */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+              style={{
+                background:
+                  "radial-gradient(circle at 50% 40%, rgba(99,102,241,0.10), transparent 60%)",
+              }}
+            />
+            {/* Animated dotted ring */}
+            <div
+              aria-hidden
+              className="absolute -inset-px rounded-[inherit] opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+              style={{
+                background:
+                  "conic-gradient(from 0deg, transparent 70%, rgba(99,102,241,0.4))",
+                animation: "spin360 8s linear infinite",
+                WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+                mask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+                WebkitMaskComposite: "xor",
+                maskComposite: "exclude",
+                padding: "1px",
+              }}
+            />
+
+            <div className="relative w-14 h-14 rounded-2xl bg-zinc-900 text-white grid place-items-center transition-transform duration-300 group-hover:scale-105 group-hover:-rotate-3 ambient-float">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path d="M12 3v12M8 8l4-5 4 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
               </svg>
             </div>
-            <div className="text-center">
-              <p className="text-zinc-900 font-semibold text-[14px] mb-1">Upload CSV</p>
-              <p className="text-zinc-500 text-[12.5px]">address, amount, mint (SOL), note</p>
+            <div className="relative text-center">
+              <p className="text-zinc-900 font-semibold text-[15px] mb-1 tracking-tight">
+                Drop your CSV here
+              </p>
+              <p className="text-zinc-500 text-[12.5px]">
+                or click to browse — address, amount, mint, note
+              </p>
             </div>
+            <span className="relative inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-zinc-400 group-hover:text-zinc-900 transition-colors">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-soft-pulse" />
+              Ready to upload
+            </span>
             <input
               ref={fileRef}
               type="file"
@@ -361,17 +394,28 @@ export default function PayPage() {
             />
           </button>
 
-          <div className="card p-6">
-            <h3 className="text-[14px] font-semibold text-zinc-900 mb-3 tracking-tight">CSV format</h3>
-            <pre className="bg-zinc-50 border border-zinc-100 rounded-lg p-4 text-[11px] font-mono text-zinc-600 overflow-x-auto">
-              {`address,amount,mint,note\n8xH3...,0.01,SOL,Q1 salary\n7yJ2...,0.05,SOL,Bounty`}
+          <div className="card p-6 flex flex-col">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-[14px] font-semibold text-zinc-900 tracking-tight">CSV format</h3>
+              <span className="text-[10px] font-mono text-zinc-400 px-1.5 py-0.5 bg-zinc-100 rounded">.csv</span>
+            </div>
+            <pre className="bg-zinc-50 border border-zinc-100 rounded-lg p-4 text-[11px] font-mono text-zinc-600 overflow-x-auto leading-[1.7]">
+              <span className="text-zinc-400">address,amount,mint,note</span>
+              {"\n"}8xH3…,<span className="text-emerald-700">0.01</span>,SOL,<span className="text-zinc-500">Q1 salary</span>
+              {"\n"}7yJ2…,<span className="text-emerald-700">0.05</span>,SOL,<span className="text-zinc-500">Bounty</span>
             </pre>
-            <p className="mt-3 text-amber-700 text-[11px]">Devnet: only SOL (wrapped) supported.</p>
+            <p className="mt-3 text-[11.5px] text-amber-700 font-medium flex items-center gap-1.5">
+              <span className="w-1 h-1 rounded-full bg-amber-500" />
+              Devnet: only SOL (wrapped) supported
+            </p>
             <button
               onClick={downloadTemplate}
-              className="press mt-3 text-zinc-700 text-[12.5px] font-semibold hover:text-zinc-900 transition-colors inline-flex items-center gap-1"
+              className="press mt-auto pt-4 text-zinc-700 text-[12.5px] font-semibold hover:text-zinc-900 transition-colors inline-flex items-center gap-1 self-start group"
             >
-              Download template <span aria-hidden>→</span>
+              Download template
+              <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-0.5">
+                →
+              </span>
             </button>
           </div>
         </div>

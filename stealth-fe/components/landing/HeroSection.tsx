@@ -19,14 +19,50 @@ const TYPING_PHRASES = [
 export default function HeroSection() {
   return (
     <section className="relative pt-28 md:pt-32 pb-20 md:pb-24 px-5 md:px-8 overflow-hidden">
+      {/* Subtle dot-grid bg — masked radial fade */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[420px] rounded-full -z-10"
+        className="pointer-events-none absolute inset-0 -z-10 bg-dot-grid mask-radial"
+      />
+      {/* Soft halo — drifts ambient */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-40 left-1/2 w-[800px] h-[420px] rounded-full -z-10 ambient-drift"
         style={{
           background:
             "radial-gradient(closest-side, rgba(99,102,241,0.10), transparent 70%)",
+          transform: "translate(-50%, 0)",
         }}
       />
+      {/* SVG accent paths */}
+      <svg
+        aria-hidden
+        className="pointer-events-none absolute top-12 left-0 right-0 mx-auto -z-10 opacity-30"
+        width="100%"
+        height="500"
+        viewBox="0 0 1200 500"
+        preserveAspectRatio="none"
+      >
+        <defs>
+          <linearGradient id="heroPathFade" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="rgba(99,102,241,0)" />
+            <stop offset="50%" stopColor="rgba(99,102,241,0.3)" />
+            <stop offset="100%" stopColor="rgba(99,102,241,0)" />
+          </linearGradient>
+        </defs>
+        <path
+          d="M-50 250 Q300 100, 600 250 T1250 250"
+          fill="none"
+          stroke="url(#heroPathFade)"
+          strokeWidth="1"
+        />
+        <path
+          d="M-50 320 Q300 470, 600 320 T1250 320"
+          fill="none"
+          stroke="url(#heroPathFade)"
+          strokeWidth="1"
+        />
+      </svg>
 
       <div className="max-w-4xl mx-auto text-center">
         <a
@@ -87,7 +123,7 @@ export default function HeroSection() {
         </div>
       </div>
 
-      <div className="animate-fade-in-up delay-400 mt-14 md:mt-16 max-w-2xl mx-auto">
+      <div className="animate-fade-in-up delay-400 mt-14 md:mt-16 max-w-2xl mx-auto ambient-float">
         <CommandPreview />
       </div>
 

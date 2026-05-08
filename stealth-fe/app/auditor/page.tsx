@@ -47,11 +47,49 @@ export default function AuditorPage() {
       </div>
 
       {grants.length === 0 ? (
-        <div className="card p-12 text-center">
-          <p className="text-zinc-700 text-[14px] font-medium mb-1">No compliance grants yet.</p>
-          <p className="text-zinc-500 text-[13px]">
-            Ask a DAO treasurer to issue a grant to your address.
-          </p>
+        <div className="relative card overflow-hidden">
+          {/* Aurora accent */}
+          <div aria-hidden className="absolute inset-x-0 top-0 aurora-line" />
+          {/* Soft halo */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[480px] h-[300px] rounded-full"
+            style={{
+              background: "radial-gradient(closest-side, rgba(99,102,241,0.10), transparent 70%)",
+            }}
+          />
+          <div className="relative px-8 py-16 md:py-20 text-center">
+            {/* Illustration */}
+            <div className="relative w-20 h-20 mx-auto mb-6 ambient-float">
+              <div
+                aria-hidden
+                className="absolute inset-0 rounded-2xl bg-zinc-50 border border-zinc-200"
+              />
+              <div className="absolute inset-0 grid place-items-center text-zinc-700">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                  <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                  <path d="M14 3v5h5M9 13h6M9 17h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
+              </div>
+              {/* Decorative dots */}
+              <span aria-hidden className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-indigo-400 animate-soft-pulse" />
+              <span aria-hidden className="absolute -bottom-1 -left-1 w-1.5 h-1.5 rounded-full bg-emerald-400 animate-soft-pulse" style={{ animationDelay: "1s" }} />
+            </div>
+            <p className="text-zinc-900 text-[16px] font-semibold mb-1.5 tracking-tight">
+              No compliance grants yet
+            </p>
+            <p className="text-zinc-500 text-[13.5px] leading-relaxed max-w-sm mx-auto">
+              Ask a DAO treasurer to issue a grant to your address. You&apos;ll see active grants
+              show up here automatically.
+            </p>
+            <div className="mt-6 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-50 border border-zinc-200 text-[11.5px] text-zinc-600">
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
+                <circle cx="6" cy="6" r="5" stroke="currentColor" strokeWidth="1.4" />
+                <path d="M6 4v3M6 8.5h.01" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+              </svg>
+              <span className="font-medium">Auto-refresh on new grants</span>
+            </div>
+          </div>
         </div>
       ) : (
         <div className="space-y-3">

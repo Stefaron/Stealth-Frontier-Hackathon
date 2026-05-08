@@ -8,13 +8,27 @@ export default function CtaSection() {
         <Reveal y={16}>
           <div
             className="relative overflow-hidden rounded-[20px] border border-zinc-200 bg-white text-center px-7 py-14 md:px-12 md:py-16"
+            style={{ boxShadow: "0 30px 80px -50px rgba(11,13,18,0.18)" }}
           >
+            {/* Aurora line on top edge */}
+            <div aria-hidden className="absolute inset-x-0 top-0 aurora-line" />
+
+            {/* Subtle dot grid */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 bg-dot-grid opacity-40"
+              style={{
+                maskImage: "radial-gradient(ellipse 50% 50% at 50% 50%, black, transparent 70%)",
+                WebkitMaskImage: "radial-gradient(ellipse 50% 50% at 50% 50%, black, transparent 70%)",
+              }}
+            />
+
             <div
               aria-hidden
               className="pointer-events-none absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full"
               style={{
                 background:
-                  "radial-gradient(closest-side, rgba(99,102,241,0.10), transparent 70%)",
+                  "radial-gradient(closest-side, rgba(99,102,241,0.14), transparent 70%)",
               }}
             />
             <div className="relative">

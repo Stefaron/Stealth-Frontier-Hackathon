@@ -153,6 +153,165 @@ body {
   animation: thumbCheckDraw 3s ease-in-out infinite;
 }
 
+/* ─── Premium accents (21st.dev-inspired) ──────────────────── */
+
+@keyframes auroraLine {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0.5); }
+  50%      { opacity: 1; transform: scale(1); }
+}
+
+@keyframes gradientBorder {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+
+@keyframes pathDraw {
+  from { stroke-dashoffset: 1000; }
+  to   { stroke-dashoffset: 0; }
+}
+
+@keyframes ambientDrift {
+  0%, 100% { transform: translate(-50%, 0) scale(1); opacity: 0.7; }
+  50%      { transform: translate(-50%, -8px) scale(1.04); opacity: 1; }
+}
+
+@keyframes ambientFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-3px); }
+}
+
+@keyframes iconWiggle {
+  0%, 100% { transform: rotate(0); }
+  25%      { transform: rotate(-3deg); }
+  75%      { transform: rotate(3deg); }
+}
+
+.ambient-drift  { animation: ambientDrift 9s ease-in-out infinite; }
+.ambient-float  { animation: ambientFloat 6s ease-in-out infinite; }
+
+/* Card icon hover wiggle */
+.card-hover:hover .icon-wiggle,
+.bento-card:hover .icon-wiggle,
+.r-card:hover .icon-wiggle {
+  animation: iconWiggle 0.6s ease-in-out;
+}
+
+/* Subtle dot-grid bg (premium accent, not full-page) */
+.bg-dot-grid {
+  background-image: radial-gradient(rgba(11, 13, 18, 0.06) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.mask-radial {
+  -webkit-mask-image: radial-gradient(ellipse 60% 55% at 50% 35%, black, transparent 75%);
+  mask-image: radial-gradient(ellipse 60% 55% at 50% 35%, black, transparent 75%);
+}
+
+/* Aurora accent line — single thin gradient sweep */
+.aurora-line {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(99, 102, 241, 0.4) 30%,
+    rgba(139, 92, 246, 0.7) 50%,
+    rgba(99, 102, 241, 0.4) 70%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: auroraLine 8s ease-in-out infinite;
+}
+
+/* Card with animated gradient border (subtle) */
+.card-gradient {
+  position: relative;
+  background: white;
+  border-radius: 14px;
+  isolation: isolate;
+}
+.card-gradient::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.4) 0%,
+    rgba(139, 92, 246, 0.25) 30%,
+    rgba(231, 232, 236, 1) 60%,
+    rgba(231, 232, 236, 1) 100%
+  );
+  background-size: 200% 200%;
+  animation: gradientBorder 6s ease-in-out infinite;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Spotlight glow on hover (used on premium card) */
+.spotlight-glow {
+  position: relative;
+  overflow: hidden;
+}
+.spotlight-glow::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  inset: -40%;
+  background: radial-gradient(
+    300px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(99, 102, 241, 0.10),
+    transparent 50%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.spotlight-glow:hover::after {
+  opacity: 1;
+}
+
+/* Sparkles (small twinkle dots) */
+.sparkle-dot {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: white;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+  animation: sparkle 2.4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Bento card variants */
+.bento-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.25s ease,
+              border-color 0.18s ease;
+}
+.bento-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--border-strong);
+}
+.bento-card-feature {
+  background: linear-gradient(180deg, #fafafb 0%, #ffffff 50%);
+}
+
 .animate-fade-in       { animation: fadeIn      0.5s ease-out both; }
 .animate-fade-in-up    { animation: fadeInUp    0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
 .animate-fade-in-blur  { animation: fadeInBlur  0.65s cubic-bezier(0.16, 1, 0.3, 1) both; }

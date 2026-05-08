@@ -99,7 +99,7 @@ export default function UmbraSection() {
               <article className="group h-full card card-hover p-6 cursor-default">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-2.5">
-                    <span className="w-9 h-9 rounded-lg bg-zinc-50 text-zinc-700 grid place-items-center group-hover:bg-zinc-900 group-hover:text-white transition-colors duration-300">
+                    <span className="w-9 h-9 rounded-lg bg-zinc-50 text-zinc-700 grid place-items-center group-hover:bg-zinc-900 group-hover:text-white transition-colors duration-300 icon-wiggle">
                       {p.icon}
                     </span>
                     <div>

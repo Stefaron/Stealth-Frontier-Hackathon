@@ -294,26 +294,60 @@ export default function AuditorsPage() {
           </button>
         </div>
 
-        <div className="card p-6">
-          <h3 className="text-[15px] font-semibold text-zinc-900 mb-3 tracking-tight">How it works</h3>
-          <div className="space-y-3 text-[13.5px] text-zinc-600 leading-relaxed">
-            <p>
-              A compliance grant reencrypts your encrypted outputs under the
-              auditor&apos;s X25519 key using Arcium MPC.
-            </p>
-            <p>
-              The auditor can view your transaction history within the
-              scoped grant without accessing your private key.
-            </p>
-            <p>
-              Grants are revocable on-chain at any time. Each grant has a unique
-              nonce to prevent replay.
-            </p>
-          </div>
-          <div className="mt-5 pt-4 border-t border-zinc-100">
-            <span className="text-[11px] font-mono text-zinc-400 tracking-wider">
-              GRANT · ECDH · scoped-key
-            </span>
+        <div className="relative card overflow-hidden p-6">
+          {/* Accent line */}
+          <div aria-hidden className="absolute inset-x-0 top-0 aurora-line" />
+          {/* Soft halo */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -top-24 -right-24 w-48 h-48 rounded-full opacity-50"
+            style={{
+              background: "radial-gradient(circle, rgba(99,102,241,0.10), transparent 70%)",
+            }}
+          />
+          <div className="relative">
+            <h3 className="text-[15px] font-semibold text-zinc-900 mb-5 tracking-tight">How it works</h3>
+            <ol className="space-y-4">
+              {[
+                {
+                  num: "01",
+                  title: "Reencrypt",
+                  desc:
+                    "Your encrypted outputs are reencrypted under the auditor's X25519 key via Arcium MPC.",
+                },
+                {
+                  num: "02",
+                  title: "View",
+                  desc:
+                    "The auditor sees transaction history within the scoped grant — never your private key.",
+                },
+                {
+                  num: "03",
+                  title: "Revoke",
+                  desc:
+                    "Grants are revocable on-chain anytime. Each grant has a unique nonce — no replay.",
+                },
+              ].map((step) => (
+                <li key={step.num} className="flex gap-3 items-start group">
+                  <span className="flex-shrink-0 w-7 h-7 rounded-md bg-zinc-50 text-zinc-700 grid place-items-center text-[10.5px] font-mono font-semibold tracking-wider group-hover:bg-zinc-900 group-hover:text-white transition-colors duration-300">
+                    {step.num}
+                  </span>
+                  <div className="flex-1 min-w-0 pt-0.5">
+                    <p className="text-[13.5px] font-semibold text-zinc-900 mb-0.5">{step.title}</p>
+                    <p className="text-[12.5px] text-zinc-600 leading-relaxed">{step.desc}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+            <div className="mt-6 pt-4 border-t border-zinc-100 flex items-center gap-2">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60 animate-soft-pulse" />
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+              </span>
+              <span className="text-[11px] font-mono text-zinc-500 tracking-wider">
+                GRANT · ECDH · scoped-key
+              </span>
+            </div>
           </div>
         </div>
       </div>

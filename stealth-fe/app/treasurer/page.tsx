@@ -38,7 +38,10 @@ export default function TreasurerPage() {
   const { status, checkRegistration } = useRegistration(publicKey?.toBase58());
 
   useEffect(() => {
-    if (client && publicKey) checkRegistration();
+    if (!client || !publicKey) return;
+    checkRegistration();
+    const id = setInterval(() => checkRegistration(), 15_000);
+    return () => clearInterval(id);
   }, [client, publicKey, checkRegistration]);
 
   const shortAddress = publicKey
@@ -49,10 +52,16 @@ export default function TreasurerPage() {
   const isPending = status === "pending" || status === "checking" || status === "registering";
 
   // Onboarding steps
+  // step 3 done if either fully registered OR Arcium-pending (user signed, Arcium processing)
+  const step3Done = isRegistered || isPending;
   const steps = [
     { label: "Wallet connected", done: !!publicKey },
     { label: "Stealth session active", done: !!client },
-    { label: "Registered with Umbra", done: isRegistered, pending: isPending },
+    {
+      label: isPending && !isRegistered ? "Registered (confirming on Arcium…)" : "Registered with Umbra",
+      done: step3Done,
+      pending: false,
+    },
   ];
 
   const completedSteps = steps.filter((s) => s.done).length;
@@ -144,34 +153,51 @@ export default function TreasurerPage() {
       )}
 
       {/* Action cards */}
-      <div className="grid md:grid-cols-2 gap-3 mb-6">
-        {ACTIONS.map((action) => (
+      <div className="grid md:grid-cols-2 gap-4 mb-6">
+        {ACTIONS.map((action, i) => (
           <Link
             key={action.href}
             href={action.href}
-            className="group card card-hover p-7 flex flex-col"
+            className="group relative card card-hover p-7 flex flex-col overflow-hidden"
           >
-            <div className="flex items-center justify-between mb-6">
-              <span className="w-12 h-12 rounded-xl bg-zinc-50 text-zinc-700 grid place-items-center group-hover:bg-zinc-900 group-hover:text-white transition-colors duration-300">
+            {/* Decorative gradient accent */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -top-16 -right-16 w-40 h-40 rounded-full opacity-0 group-hover:opacity-100 blur-3xl transition-opacity duration-500"
+              style={{
+                background:
+                  i === 0
+                    ? "radial-gradient(circle, rgba(99,102,241,0.18), transparent 70%)"
+                    : "radial-gradient(circle, rgba(16,185,129,0.16), transparent 70%)",
+              }}
+            />
+            {/* Top corner dot */}
+            <span
+              aria-hidden
+              className="absolute top-4 right-4 w-1.5 h-1.5 rounded-full bg-zinc-200 group-hover:bg-zinc-900 transition-colors duration-300"
+            />
+
+            <div className="relative flex items-center justify-between mb-7">
+              <span className="w-12 h-12 rounded-xl bg-zinc-50 text-zinc-700 grid place-items-center group-hover:bg-zinc-900 group-hover:text-white transition-all duration-300 icon-wiggle">
                 {action.icon}
               </span>
               <svg
-                width="14"
-                height="14"
+                width="16"
+                height="16"
                 viewBox="0 0 14 14"
                 fill="none"
-                className="text-zinc-300 group-hover:text-zinc-900 group-hover:translate-x-0.5 transition-all duration-300"
+                className="text-zinc-300 group-hover:text-zinc-900 group-hover:translate-x-1 transition-all duration-300"
               >
-                <path d="M5 3l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M5 3l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
-            <h2 className="text-[16px] font-semibold text-zinc-900 mb-1.5 tracking-tight">
+            <h2 className="relative text-[17px] font-semibold text-zinc-900 mb-1.5 tracking-tight">
               {action.label}
             </h2>
-            <p className="text-[13.5px] text-zinc-500 leading-relaxed mb-5">{action.sub}</p>
-            <span className="inline-flex items-center gap-1 text-[12.5px] font-semibold text-zinc-700 group-hover:text-zinc-900 transition-colors mt-auto">
+            <p className="relative text-[13.5px] text-zinc-500 leading-relaxed mb-6">{action.sub}</p>
+            <span className="relative inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-zinc-700 group-hover:text-zinc-900 transition-colors mt-auto">
               {action.cta}
-              <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-0.5">
+              <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-1">
                 →
               </span>
             </span>
