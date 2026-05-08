@@ -133,35 +133,64 @@ export default function HeroSection() {
             <Link
               key={r.name}
               href={r.href}
-              className="group r-card p-4 flex items-center gap-3 animate-scale-in"
+              className="group relative r-card overflow-hidden p-4 flex items-center gap-3 animate-scale-in"
               style={{ animationDelay: `${550 + i * 90}ms` }}
             >
-              <span className="w-9 h-9 rounded-lg bg-zinc-50 text-zinc-700 grid place-items-center group-hover:bg-zinc-900 group-hover:text-white transition-colors duration-300">
-                <svg width="14" height="14" viewBox="0 0 18 18" fill="none">
+              {/* Hover accent halo */}
+              <span
+                aria-hidden
+                className="pointer-events-none absolute -top-12 -right-12 w-32 h-32 rounded-full opacity-0 group-hover:opacity-100 blur-2xl transition-opacity duration-500"
+                style={{
+                  background:
+                    i === 0
+                      ? "radial-gradient(circle, rgba(99,102,241,0.18), transparent 70%)"
+                      : i === 1
+                      ? "radial-gradient(circle, rgba(56,189,248,0.18), transparent 70%)"
+                      : "radial-gradient(circle, rgba(16,185,129,0.18), transparent 70%)",
+                }}
+              />
+              {/* Top accent strip */}
+              <span
+                aria-hidden
+                className="absolute inset-x-0 top-0 h-[2px] origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500"
+                style={{
+                  background:
+                    i === 0
+                      ? "linear-gradient(90deg, transparent, rgba(99,102,241,0.7), transparent)"
+                      : i === 1
+                      ? "linear-gradient(90deg, transparent, rgba(56,189,248,0.7), transparent)"
+                      : "linear-gradient(90deg, transparent, rgba(16,185,129,0.7), transparent)",
+                }}
+              />
+
+              <span className="relative w-10 h-10 rounded-xl bg-zinc-50 text-zinc-700 grid place-items-center group-hover:bg-zinc-900 group-hover:text-white transition-all duration-300 group-hover:scale-105 group-hover:-rotate-3">
+                <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
                   {r.name === "Treasurer" && (
-                    <path d="M2 5h14M2 5l1.5 10h11L16 5M7 5V3.5h4V5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M2 5h14M2 5l1.5 10h11L16 5M7 5V3.5h4V5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
                   )}
                   {r.name === "Contributor" && (
                     <>
-                      <circle cx="9" cy="6.5" r="3" stroke="currentColor" strokeWidth="1.5" />
-                      <path d="M3.5 16c0-3.04 2.46-5.5 5.5-5.5s5.5 2.46 5.5 5.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                      <circle cx="9" cy="6.5" r="3" stroke="currentColor" strokeWidth="1.6" />
+                      <path d="M3.5 16c0-3.04 2.46-5.5 5.5-5.5s5.5 2.46 5.5 5.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
                     </>
                   )}
                   {r.name === "Auditor" && (
                     <>
-                      <path d="M10 2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V7L10 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-                      <path d="M10 2v5h5M6 11h4M6 14h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                      <path d="M10 2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V7L10 2Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+                      <path d="M10 2v5h5M6 11h4M6 14h6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
                     </>
                   )}
                 </svg>
               </span>
-              <div className="text-left flex-1 min-w-0">
-                <div className="text-[13.5px] font-semibold text-zinc-900">{r.name}</div>
-                <div className="text-[11.5px] text-zinc-500 truncate">{r.tag}</div>
+              <div className="relative text-left flex-1 min-w-0">
+                <div className="text-[14px] font-semibold text-zinc-900 tracking-tight">{r.name}</div>
+                <div className="text-[12px] text-zinc-500 truncate">{r.tag}</div>
               </div>
-              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" className="text-zinc-300 group-hover:text-zinc-900 transition-colors duration-300">
-                <path d="M5 3l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
+              <span className="relative inline-flex items-center justify-center w-7 h-7 rounded-full bg-zinc-50 text-zinc-400 group-hover:bg-zinc-900 group-hover:text-white transition-all duration-300">
+                <svg width="11" height="11" viewBox="0 0 14 14" fill="none" className="group-hover:translate-x-0.5 transition-transform duration-300">
+                  <path d="M5 3l4 4-4 4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
             </Link>
           ))}
         </div>
