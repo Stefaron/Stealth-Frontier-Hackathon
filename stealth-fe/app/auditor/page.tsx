@@ -33,7 +33,7 @@ export default function AuditorPage() {
         </p>
       </div>
 
-      <div className="mb-6 card px-4 py-3 flex items-center gap-3 flex-wrap">
+      <div data-tour="your-address" className="mb-6 card px-4 py-3 flex items-center gap-3 flex-wrap">
         <span className="relative flex h-1.5 w-1.5">
           <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60 animate-soft-pulse" />
           <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
@@ -47,7 +47,7 @@ export default function AuditorPage() {
       </div>
 
       {grants.length === 0 ? (
-        <div className="relative card overflow-hidden">
+        <div data-tour="grants" className="relative card overflow-hidden">
           {/* Aurora accent */}
           <div aria-hidden className="absolute inset-x-0 top-0 aurora-line" />
           {/* Soft halo */}
@@ -92,7 +92,7 @@ export default function AuditorPage() {
           </div>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div data-tour="grants" className="space-y-3">
           {grants.map((grant) => (
             <Link
               key={grant.nonce}

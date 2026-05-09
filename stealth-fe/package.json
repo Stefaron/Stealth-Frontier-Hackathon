@@ -22,6 +22,7 @@
     "@umbra-privacy/sdk": "^4.0.0",
     "@umbra-privacy/umbra-codama": "^2.0.2",
     "@umbra-privacy/web-zk-prover": "^2.0.1",
+    "framer-motion": "^12.38.0",
     "gsap": "^3.15.0",
     "jspdf": "^4.2.1",
     "lucide-react": "^1.14.0",

@@ -92,7 +92,7 @@ export default function TreasurerPage() {
 
       {/* Onboarding / status — only when not all done */}
       {!allDone && (
-        <div className="card p-6 mb-6">
+        <div data-tour="setup" className="card p-6 mb-6">
           <div className="flex items-center justify-between mb-5">
             <div>
               <h2 className="text-[15px] font-semibold text-zinc-900 tracking-tight">
@@ -158,6 +158,7 @@ export default function TreasurerPage() {
           <Link
             key={action.href}
             href={action.href}
+            data-tour={action.href.endsWith("/pay") ? "action-pay" : "action-auditors"}
             className="group relative card card-hover p-7 flex flex-col overflow-hidden"
           >
             {/* Decorative gradient accent */}
