@@ -370,7 +370,7 @@ export default function ContributorPage() {
       })()}
 
       <div className="grid md:grid-cols-2 gap-4 mb-6">
-        <div className="space-y-4">
+        <div data-tour="balance" className="space-y-4">
           <div className="card p-7">
             <div className="flex items-center gap-2 mb-5">
               <span className="text-[10.5px] font-semibold uppercase tracking-wider text-zinc-500">SOL Balance</span>
@@ -385,7 +385,7 @@ export default function ContributorPage() {
           </div>
         </div>
 
-        <div className="card p-7">
+        <div data-tour="withdraw" className="card p-7">
           <h2 className="text-[15px] font-semibold text-zinc-900 mb-5 tracking-tight">Withdraw to wallet</h2>
 
           <div className="flex gap-1 mb-4 p-1 rounded-full border border-zinc-200 bg-white w-fit">

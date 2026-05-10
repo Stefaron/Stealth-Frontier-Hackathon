@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { useUmbra } from "@/context/UmbraContext";
@@ -218,12 +219,15 @@ export default function WalletButton() {
             <div className="relative w-16 h-16 mx-auto mb-4">
               <div
                 aria-hidden
-                className="absolute -inset-2 rounded-full opacity-50 blur-md"
+                className="absolute -inset-2 rounded-full opacity-40 blur-md"
                 style={{ background: avatarGradient(addr) }}
               />
-              <div
-                className="relative w-16 h-16 rounded-full ring-2 ring-white"
-                style={{ background: avatarGradient(addr) }}
+              <Image
+                src="/icon-robot.png"
+                alt="Account avatar"
+                width={64}
+                height={64}
+                className="relative w-16 h-16 rounded-full ring-2 ring-white object-cover"
               />
             </div>
 

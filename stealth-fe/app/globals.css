@@ -142,6 +142,326 @@ body {
 }
 
 .thumb-shimmer { animation: thumbShimmer 1.6s ease-in-out infinite; transform-origin: left; }
+
+@keyframes thumbScanSweep {
+  0%   { transform: translateX(-100%); opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+
+@keyframes thumbRingPulse {
+  0%, 100% { transform: scale(0.9); opacity: 0; }
+  50%      { transform: scale(1.4); opacity: 0.5; }
+}
+
+@keyframes thumbDotFlow {
+  0%   { stroke-dashoffset: 12; }
+  100% { stroke-dashoffset: 0; }
+}
+
+@keyframes thumbReadyPop {
+  0%, 60% { transform: scale(0); opacity: 0; }
+  70%     { transform: scale(1.1); opacity: 1; }
+  100%    { transform: scale(1); opacity: 1; }
+}
+
+.thumb-scan-sweep {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(99, 102, 241, 0.15) 50%,
+    transparent 100%
+  );
+  animation: thumbScanSweep 2.6s ease-in-out infinite;
+}
+
+.thumb-ring-pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid rgb(99, 102, 241);
+  animation: thumbRingPulse 2s ease-out infinite;
+  pointer-events: none;
+}
+
+.thumb-line {
+  stroke-dasharray: 4 2;
+  animation: thumbDotFlow 0.7s linear infinite;
+}
+
+.thumb-ready-pop {
+  display: inline-flex;
+  animation: thumbReadyPop 2.6s cubic-bezier(0.5, 0, 0.3, 1.4) infinite;
+  transform-origin: center;
+}
+
+/* ─── Guide tour ─────────────────────────────────────── */
+
+@keyframes tourPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.45); }
+  70%      { box-shadow: 0 0 0 12px rgba(99, 102, 241, 0); }
+}
+
+.tour-spotlight-target {
+  position: relative;
+  z-index: 10000;
+  border-radius: 14px;
+  animation: tourPulse 2s ease-out infinite;
+}
+
+.tour-progress-dot {
+  width: 16px;
+  height: 4px;
+  border-radius: 999px;
+  background: #e7e8ec;
+  transition: background 0.3s ease, width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.tour-progress-dot.is-current {
+  background: #6366f1;
+  width: 24px;
+}
+.tour-progress-dot.is-done {
+  background: #c7d2fe;
+}
+
+/* ─── Retro TV ─────────────────────────────────────────── */
+
+.retrotv-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  aspect-ratio: 1.1 / 1;
+  user-select: none;
+}
+
+.retrotv-bigtext {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4%;
+  pointer-events: none;
+  font-weight: 800;
+  font-size: clamp(8rem, 22vw, 14rem);
+  line-height: 0.85;
+  color: rgba(11, 13, 18, 0.07);
+  letter-spacing: -0.02em;
+  z-index: 0;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+.retrotv-digit { display: inline-block; }
+.retrotv-digit-0 { transform: translateY(-4%); }
+.retrotv-digit-2 { transform: translateY(-2%); }
+
+.retrotv-unit {
+  position: relative;
+  z-index: 1;
+  width: 62%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Antennas */
+.retrotv-antenna {
+  position: absolute;
+  top: -28%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 35%;
+  pointer-events: none;
+}
+.retrotv-ant {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 2px;
+  height: 88%;
+  background: #6b7280;
+  transform-origin: bottom center;
+  border-radius: 2px;
+}
+.retrotv-ant-l { transform: translateX(-50%) rotate(-26deg); }
+.retrotv-ant-r { transform: translateX(-50%) rotate(26deg); }
+.retrotv-ant-knob {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #6b7280;
+}
+.retrotv-ant-knob-l {
+  top: 6%;
+  left: calc(50% - 22%);
+}
+.retrotv-ant-knob-r {
+  top: 6%;
+  right: calc(50% - 22%);
+}
+
+/* Body */
+.retrotv-body {
+  width: 100%;
+  background: linear-gradient(180deg, #f97316 0%, #ea580c 100%);
+  border: 2px solid #9a3412;
+  border-radius: 16px 16px 8px 8px;
+  padding: 14px;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.25),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.18),
+    0 18px 36px -16px rgba(154, 52, 18, 0.5);
+  position: relative;
+}
+
+.retrotv-screen {
+  position: relative;
+  width: 70%;
+  aspect-ratio: 1.15 / 1;
+  background: #0b0d12;
+  border: 3px solid #1f2937;
+  border-radius: 12px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  margin: 0;
+}
+
+/* Static noise effect */
+.retrotv-static {
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-conic-gradient(
+      rgba(255, 255, 255, 0.7) 0%,
+      rgba(255, 255, 255, 0.7) 0.5%,
+      rgba(0, 0, 0, 0.6) 0.5%,
+      rgba(0, 0, 0, 0.6) 1%
+    );
+  background-size: 3px 3px;
+  opacity: 0.65;
+  mix-blend-mode: screen;
+  animation: retrotvStatic 0.18s steps(4) infinite;
+  pointer-events: none;
+}
+
+@keyframes retrotvStatic {
+  0%   { background-position: 0 0; }
+  25%  { background-position: 1px -1px; }
+  50%  { background-position: -1px 1px; }
+  75%  { background-position: 2px 0; }
+  100% { background-position: 0 1px; }
+}
+
+/* Scanline */
+.retrotv-scanline {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    transparent 48%,
+    rgba(255, 255, 255, 0.12) 50%,
+    transparent 52%,
+    transparent 100%
+  );
+  background-size: 100% 8px;
+  pointer-events: none;
+  animation: retrotvScan 6s linear infinite;
+}
+
+@keyframes retrotvScan {
+  0%   { background-position: 0 0; }
+  100% { background-position: 0 200%; }
+}
+
+/* Message label (in screen) */
+.retrotv-message {
+  position: relative;
+  z-index: 2;
+  background: #0b0d12;
+  border: 2px solid #1f2937;
+  color: #fff;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  padding: 4px 10px;
+  border-radius: 4px;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.25);
+}
+
+/* Position screen at left, controls at right */
+.retrotv-body {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.retrotv-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 0;
+}
+.retrotv-knob {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 30%, #fed7aa, #c2410c 60%);
+  border: 2px solid #9a3412;
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+}
+.retrotv-speaker {
+  display: grid;
+  grid-template-columns: repeat(3, 4px);
+  grid-template-rows: repeat(2, 4px);
+  gap: 2px;
+}
+.retrotv-speaker span {
+  background: #1f2937;
+  border-radius: 999px;
+}
+
+/* Stand */
+.retrotv-stand {
+  position: relative;
+  margin-top: -2px;
+  width: 50%;
+  display: flex;
+  justify-content: space-between;
+}
+.retrotv-stand span {
+  width: 6px;
+  height: 16px;
+  background: #6b7280;
+  border-radius: 0 0 4px 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .retrotv-static,
+  .retrotv-scanline { animation: none; }
+}
+
+/* CTA card hover — extra shadow lift */
+.cta-card:hover {
+  box-shadow: 0 50px 120px -40px rgba(99, 102, 241, 0.28),
+              0 30px 80px -40px rgba(11, 13, 18, 0.18) !important;
+}
+
+/* Floating chips wiggle on card hover */
+.cta-card:hover .chip-float-1 { animation-duration: 3s; transform: translateX(-2px); }
+.cta-card:hover .chip-float-2 { animation-duration: 3s; transform: translateX(2px); }
+.cta-card:hover .chip-float-3 { animation-duration: 3s; transform: translateX(-2px); }
+.cta-card:hover .chip-float-4 { animation-duration: 3s; transform: translateX(2px); }
 .thumb-row     { animation: thumbRowFill 3.5s cubic-bezier(0.16,1,0.3,1) infinite; transform-origin: left; }
 .thumb-bar     { animation: thumbBarLoop 4s cubic-bezier(0.16,1,0.3,1) infinite; transform-origin: bottom; }
 .thumb-ready   { animation: thumbReadyPulse 2.4s ease-in-out infinite; }
