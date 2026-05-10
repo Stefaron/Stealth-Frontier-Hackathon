@@ -40,10 +40,10 @@ export default function AuditorPage() {
           Auditor
         </span>
         <h1 className="mt-3 text-[1.75rem] md:text-[2rem] font-bold text-zinc-900 tracking-tight" style={{ letterSpacing: "-0.02em" }}>
-          Compliance dashboard
+          Company Audits
         </h1>
         <p className="mt-2 text-[14px] text-zinc-500">
-          DAOs that have granted you scoped viewing access.
+          Companies that have granted you scoped viewing access to their payroll treasuries.
         </p>
       </div>
 
@@ -241,7 +241,7 @@ export default function AuditorPage() {
                     </div>
                     <div className="min-w-0">
                       <h3 className="text-[15px] font-semibold text-zinc-900 truncate tracking-tight">
-                        {grant.label ?? "DAO Treasury"}
+                        {grant.label ?? "Company Treasury"}
                       </h3>
                       <p className="text-[11.5px] text-zinc-500 mt-0.5">
                         {grant.treasurerAddress.slice(0, 12)}…{grant.treasurerAddress.slice(-6)}

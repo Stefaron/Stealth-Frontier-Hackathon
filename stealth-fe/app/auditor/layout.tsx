@@ -3,7 +3,10 @@
 import AppNav from "@/components/app/AppNav";
 import ConnectGate from "@/components/app/ConnectGate";
 
-const LINKS = [{ label: "Grants", href: "/auditor" }];
+const LINKS = [
+  { label: "Company Audits", href: "/auditor" },
+  { label: "Individual Reports", href: "/auditor/decrypt" },
+];
 
 export default function AuditorLayout({
   children,

@@ -8,6 +8,7 @@ import { queryBalances } from "@/lib/umbra/balance";
 import { withdrawToPublic } from "@/lib/umbra/withdraw";
 import { scanClaimableUtxos, claimReceiverUtxos } from "@/lib/umbra/claim";
 import { USDC_DEVNET_MINT, KNOWN_MINTS } from "@/lib/constants";
+import type { AuditTransaction } from "@/lib/types";
 import type { Address } from "@solana/kit";
 
 const SOL_MINT = "So11111111111111111111111111111111111111112" as Address;
@@ -26,7 +27,7 @@ function formatBalance(amount: bigint, mint: string): string {
 }
 
 export default function ContributorPage() {
-  const { publicKey } = useWallet();
+  const { publicKey, signMessage } = useWallet();
   const { client } = useUmbra();
 
   const toast = useToast();
@@ -44,6 +45,9 @@ export default function ContributorPage() {
   const [claimedIndices, setClaimedIndices] = useState<Set<string>>(new Set());
   const [isClaiming, setIsClaiming] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
+  const [isGeneratingProof, setIsGeneratingProof] = useState(false);
+  const [sharedSecret, setSharedSecret] = useState("");
+  const [auditorAddress, setAuditorAddress] = useState("");
 
   const lsKey = publicKey ? `umbra_claimed_${publicKey.toBase58()}` : null;
 
@@ -164,6 +168,97 @@ export default function ContributorPage() {
       toast.error(msg);
     } finally {
       setIsWithdrawing(false);
+    }
+  };
+
+  const handleGenerateProof = async () => {
+    if (!publicKey || pendingUtxos.length === 0) {
+      toast.error("No transactions found to generate report.");
+      return;
+    }
+    if (!sharedSecret || !auditorAddress) {
+      toast.error("Please enter both the Auditor's Wallet Address and a Shared Secret.");
+      return;
+    }
+    
+    setIsGeneratingProof(true);
+    const loadingId = toast.loading("Encrypting & Uploading to IPFS…");
+    try {
+      const txs: AuditTransaction[] = pendingUtxos.map((u) => ({
+        signature: u.transactionHash ?? String(u.insertionIndex ?? "unknown"),
+        timestamp: u.timestamp ? parseInt(u.timestamp, 10) * 1000 : Date.now(),
+        amount: BigInt(u.amount ?? 0).toString() as any, // serialize BigInt as string for JSON
+        mint: u.token ?? USDC_DEVNET_MINT,
+        recipient: publicKey.toBase58(),
+        type: "receive",
+      }));
+
+      const payload = JSON.stringify({
+        contributor: publicKey.toBase58(),
+        generatedAt: new Date().toISOString(),
+        transactions: txs
+      });
+
+      // Web Crypto API AES-GCM Encryption
+      const enc = new TextEncoder();
+      const salt = crypto.getRandomValues(new Uint8Array(16));
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      
+      const keyMaterial = await crypto.subtle.importKey(
+        "raw", enc.encode(sharedSecret), { name: "PBKDF2" }, false, ["deriveKey"]
+      );
+      const key = await crypto.subtle.deriveKey(
+        { name: "PBKDF2", salt, iterations: 100000, hash: "SHA-256" },
+        keyMaterial,
+        { name: "AES-GCM", length: 256 },
+        false,
+        ["encrypt"]
+      );
+      
+      const ciphertext = await crypto.subtle.encrypt(
+        { name: "AES-GCM", iv },
+        key,
+        enc.encode(payload)
+      );
+
+      const toBase64 = (buf: ArrayBuffer) => {
+        let binary = '';
+        const bytes = new Uint8Array(buf);
+        for (let i = 0; i < bytes.byteLength; i++) { binary += String.fromCharCode(bytes[i]); }
+        return window.btoa(binary);
+      };
+
+      const encryptedData = {
+        version: "1.0",
+        cipher: "AES-GCM",
+        ciphertext: toBase64(ciphertext),
+        iv: toBase64(iv),
+        salt: toBase64(salt)
+      };
+
+      const res = await fetch("/api/pinata/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          encryptedData,
+          auditorAddress: auditorAddress.trim(),
+          contributorAddress: publicKey.toBase58(),
+        }),
+      });
+
+      const resData = await res.json();
+      if (!res.ok) {
+        throw new Error(resData.error || "Failed to upload to IPFS");
+      }
+
+      toast.dismiss(loadingId);
+      toast.success(`Report published to IPFS! CID: ${resData.ipfsHash.slice(0, 10)}...`);
+      setSharedSecret("");
+    } catch (e) {
+      toast.dismiss(loadingId);
+      toast.error(e instanceof Error ? e.message : "Failed to generate report");
+    } finally {
+      setIsGeneratingProof(false);
     }
   };
 
@@ -355,24 +450,67 @@ export default function ContributorPage() {
         </div>
       </div>
 
-      <div className="card p-6">
-        <p className="text-[10.5px] font-semibold uppercase tracking-wider text-zinc-500 mb-4">
-          Privacy model
-        </p>
-        <div className="grid md:grid-cols-3 gap-4">
-          {[
-            { label: "Balance", value: "Rescue cipher", tag: "ETA · x25519" },
-            { label: "Withdraw", value: "Direct (MPC)", tag: "Arcium · MXE" },
-            { label: "History", value: "Encrypted", tag: "No on-chain leak" },
-          ].map((item) => (
-            <div key={item.label}>
-              <p className="text-zinc-400 text-[10.5px] uppercase tracking-wider font-semibold mb-1">
-                {item.label}
-              </p>
-              <p className="text-zinc-900 text-[14px] font-medium">{item.value}</p>
-              <p className="font-mono text-[11px] text-zinc-400 mt-0.5">{item.tag}</p>
+      <div className="grid md:grid-cols-2 gap-4">
+        <div className="card p-6 flex flex-col justify-between">
+          <div>
+            <p className="text-[10.5px] font-semibold uppercase tracking-wider text-zinc-500 mb-4">
+              Privacy model
+            </p>
+            <div className="space-y-4">
+              {[
+                { label: "Balance", value: "Rescue cipher", tag: "ETA · x25519" },
+                { label: "Withdraw", value: "Direct (MPC)", tag: "Arcium · MXE" },
+                { label: "History", value: "Encrypted", tag: "No on-chain leak" },
+              ].map((item) => (
+                <div key={item.label} className="flex justify-between items-center">
+                  <p className="text-zinc-500 text-[12.5px] font-medium">{item.label}</p>
+                  <div className="text-right">
+                    <p className="text-zinc-900 text-[13px] font-semibold">{item.value}</p>
+                    <p className="font-mono text-[10px] text-zinc-400 mt-0.5">{item.tag}</p>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
+        </div>
+
+        <div className="card p-6 flex flex-col justify-between bg-zinc-900 text-white ring-1 ring-zinc-800">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60 animate-ping" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+              </span>
+              <p className="text-[10.5px] font-semibold uppercase tracking-wider text-zinc-400">
+                Self-Sovereign Compliance
+              </p>
+            </div>
+            <h3 className="text-[18px] font-semibold mb-2">E2E Encrypted Report</h3>
+            <p className="text-zinc-400 text-[12.5px] leading-relaxed mb-4">
+              Decrypt your on-chain data locally, then re-encrypt it. It will be published to IPFS via Pinata, mapped directly to the Auditor's wallet address.
+            </p>
+            <input
+              type="text"
+              placeholder="Auditor Wallet Address..."
+              value={auditorAddress}
+              onChange={(e) => setAuditorAddress(e.target.value)}
+              className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3.5 py-2.5 text-white text-[13px] placeholder:text-zinc-500 focus:outline-none focus:border-zinc-500 transition-colors mb-3"
+            />
+            <input
+              type="password"
+              placeholder="Enter shared secret password..."
+              value={sharedSecret}
+              onChange={(e) => setSharedSecret(e.target.value)}
+              className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3.5 py-2.5 text-white text-[13px] placeholder:text-zinc-500 focus:outline-none focus:border-zinc-500 transition-colors mb-5"
+            />
+          </div>
+          <button
+            onClick={handleGenerateProof}
+            disabled={isGeneratingProof || pendingUtxos.length === 0 || !sharedSecret || !auditorAddress}
+            className="w-full bg-emerald-500 text-white hover:bg-emerald-400 press font-semibold text-[13px] py-2.5 rounded-lg transition-colors disabled:opacity-50"
+          >
+            {isGeneratingProof ? "Publishing to IPFS..." : "Encrypt & Publish"}
+          </button>
         </div>
       </div>
     </div>

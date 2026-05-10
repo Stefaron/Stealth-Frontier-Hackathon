@@ -79,3 +79,74 @@ export function generateAuditPdf(params: {
 
   return doc.output("blob");
 }
+
+export function generateIncomeReportPdf(params: {
+  contributorAddress: string;
+  transactions: AuditTransaction[];
+  generatedAt: Date;
+  signatureBase58?: string;
+}): Blob {
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const { contributorAddress, transactions, generatedAt, signatureBase58 } = params;
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(18);
+  doc.text("Stealth — Proof of Income Report", 20, 24);
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+  doc.setTextColor(120, 120, 120);
+  doc.text(`Contributor: ${contributorAddress}`, 20, 34);
+  doc.text(`Generated: ${generatedAt.toISOString()}`, 20, 39);
+  if (signatureBase58) {
+    doc.text(`Cryptographic Signature: ${signatureBase58.slice(0, 32)}...`, 20, 44);
+  }
+
+  doc.setTextColor(0, 0, 0);
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "bold");
+
+  const tableTop = 54;
+  const colWidths = [55, 25, 30, 25, 35];
+  const headers = ["Signature", "Type", "Amount", "Token", "Timestamp"];
+  let x = 20;
+  headers.forEach((h, i) => {
+    doc.text(h, x, tableTop);
+    x += colWidths[i];
+  });
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+
+  let y = tableTop + 6;
+  for (const tx of transactions) {
+    if (y > 270) {
+      doc.addPage();
+      y = 20;
+    }
+    const mintInfo = KNOWN_MINTS[tx.mint];
+    const cols = [
+      tx.signature.slice(0, 18) + "…",
+      tx.type,
+      formatAmount(tx.amount, tx.mint),
+      mintInfo?.symbol ?? tx.mint.slice(0, 8),
+      new Date(tx.timestamp).toISOString().slice(0, 10),
+    ];
+    let cx = 20;
+    cols.forEach((c, i) => {
+      doc.text(c, cx, y);
+      cx += colWidths[i];
+    });
+    y += 5;
+  }
+
+  doc.setFontSize(8);
+  doc.setTextColor(150, 150, 150);
+  doc.text(
+    `Self-Generated Zero-Knowledge Proof | Stealth Frontier`,
+    20,
+    285
+  );
+
+  return doc.output("blob");
+}
