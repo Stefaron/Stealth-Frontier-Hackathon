@@ -26,10 +26,10 @@ export default function AuditorPage() {
           Auditor
         </span>
         <h1 className="mt-3 text-[1.75rem] md:text-[2rem] font-bold text-zinc-900 tracking-tight" style={{ letterSpacing: "-0.02em" }}>
-          Compliance dashboard
+          Company Audits
         </h1>
         <p className="mt-2 text-[14px] text-zinc-500">
-          DAOs that have granted you scoped viewing access.
+          Companies that have granted you scoped viewing access to their payroll treasuries.
         </p>
       </div>
 
@@ -76,10 +76,10 @@ export default function AuditorPage() {
               <span aria-hidden className="absolute -bottom-1 -left-1 w-1.5 h-1.5 rounded-full bg-emerald-400 animate-soft-pulse" style={{ animationDelay: "1s" }} />
             </div>
             <p className="text-zinc-900 text-[16px] font-semibold mb-1.5 tracking-tight">
-              No compliance grants yet
+              No company access yet
             </p>
             <p className="text-zinc-500 text-[13.5px] leading-relaxed max-w-sm mx-auto">
-              Ask a DAO treasurer to issue a grant to your address. You&apos;ll see active grants
+              Ask a company treasurer to issue an audit access to your address. You&apos;ll see active companies
               show up here automatically.
             </p>
             <div className="mt-6 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-50 border border-zinc-200 text-[11.5px] text-zinc-600">
@@ -110,7 +110,7 @@ export default function AuditorPage() {
                     </div>
                     <div className="min-w-0">
                       <h3 className="text-[15px] font-semibold text-zinc-900 truncate tracking-tight">
-                        {grant.label ?? "DAO Treasury"}
+                        {grant.label ?? "Company Treasury"}
                       </h3>
                       <p className="text-[11.5px] text-zinc-500 mt-0.5">
                         {grant.treasurerAddress.slice(0, 12)}…{grant.treasurerAddress.slice(-6)}
