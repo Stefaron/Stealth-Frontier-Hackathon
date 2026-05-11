@@ -244,9 +244,9 @@ export default function ContributorPage() {
         enc.encode(payload)
       );
 
-      const toBase64 = (buf: ArrayBuffer) => {
+      const toBase64 = (buf: ArrayBuffer | Uint8Array) => {
         let binary = '';
-        const bytes = new Uint8Array(buf);
+        const bytes = buf instanceof Uint8Array ? buf : new Uint8Array(buf);
         for (let i = 0; i < bytes.byteLength; i++) { binary += String.fromCharCode(bytes[i]); }
         return window.btoa(binary);
       };
@@ -497,87 +497,182 @@ export default function ContributorPage() {
           </div>
         </div>
 
-        <div className="card p-6 flex flex-col justify-between bg-zinc-900 text-white ring-1 ring-zinc-800">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60 animate-ping" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+        <div data-tour="compliance" className="relative card overflow-hidden p-6 flex flex-col justify-between">
+          {/* Aurora line accent */}
+          <div aria-hidden className="absolute inset-x-0 top-0 aurora-line" />
+
+          {/* Halo */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -top-16 -right-16 w-48 h-48 rounded-full"
+            style={{
+              background:
+                "radial-gradient(circle, rgba(16,185,129,0.10), transparent 70%)",
+            }}
+          />
+
+          <div className="relative">
+            {/* Eyebrow + headline */}
+            <div className="flex items-center gap-2 mb-3">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60 animate-soft-pulse" />
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
               </span>
-              <p className="text-[10.5px] font-semibold uppercase tracking-wider text-zinc-400">
+              <span className="text-[10.5px] font-semibold uppercase tracking-wider text-emerald-700">
                 Self-Sovereign Compliance
-              </p>
+              </span>
             </div>
-            <h3 className="text-[18px] font-semibold mb-2">E2E Encrypted Report</h3>
-            <p className="text-zinc-400 text-[12.5px] leading-relaxed mb-4">
-              Decrypt your on-chain data locally, then re-encrypt it. It will be published to IPFS via Pinata, mapped directly to the Auditor's wallet address.
+            <h3 className="text-[18px] font-semibold text-zinc-900 mb-2 tracking-tight">
+              End-to-end encrypted report
+            </h3>
+            <p className="text-zinc-500 text-[13px] leading-relaxed mb-5 max-w-md">
+              Decrypt your data locally, re-encrypt with a shared password, and publish to IPFS
+              addressed to your auditor. Only they can read it.
             </p>
-            
-            <div className="mb-3 flex gap-2">
-              <div className="relative flex-1">
-                <select
-                  value={filterType}
-                  onChange={(e) => setFilterType(e.target.value as any)}
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3.5 py-2.5 text-white text-[13px] focus:outline-none focus:border-zinc-500 transition-colors appearance-none cursor-pointer"
-                >
-                  <option value="all">All Time History</option>
-                  <option value="year">Specific Year</option>
-                  <option value="month">Specific Month</option>
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-zinc-400">
-                  <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M3 5l3 3 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                </div>
+
+            {/* 3-step badges */}
+            <div className="flex items-center gap-1.5 mb-6 text-[11px] font-medium">
+              {[
+                { n: "1", t: "Decrypt" },
+                { n: "2", t: "Encrypt" },
+                { n: "3", t: "Publish" },
+              ].map((s, i) => (
+                <span key={s.n} className="contents">
+                  <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-zinc-50 border border-zinc-200 text-zinc-700">
+                    <span className="w-4 h-4 rounded-full bg-zinc-900 text-white text-[9px] grid place-items-center font-semibold">
+                      {s.n}
+                    </span>
+                    {s.t}
+                  </span>
+                  {i < 2 && (
+                    <span aria-hidden className="text-zinc-300">
+                      →
+                    </span>
+                  )}
+                </span>
+              ))}
+            </div>
+
+            {/* Time range — segmented switcher */}
+            <label className="block mb-4">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 block mb-1.5">
+                Time range
+              </span>
+              <div className="flex items-center gap-1 p-1 rounded-lg bg-zinc-50 border border-zinc-200 w-fit">
+                {[
+                  { v: "all", l: "All time" },
+                  { v: "year", l: "Year" },
+                  { v: "month", l: "Month" },
+                ].map((opt) => {
+                  const active = filterType === opt.v;
+                  return (
+                    <button
+                      key={opt.v}
+                      type="button"
+                      onClick={() => setFilterType(opt.v as "all" | "year" | "month")}
+                      className={`press text-[12px] font-semibold px-3 py-1.5 rounded-md transition-all ${
+                        active
+                          ? "bg-white text-zinc-900 shadow-sm"
+                          : "text-zinc-500 hover:text-zinc-900"
+                      }`}
+                    >
+                      {opt.l}
+                    </button>
+                  );
+                })}
               </div>
-              
-              {filterType === "year" && (
+            </label>
+
+            {filterType === "year" && (
+              <label className="block mb-4">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 block mb-1.5">
+                  Year
+                </span>
                 <input
                   type="number"
                   min="2020"
                   max="2030"
                   value={filterYear}
                   onChange={(e) => setFilterYear(e.target.value)}
-                  className="w-24 bg-zinc-800 border border-zinc-700 rounded-lg px-3.5 py-2.5 text-white text-[13px] focus:outline-none focus:border-zinc-500 transition-colors text-center"
+                  className="w-32 bg-white border border-zinc-200 rounded-lg px-3.5 py-2.5 text-zinc-900 text-[13px] font-mono focus:outline-none focus:border-zinc-400 transition-colors"
                 />
-              )}
-              
-              {filterType === "month" && (
+              </label>
+            )}
+
+            {filterType === "month" && (
+              <label className="block mb-4">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 block mb-1.5">
+                  Month
+                </span>
                 <input
                   type="month"
                   value={`${filterYear}-${filterMonth}`}
                   onChange={(e) => {
-                    const [y, m] = e.target.value.split('-');
+                    const [y, m] = e.target.value.split("-");
                     if (y && m) {
                       setFilterYear(y);
                       setFilterMonth(m);
                     }
                   }}
-                  className="flex-1 bg-zinc-800 border border-zinc-700 rounded-lg px-3.5 py-2.5 text-white text-[13px] focus:outline-none focus:border-zinc-500 transition-colors"
-                  style={{ colorScheme: 'dark' }}
+                  className="w-full bg-white border border-zinc-200 rounded-lg px-3.5 py-2.5 text-zinc-900 text-[13px] font-mono focus:outline-none focus:border-zinc-400 transition-colors"
                 />
-              )}
-            </div>
+              </label>
+            )}
 
-            <input
-              type="text"
-              placeholder="Auditor Wallet Address..."
-              value={auditorAddress}
-              onChange={(e) => setAuditorAddress(e.target.value)}
-              className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3.5 py-2.5 text-white text-[13px] placeholder:text-zinc-500 focus:outline-none focus:border-zinc-500 transition-colors mb-3"
-            />
-            <input
-              type="password"
-              placeholder="Enter shared secret password..."
-              value={sharedSecret}
-              onChange={(e) => setSharedSecret(e.target.value)}
-              className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3.5 py-2.5 text-white text-[13px] placeholder:text-zinc-500 focus:outline-none focus:border-zinc-500 transition-colors mb-5"
-            />
+            {/* Auditor address */}
+            <label className="block mb-4">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 block mb-1.5">
+                Auditor wallet address
+              </span>
+              <input
+                type="text"
+                placeholder="Base58 address…"
+                value={auditorAddress}
+                onChange={(e) => setAuditorAddress(e.target.value)}
+                className="w-full bg-white border border-zinc-200 rounded-lg px-3.5 py-2.5 text-zinc-900 text-[13px] font-mono placeholder:text-zinc-400 focus:outline-none focus:border-zinc-400 transition-colors"
+              />
+            </label>
+
+            {/* Shared secret */}
+            <label className="block mb-6">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 block mb-1.5">
+                Shared secret
+              </span>
+              <input
+                type="password"
+                placeholder="Type a strong password…"
+                value={sharedSecret}
+                onChange={(e) => setSharedSecret(e.target.value)}
+                className="w-full bg-white border border-zinc-200 rounded-lg px-3.5 py-2.5 text-zinc-900 text-[13px] placeholder:text-zinc-400 focus:outline-none focus:border-zinc-400 transition-colors"
+              />
+              <span className="block mt-1.5 text-[11px] text-zinc-400 leading-relaxed">
+                Share this with your auditor through a secure channel. Without it, the report is unreadable.
+              </span>
+            </label>
           </div>
+
+          {/* CTA */}
           <button
             onClick={handleGenerateProof}
             disabled={isGeneratingProof || pendingUtxos.length === 0 || !sharedSecret || !auditorAddress}
-            className="w-full bg-emerald-500 text-white hover:bg-emerald-400 press font-semibold text-[13px] py-2.5 rounded-lg transition-colors disabled:opacity-50"
+            className="group press w-full bg-zinc-900 text-white hover:bg-zinc-800 font-semibold text-[13.5px] py-3 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-[0_8px_20px_-10px_rgba(11,13,18,0.45)]"
           >
-            {isGeneratingProof ? "Publishing to IPFS..." : "Encrypt & Publish"}
+            {isGeneratingProof ? (
+              <>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="animate-spin">
+                  <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.5" strokeOpacity="0.3" />
+                  <path d="M7 1.5A5.5 5.5 0 0 1 12.5 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
+                Publishing to IPFS…
+              </>
+            ) : (
+              <>
+                Encrypt &amp; Publish
+                <svg width="13" height="13" viewBox="0 0 14 14" fill="none" className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+                  <path d="M2 12L12 2M12 2H5M12 2V9" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+                </svg>
+              </>
+            )}
           </button>
         </div>
       </div>

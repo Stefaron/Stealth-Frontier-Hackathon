@@ -29,7 +29,7 @@ const ROLE_HREF: Record<AppNavProps["role"], string> = {
   auditor: "/auditor",
 };
 
-const GUIDE_KEY = "stealth-guide-seen";
+const GUIDE_KEY = "stealth-guide-seen-v2";
 
 function buildSteps(role: AppNavProps["role"]): TourStep[] {
   const common: TourStep[] = [
@@ -133,6 +133,17 @@ function buildSteps(role: AppNavProps["role"]): TourStep[] {
         </>
       ),
     },
+    {
+      selector: "[data-tour='compliance']",
+      title: "Self-sovereign compliance",
+      body: (
+        <>
+          Need to prove income to an auditor? Pick a time range, encrypt your history with a
+          shared password, and publish it to IPFS. Only your auditor — addressed by their wallet —
+          can read it.
+        </>
+      ),
+    },
   ];
 
   const auditorSpecific: TourStep[] = [
@@ -153,6 +164,17 @@ function buildSteps(role: AppNavProps["role"]): TourStep[] {
         <>
           Each grant lets you decrypt a specific scope (mint, time range) without ever holding the
           private key. Open one to view, verify, and export reports.
+        </>
+      ),
+    },
+    {
+      selector: null,
+      title: "Individual reports",
+      body: (
+        <>
+          Contributors can also publish encrypted income reports directly to you via IPFS. Open{" "}
+          <span className="font-semibold text-zinc-900">Auditor → Individual Reports</span> to sync
+          and decrypt them with the shared password.
         </>
       ),
     },
