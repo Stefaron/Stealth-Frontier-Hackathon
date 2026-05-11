@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { useUmbra } from "@/context/UmbraContext";
+import { useToast } from "@/context/ToastContext";
 import { SOLANA_RPC_URL, SOLANA_NETWORK } from "@/lib/constants";
 import WalletModal from "./WalletModal";
 
@@ -28,6 +29,7 @@ export default function WalletButton() {
   const { connected, connecting, publicKey, connect, disconnect, wallet, select } =
     useWallet();
   const { client, isInitializing, initClient, clearClient } = useUmbra();
+  const toast = useToast();
   const [modalOpen, setModalOpen] = useState(false);
   const [pendingConnect, setPendingConnect] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
@@ -49,10 +51,18 @@ export default function WalletButton() {
   // Auto-connect once adapter ready
   useEffect(() => {
     if (!pendingConnect || !wallet || connected || connecting) return;
-    connect()
-      .catch((e) => console.error("[WalletButton] connect() failed:", e))
-      .finally(() => setPendingConnect(false));
-  }, [pendingConnect, wallet, connected, connecting, connect]);
+    
+    const timer = setTimeout(() => {
+      connect()
+        .catch((e) => {
+          console.error("[WalletButton] connect() failed:", e);
+          toast.error(e.message || "Failed to connect wallet.");
+        })
+        .finally(() => setPendingConnect(false));
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, [pendingConnect, wallet, connected, connecting, connect, toast]);
 
   // Fetch SOL balance when account popover opens
   useEffect(() => {
@@ -100,9 +110,6 @@ export default function WalletButton() {
       await disconnect();
     } catch {
       // Phantom service worker errors are benign
-    } finally {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      select(null as any);
     }
   };
 

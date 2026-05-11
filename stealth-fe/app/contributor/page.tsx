@@ -48,6 +48,9 @@ export default function ContributorPage() {
   const [isGeneratingProof, setIsGeneratingProof] = useState(false);
   const [sharedSecret, setSharedSecret] = useState("");
   const [auditorAddress, setAuditorAddress] = useState("");
+  const [filterType, setFilterType] = useState<"all" | "year" | "month">("all");
+  const [filterYear, setFilterYear] = useState(new Date().getFullYear().toString());
+  const [filterMonth, setFilterMonth] = useState((new Date().getMonth() + 1).toString().padStart(2, '0'));
 
   const lsKey = publicKey ? `umbra_claimed_${publicKey.toBase58()}` : null;
 
@@ -184,7 +187,7 @@ export default function ContributorPage() {
     setIsGeneratingProof(true);
     const loadingId = toast.loading("Encrypting & Uploading to IPFS…");
     try {
-      const txs: AuditTransaction[] = pendingUtxos.map((u) => ({
+      let txs: AuditTransaction[] = pendingUtxos.map((u) => ({
         signature: u.transactionHash ?? String(u.insertionIndex ?? "unknown"),
         timestamp: u.timestamp ? parseInt(u.timestamp, 10) * 1000 : Date.now(),
         amount: BigInt(u.amount ?? 0).toString() as any, // serialize BigInt as string for JSON
@@ -192,6 +195,26 @@ export default function ContributorPage() {
         recipient: publicKey.toBase58(),
         type: "receive",
       }));
+
+      if (filterType !== "all") {
+        txs = txs.filter(tx => {
+          const d = new Date(tx.timestamp);
+          if (filterType === "year") {
+            return d.getFullYear() === parseInt(filterYear);
+          }
+          if (filterType === "month") {
+            return d.getFullYear() === parseInt(filterYear) && (d.getMonth() + 1) === parseInt(filterMonth);
+          }
+          return true;
+        });
+      }
+
+      if (txs.length === 0) {
+        toast.dismiss(loadingId);
+        toast.error("No transactions found for the selected time period.");
+        setIsGeneratingProof(false);
+        return;
+      }
 
       const payload = JSON.stringify({
         contributor: publicKey.toBase58(),
@@ -489,6 +512,51 @@ export default function ContributorPage() {
             <p className="text-zinc-400 text-[12.5px] leading-relaxed mb-4">
               Decrypt your on-chain data locally, then re-encrypt it. It will be published to IPFS via Pinata, mapped directly to the Auditor's wallet address.
             </p>
+            
+            <div className="mb-3 flex gap-2">
+              <div className="relative flex-1">
+                <select
+                  value={filterType}
+                  onChange={(e) => setFilterType(e.target.value as any)}
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3.5 py-2.5 text-white text-[13px] focus:outline-none focus:border-zinc-500 transition-colors appearance-none cursor-pointer"
+                >
+                  <option value="all">All Time History</option>
+                  <option value="year">Specific Year</option>
+                  <option value="month">Specific Month</option>
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-zinc-400">
+                  <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M3 5l3 3 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </div>
+              </div>
+              
+              {filterType === "year" && (
+                <input
+                  type="number"
+                  min="2020"
+                  max="2030"
+                  value={filterYear}
+                  onChange={(e) => setFilterYear(e.target.value)}
+                  className="w-24 bg-zinc-800 border border-zinc-700 rounded-lg px-3.5 py-2.5 text-white text-[13px] focus:outline-none focus:border-zinc-500 transition-colors text-center"
+                />
+              )}
+              
+              {filterType === "month" && (
+                <input
+                  type="month"
+                  value={`${filterYear}-${filterMonth}`}
+                  onChange={(e) => {
+                    const [y, m] = e.target.value.split('-');
+                    if (y && m) {
+                      setFilterYear(y);
+                      setFilterMonth(m);
+                    }
+                  }}
+                  className="flex-1 bg-zinc-800 border border-zinc-700 rounded-lg px-3.5 py-2.5 text-white text-[13px] focus:outline-none focus:border-zinc-500 transition-colors"
+                  style={{ colorScheme: 'dark' }}
+                />
+              )}
+            </div>
+
             <input
               type="text"
               placeholder="Auditor Wallet Address..."

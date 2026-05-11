@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useUmbra } from "@/context/UmbraContext";
+import { useToast } from "@/context/ToastContext";
 import { FlowButton } from "@/components/ui/flow-button";
 import { RetroTvError } from "@/components/ui/404-error-page";
 import WalletModal from "./WalletModal";
@@ -84,15 +85,25 @@ const iconVariants: Variants = {
 export default function ConnectGate({ children, role }: ConnectGateProps) {
   const { connected, wallet, connect, connecting, select } = useWallet();
   const { client, isInitializing, initClient } = useUmbra();
+  const toast = useToast();
   const [modalOpen, setModalOpen] = useState(false);
   const [pendingConnect, setPendingConnect] = useState(false);
 
   useEffect(() => {
     if (!pendingConnect || !wallet || connected || connecting) return;
-    connect()
-      .catch((e) => console.error("[ConnectGate] connect() failed:", e))
-      .finally(() => setPendingConnect(false));
-  }, [pendingConnect, wallet, connected, connecting, connect]);
+    
+    // Slight delay to allow adapter to initialize fully after select()
+    const timer = setTimeout(() => {
+      connect()
+        .catch((e) => {
+          console.error("[ConnectGate] connect() failed:", e);
+          toast.error(e.message || "Failed to connect to wallet. Please try again.");
+        })
+        .finally(() => setPendingConnect(false));
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, [pendingConnect, wallet, connected, connecting, connect, toast]);
 
   if (connected && client) {
     return <>{children}</>;

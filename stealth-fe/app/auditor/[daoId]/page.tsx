@@ -378,10 +378,23 @@ export default function DaoAuditPage() {
               className="grid grid-cols-[1fr_auto_auto_auto] gap-4 items-center px-5 py-4 border-b border-zinc-100 last:border-0"
             >
               <div>
-                <p className="font-mono text-[12px] text-zinc-900">
-                  {tx.signature.slice(0, 16)}…
-                </p>
-                <p className="font-mono text-[10.5px] text-zinc-500 mt-0.5">
+                <div className="font-mono text-[12px] text-zinc-900 mb-0.5">
+                  {tx.signature.length > 20 ? (
+                    <a 
+                      href={`https://solscan.io/tx/${tx.signature}?cluster=devnet`} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-indigo-600 hover:text-indigo-800 hover:underline transition-colors inline-flex items-center gap-1.5"
+                      title="View on Solscan"
+                    >
+                      {tx.signature.slice(0, 16)}…
+                      <svg width="10" height="10" viewBox="0 0 14 14" fill="none" className="shrink-0"><path d="M4 2h8v8M12 2L3 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    </a>
+                  ) : (
+                    <span className="text-zinc-500">Index: {tx.signature}</span>
+                  )}
+                </div>
+                <p className="font-mono text-[10.5px] text-zinc-500">
                   → {tx.destination.slice(0, 12)}…
                 </p>
               </div>

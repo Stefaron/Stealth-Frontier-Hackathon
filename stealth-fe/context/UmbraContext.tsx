@@ -5,6 +5,7 @@ import {
   useContext,
   useState,
   useCallback,
+  useEffect,
   type ReactNode,
 } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -57,6 +58,13 @@ export function UmbraProvider({ children }: { children: ReactNode }) {
     setClient(null);
     setError(null);
   }, []);
+
+  // Clear client if wallet disconnects or changes account
+  useEffect(() => {
+    if (!connected || !publicKey) {
+      clearClient();
+    }
+  }, [connected, publicKey, clearClient]);
 
   return (
     <UmbraContext.Provider
