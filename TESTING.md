@@ -162,9 +162,30 @@ Settings → Developer Settings → Airdrop SOL (devnet only).
 
 ---
 
+## Feature Overview
+
+Four distinct features span the three roles. Read this first to understand what you're testing.
+
+| Feature | Who | What it does |
+|---------|-----|--------------|
+| **Self-Sovereign Compliance** | Contributor | Decrypts own Umbra history locally → re-encrypts with shared secret → publishes encrypted report to IPFS (Pinata), mapped to auditor's wallet address |
+| **Individual Reports** | Auditor | Syncs IPFS to find reports contributors sent to your wallet → enter shared secret → decrypt locally |
+| **Company Audits / Compliance Scanner** | Auditor | DAO treasury scan using MVK issued by treasurer → decrypts all payroll transactions on-chain |
+| **Compliance Grants** | Treasurer | Issues scoped viewing key (MVK or time-bounded) to auditor wallet → auditor can run scanner on that DAO's treasury. Re-encrypted via Arcium MPC (X25519 ECDH). Revocable on-chain anytime. |
+
+**Two separate auditor flows:**
+- `Company Audits` tab → grant from DAO treasurer → scanner sees all payroll (decrypted with MVK)
+- `Individual Reports` tab → report from contributor → auditor sees individual income proof (decrypted with shared password)
+
+These are independent. Contributor-side proof does NOT require a company grant.
+
+---
+
 ## Part 4 — Auditor Flow (Wallet C or Wallet B)
 
-### Part 4A — Treasurer Issues Grant (Wallet A)
+### Part 4A — Treasurer Issues Compliance Grant (Wallet A)
+
+> **What this is:** Treasurer gives auditor a scoped viewing key (VK Level: Master = all time, or Yearly/Monthly = time-bounded). The MVK is derived from the treasurer's master seed (via `signMessage`) and stored with the grant. Arcium MPC re-encrypts treasury outputs under the auditor's X25519 public key — auditor can then scan and decrypt without the treasurer's private key. Each grant has a unique nonce — no replay attacks.
 
 #### 4A.1 Derive master viewing key
 1. Open `/treasurer/auditors` (still on Wallet A)
@@ -237,7 +258,77 @@ Settings → Developer Settings → Airdrop SOL (devnet only).
 
 ---
 
-## Part 5 — Troubleshooting
+## Part 5 — Self-Sovereign Compliance (Contributor → Auditor via IPFS)
+
+This flow lets a **contributor** prove their income to an auditor directly — without involving the DAO treasurer. Data never touches a server; it goes contributor → Pinata IPFS → auditor.
+
+### Prerequisites
+- Contributor wallet (Wallet B) must be initialized + have some Umbra history (claimed UTXOs)
+- Auditor wallet address (Wallet C) — contributor needs this beforehand
+- Both parties agree on a **shared secret password** out-of-band (e.g. Signal message)
+- `NEXT_PUBLIC_PINATA_JWT` must be set in `.env.local` (Pinata API key)
+
+```
+NEXT_PUBLIC_PINATA_JWT=<your_pinata_jwt_token>
+```
+
+Get Pinata JWT at https://app.pinata.cloud → API Keys → New Key → Admin.
+
+---
+
+### 5.1 Contributor publishes encrypted report (Wallet B)
+
+1. Connect Wallet B → open `/contributor`
+2. Initialize Umbra Client (if not already) → sign message
+3. On the right panel: **SELF-SOVEREIGN COMPLIANCE**
+4. Fill **Auditor Wallet Address** → paste Wallet C's base58 address
+5. Fill **Enter shared secret password** → type the agreed password (e.g. `audit2026`)
+   - This password is symmetric — auditor needs the exact same string to decrypt
+   - **Never put this in a URL or blockchain tx** — share via secure channel only
+6. Click **Encrypt & Publish**
+7. App decrypts your Umbra history locally (no data leaves your machine unencrypted)
+8. Re-encrypts the report using the shared secret
+9. Publishes to IPFS via Pinata — mapped to the auditor's wallet address
+10. Toast shows IPFS CID on success (e.g. `QmXxx...`)
+
+**What gets included in the report:**
+- Transaction history from your encrypted Umbra balance
+- Amounts received + approximate timestamps
+- Recipient is your own wallet — no other parties' data
+
+---
+
+### 5.2 Auditor syncs and decrypts (Wallet C)
+
+1. Switch to Wallet C → open `/auditor`
+2. Click **Individual Reports** tab (top nav)
+3. Left panel: click **Sync IPFS Reports**
+   - App queries Pinata for all IPFS files mapped to Wallet C's address
+   - Reports list populates (shows contributor address + publish timestamp)
+4. Click a report row to select it
+5. Right panel: **SELECTED REPORT** shows the report metadata
+6. Fill **SHARED SECRET (PASSWORD)** → type the same password contributor used
+7. Click **Decrypt Report**
+8. Report decrypts locally — income data appears (amounts, dates, token)
+
+**Expected output:**
+- Table of payment entries with amount + date
+- Contributor wallet shown
+- Decryption happens 100% client-side — Pinata never sees plaintext
+
+---
+
+### 5.3 Verification checklist
+
+- [ ] Report appears in Auditor Individual Reports after Sync
+- [ ] Wrong password → decrypt fails with error (not garbage data)
+- [ ] Correct password → all entries show with correct amounts
+- [ ] IPFS CID from step 5.1 matches what appears in Pinata dashboard
+- [ ] No private data in IPFS URL or browser URL bar
+
+---
+
+## Part 6 — Troubleshooting
 
 ### Indexed = 0
 - Treasurer has no confirmed transactions on devnet yet
@@ -258,6 +349,20 @@ Settings → Developer Settings → Airdrop SOL (devnet only).
 Two possible causes:
 1. **Wrong mint** — Umbra TVK is mint-specific; if treasurer sent WSOL but scanner is set to USDC, decryption produces garbage. Change Mint field to match what was actually sent.
 2. **Wrong viewing key** — MVK derived from wrong wallet. Treasurer should re-issue grant using **"Derive from wallet ↗"** while connected to correct wallet.
+
+### Individual Reports: "No reports synced yet" after clicking Sync
+- Check `NEXT_PUBLIC_PINATA_JWT` is set in `.env.local`
+- Contributor must have published at least one report (Part 5.1) using Wallet C's address
+- Pinata propagation can take 30–60 sec — wait and sync again
+
+### Individual Reports: Decrypt fails / garbled output
+- Wrong shared secret — both parties must use exact same string (case-sensitive)
+- Report may have been published to a different auditor wallet — check contributor used Wallet C's address
+
+### Encrypt & Publish button fails
+- `NEXT_PUBLIC_PINATA_JWT` missing or expired — generate new key at https://app.pinata.cloud
+- Umbra client not initialized — re-initialize on `/contributor` before publishing
+- No Umbra history to report — claim at least one UTXO first (Part 2.5)
 
 ### Wrap SOL fails "not confirmed in 30 seconds"
 - Pure devnet congestion — try again
@@ -285,11 +390,13 @@ Two possible causes:
 | URL | Role | Action |
 |-----|------|--------|
 | `/contributor` | Contributor | Scan UTXOs, claim, view balance, withdraw |
+| `/contributor` (right panel) | Contributor | Self-Sovereign Compliance — encrypt + publish income report to IPFS |
 | `/treasurer` | Treasurer | Dashboard overview |
 | `/treasurer/pay` | Treasurer | Send private payment, wrap SOL |
-| `/treasurer/auditors` | Treasurer | Issue/revoke compliance grants |
-| `/auditor` | Auditor | See list of received grants |
-| `/auditor/<daoId>?nonce=<nonce>` | Auditor | View + scan treasury report |
+| `/treasurer/auditors` | Treasurer | Issue/revoke compliance grants (MVK → auditor X25519 key) |
+| `/auditor` | Auditor | Company Audits tab — see grants issued by DAO treasurers |
+| `/auditor` → Individual Reports tab | Auditor | Sync IPFS + decrypt individual contributor reports |
+| `/auditor/<daoId>?nonce=<nonce>` | Auditor | Company audit: scan + decrypt full treasury payroll |
 
 ---
 
@@ -310,19 +417,27 @@ Initialize + Register                   Initialize + Register
         │                                   Encrypted Balance
         │                                         │
         ▼                                         ▼
-  /treasurer/auditors                       Withdraw to wallet
-  Derive MVK → Issue grant
-        │
-        ▼
-Wallet C (Auditor)
-──────────────────
-  /auditor → View grant
-  Load Transactions (uses MVK)
-  Decrypted real tx data ✓
-  Export PDF / CSV
+  /treasurer/auditors               ┌─── Withdraw to wallet
+  Derive MVK → Issue grant          │
+        │                           │    (Optional: self-sovereign flow)
+        │                           └──▶ Encrypt + Publish to IPFS
+        │                                /contributor (right panel)
+        ▼                                       │
+Wallet C (Auditor)                             │
+──────────────────                             │
+  /auditor                                     │
+  ├─ Company Audits tab ◄──── grant from A ────┘(separate path)
+  │    Load Transactions (uses MVK)
+  │    Decrypted real tx data ✓
+  │    Export PDF / CSV
+  │
+  └─ Individual Reports tab ◄── IPFS reports from contributors
+       Sync from Pinata
+       Select report → enter shared secret
+       Decrypt locally ✓
 ```
 
 ---
 
-*Last updated: 2026-05-05*  
+*Last updated: 2026-05-10*  
 *Network: Solana devnet · SDK: @umbra-privacy/sdk v4+*

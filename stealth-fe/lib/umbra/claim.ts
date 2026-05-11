@@ -69,7 +69,8 @@ export async function claimReceiverUtxos(client: IUmbraClient, utxos: readonly a
       const causeStr = JSON.stringify(e).toLowerCase();
       const isAlready =
         msg.includes("already") || msg.includes("processed") ||
-        causeStr.includes("already") || causeStr.includes("processed");
+        causeStr.includes("already") || causeStr.includes("processed") ||
+        (msg.includes("cannot read properties") && msg.includes("payload"));
       if (isAlready) {
         result.alreadyClaimedIndices.push(idx);
       } else {
