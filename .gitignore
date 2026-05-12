@@ -1,1 +1,44 @@
-".claude/" 
+# Local AI/editor tooling
+.claude/
+.codex/
+.cursor/
+.vscode/
+.idea/
+CLAUDE.md
+CLAUDE (2).md
+CLAUDE.md.pdf
+AGENTS.md
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Dependencies and build output
+node_modules/
+.next/
+out/
+build/
+dist/
+coverage/
+
+# Package manager caches
+.npm/
+.yarn/
+.pnpm-store/
+
+# TypeScript / Next.js generated files
+*.tsbuildinfo
+next-env.d.ts
+
+# Deployment metadata
+.vercel/
